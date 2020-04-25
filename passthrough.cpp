@@ -10,6 +10,7 @@
 #include <dlfcn.h>
 #include <pthread.h>
 #include <stdio.h>
+#include <fcntl.h>
 
 void* libc;
 void* libc_open;
@@ -91,4 +92,142 @@ static pthread_once_t passthrough_initialized = PTHREAD_ONCE_INIT;
 
 void initialize_passthrough_if_necessary() {
   pthread_once(&passthrough_initialized, initialize_passthrough);
+}
+
+int open(const char* pathname, int flags, int mode){
+    fprintf(stdout, "opening file %s \n", pathname);
+    initialize_passthrough_if_necessary();
+    return ((funcptr_open)libc_open)(pathname, flags, mode);
+}
+
+#undef creat
+int creat(__const char *name, mode_t mode) {
+  fprintf(stdout, "creating file\n");
+  return open(name, O_CREAT | O_WRONLY | O_TRUNC, mode);
+}
+
+int close(int fd){
+    fprintf(stdout, "closing file\n");
+    initialize_passthrough_if_necessary();
+    return ((funcptr_close)libc_close)(fd);
+}
+
+ssize_t read(int fd, void *buf, size_t count){
+    initialize_passthrough_if_necessary();
+    fprintf(stdout, "reading file of count %lu \n", count);
+    return ((funcptr_read)libc_read)(fd, buf, count);
+}
+
+ssize_t write(int fd, const void *buf, size_t count){
+    fprintf(stdout, "writing file of count %lu\n", count);
+    initialize_passthrough_if_necessary();
+    return ((funcptr_write)libc_write)(fd, buf, count);
+}
+
+ssize_t pread(int fd, void *buf, size_t count, off_t offset){
+    fprintf(stdout, "preading file of count %lu\n", count);
+    initialize_passthrough_if_necessary();
+    return ((funcptr_pread)libc_pread)(fd, buf, count, offset);
+}
+
+ssize_t pwrite(int fd, const void *buf, size_t count, off_t offset){
+    fprintf(stdout, "pwriting file of count %lu\n", count);
+    initialize_passthrough_if_necessary();
+    return ((funcptr_pwrite)libc_pwrite)(fd, buf, count, offset);
+}
+
+int dup(int oldfd){
+    fprintf(stdout, "duplicating fd\n");
+    initialize_passthrough_if_necessary();
+    return ((funcptr_dup)libc_dup)(oldfd);
+}
+
+int dup2(int oldfd, int newfd){
+    fprintf(stdout, "duplicating 2 fd\n");
+    initialize_passthrough_if_necessary();
+    return ((funcptr_dup2)libc_dup2)(oldfd, newfd);
+}
+
+off_t lseek(int fd, off_t offset, int whence){
+    fprintf(stdout, "lseek\n");
+    initialize_passthrough_if_necessary();
+    return ((funcptr_lseek)libc_lseek)(fd, offset, whence);
+}
+
+int stat(const char *pathname, struct stat *statbuf){
+    fprintf(stdout, "stat %s\n", pathname);
+    initialize_passthrough_if_necessary();
+    return ((funcptr_stat)libc_stat)(pathname, statbuf);
+}
+
+int fstat(int fd, struct stat *statbuf){
+    fprintf(stdout, "fstat\n");
+    initialize_passthrough_if_necessary();
+    return ((funcptr_fstat)libc_fstat)(fd, statbuf);
+}
+
+int __xstat(int ver, const char *path, struct stat *statbuf){
+    fprintf(stdout, "xstat %s\n", path);
+    initialize_passthrough_if_necessary();
+    return ((funcptr___xstat)libc___xstat)(ver, path, statbuf);
+}
+
+int __xstat64(int ver, const char *path, struct stat64 *statbuf){
+    fprintf(stdout, "xstat64 %s\n", path);
+    initialize_passthrough_if_necessary();
+    return ((funcptr___xstat64)libc___xstat64)(ver, path, statbuf);
+}
+
+int __fxstat(int ver, int fd, struct stat *statbuf){
+    fprintf(stdout, "fxstat \n");
+    initialize_passthrough_if_necessary();
+    return ((funcptr___fxstat)libc___fxstat)(ver, fd, statbuf);
+}
+
+int __fxstat64(int ver, int fd, struct stat64 *statbuf){
+    fprintf(stdout, "fxstat64 \n");
+    initialize_passthrough_if_necessary();
+    return ((funcptr___fxstat64)libc___fxstat64)(ver, fd, statbuf);
+}
+
+int __lxstat(int ver, const char *path, struct stat *statbuf){
+    fprintf(stdout, "lxstat %s\n", path);
+    initialize_passthrough_if_necessary();
+    return ((funcptr___lxstat)libc___lxstat)(ver, path, statbuf);
+}
+
+int __lxstat64(int ver, const char *path, struct stat64 *statbuf){
+    fprintf(stdout, "lxstat64 %s\n", path);
+    initialize_passthrough_if_necessary();
+    return ((funcptr___lxstat64)libc___lxstat64)(ver, path, statbuf);
+}
+
+FILE* fopen(const char *path, const char *mode){
+    fprintf(stdout, "fopen %s\n", path);
+    initialize_passthrough_if_necessary();
+    return ((funcptr_fopen)libc_fopen)(path, mode);
+}
+
+int truncate(const char *path, off_t offset){
+    fprintf(stdout, "truncate %s\n", path);
+    initialize_passthrough_if_necessary();
+    return ((funcptr_truncate)libc_truncate)(path, offset);
+}
+
+int ftruncate(int fd, off_t offset){
+    fprintf(stdout, "ftruncate\n");
+    initialize_passthrough_if_necessary();
+    return ((funcptr_ftruncate)libc_ftruncate)(fd, offset);
+}
+
+int setxattr(const char* path, const char *name, const void *value, size_t size, int flags){
+    fprintf(stdout, "setxattr %s\n", path);
+    initialize_passthrough_if_necessary();
+    return ((funcptr_setxattr)libattr_setxattr)(path, name, value, size, flags);
+}
+
+int fsetxattr(int fd, const char *name, const void *value, size_t size, int flags){
+    fprintf(stdout, "fsetxattr \n");
+    initialize_passthrough_if_necessary();
+    return ((funcptr_fsetxattr)libattr_fsetxattr)(fd, name, value, size, flags);
 }
