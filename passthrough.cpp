@@ -16,6 +16,11 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdarg.h>
+#include <time.h>
+
+#define MAX_LOG 200
+#define DEBUG_LVL 4
+#define LOG_FOREGROUND 0 // currently doesn't really work when set to 1
 
 void* libc;
 void* libc_open;
@@ -46,8 +51,61 @@ void* libattr;
 void* libattr_setxattr;
 void* libattr_fsetxattr;
 
+static const char* relmount = "./mount";
 static char mount_dir[PATH_MAX];
 static const char* source = "/dev/shm";
+
+// maybe use tmpnam?
+static const char* log_fn = "passlogs.log";
+
+enum LogLevel { DEBUG=4, INFO=3, WARNING=2, ERROR=1, NONE=0};
+
+static const char* get_lvlname(int lvl){
+    switch(lvl){
+        case 1:
+            return "ERROR";
+        case 2:
+            return "WARNING";
+        case 3:
+            return "INFO";
+        default:
+            return "DEBUG";
+    }
+}
+
+static int log_msg(int lvl, const char* msg, ...){
+
+    if (lvl > DEBUG_LVL)
+        return 0;
+
+    //get current time
+    time_t rawtime;
+    struct tm *timeinfo;
+
+    time(&rawtime);
+    timeinfo = localtime(&rawtime);
+
+    //format input string
+    char fmsg[MAX_LOG];
+    va_list arglist;
+    va_start( arglist, msg );
+    vsprintf(fmsg, msg ,arglist);
+    va_end( arglist );
+
+    if (LOG_FOREGROUND)
+        fprintf(stderr, "%s: %s: %s\n", strtok(asctime(timeinfo), "\n"), get_lvlname(lvl), fmsg);
+
+    else {
+        FILE* logs = log_fopen(log_fn, "a+");
+        // write complete log string to file
+        if (logs != NULL){
+            fprintf(logs, "%s: %s: %s\n", strtok(asctime(timeinfo), "\n"), get_lvlname(lvl), fmsg);
+        }
+        fclose(logs);
+    }
+
+    return 0;
+}
 
 
 // Our "copy" of stdout, because the application might close stdout
@@ -64,12 +122,13 @@ static void get_path(const char* oldpath, char passpath[PATH_MAX]){
     realpath(oldpath, actualpath);
     int len = strlen(mount_dir);
     strcpy(passpath, source);
-    fprintf(stderr, "actualpath %s %s\n", actualpath, mount_dir);
+
+    log_msg(DEBUG, "actualpath: %s, mount_dir: %s", actualpath, mount_dir);
 
     if(mount_dir[0] != '\0' && (match = strstr(actualpath, mount_dir))){
         if (match == NULL)
-            fprintf(stderr, "match null\n");
-        fprintf(stderr, "match\n");
+            log_msg(DEBUG, "match null");
+        log_msg(DEBUG, "match");
         *match = '\0';
         strcat(passpath, match + len);
     }
@@ -77,7 +136,7 @@ static void get_path(const char* oldpath, char passpath[PATH_MAX]){
         strcpy(passpath, oldpath);
     }
 
-    fprintf(stdout, "old fn %s ---> new fn %s\n", oldpath, passpath);
+    log_msg(INFO, "old fn %s ---> new fn %s", oldpath, passpath);
 }
 
 static void initialize_passthrough() {
@@ -118,10 +177,9 @@ static void initialize_passthrough() {
     fdout = fdopen(stdout2, "a");
   }
 
-  if (getcwd(mount_dir, sizeof(mount_dir)) == NULL)
-      fprintf(stdout, "ERROR\n");
-
   xprintf("initialize_passthrough(): New stdout %d\n", stdout2);
+  if (realpath(relmount, mount_dir) == NULL)
+      log_msg(ERROR, "Was not able to obtain absolute path of mount dir");
 }
 
 static pthread_once_t passthrough_initialized = PTHREAD_ONCE_INIT;
@@ -131,7 +189,7 @@ void initialize_passthrough_if_necessary() {
 }
 
 //int open(const char* pathname, int flags, mode_t mode){
-//    fprintf(stdout, "opening file %s \n", pathname);
+//    //fprintf(stdout, "opening file %s \n", pathname);
 //    char passpath[PATH_MAX];
 //    get_path(pathname, passpath);
 //    initialize_passthrough_if_necessary();
@@ -139,7 +197,8 @@ void initialize_passthrough_if_necessary() {
 //}
 
 int open(__const char* pathname, int flags, ...){
-    fprintf(stderr, "opening file %s \n", pathname);
+    initialize_passthrough_if_necessary();
+    log_msg(INFO, "opening file %s", pathname);
     char passpath[PATH_MAX];
     get_path(pathname, passpath);
 
@@ -151,166 +210,168 @@ int open(__const char* pathname, int flags, ...){
         va_end(ap);
     }
 
-    initialize_passthrough_if_necessary();
     return ((funcptr_open)libc_open)(passpath, flags, mode);
 }
 
 int openat(int dirfd, const char* pathname, int flags){
-    fprintf(stderr, "opening at file %s \n", pathname);
+    initialize_passthrough_if_necessary();
+    log_msg(INFO, "opening at file %s", pathname);
     char passpath[PATH_MAX];
     get_path(pathname, passpath);
-    initialize_passthrough_if_necessary();
     return ((funcptr_openat)libc_openat)(dirfd, passpath, flags);
 }
 
 
 #undef creat
 int creat(__const char *name, mode_t mode) {
-  fprintf(stderr, "creating file %s\n", name);
+  log_msg(INFO, "creating file %s", name);
   return open(name, O_CREAT | O_WRONLY | O_TRUNC, mode);
 }
 
 int close(int fd){
-    fprintf(stderr, "closing file\n");
     initialize_passthrough_if_necessary();
+    log_msg(INFO, "closing file");
     return ((funcptr_close)libc_close)(fd);
 }
 
 ssize_t read(int fd, void *buf, size_t count){
     initialize_passthrough_if_necessary();
-    fprintf(stderr, "reading file of count %lu from fd %d\n", count, fd);
+    log_msg(INFO, "reading file of count %lu from fd %d", count, fd);
 
     size_t bytes = ((funcptr_read)libc_read)(fd, buf, count);
-    //fprintf(stdout, "buffer contents: %s\n", buf);
     return bytes;
 }
 
 ssize_t write(int fd, const void *buf, size_t count){
-    fprintf(stderr, "writing file of count %lu from fd %d\n", count, fd);
     initialize_passthrough_if_necessary();
+    log_msg(INFO, "writing file of count %lu from fd %d", count, fd);
     return ((funcptr_write)libc_write)(fd, buf, count);
 }
 
 ssize_t pread(int fd, void *buf, size_t count, off_t offset){
-    fprintf(stderr, "preading file of count %lu\n", count);
     initialize_passthrough_if_necessary();
+    log_msg(INFO, "preading file of count %lu", count);
     return ((funcptr_pread)libc_pread)(fd, buf, count, offset);
 }
 
 ssize_t pwrite(int fd, const void *buf, size_t count, off_t offset){
-    fprintf(stderr, "pwriting file of count %lu\n", count);
     initialize_passthrough_if_necessary();
+    log_msg(INFO, "pwriting file of count %lu", count);
     return ((funcptr_pwrite)libc_pwrite)(fd, buf, count, offset);
 }
 
 int dup(int oldfd){
-    fprintf(stderr, "duplicating fd\n");
     initialize_passthrough_if_necessary();
+    log_msg(INFO, "duplicating fd");
     return ((funcptr_dup)libc_dup)(oldfd);
 }
 
 int dup2(int oldfd, int newfd){
-    fprintf(stderr, "duplicating 2 fd\n");
     initialize_passthrough_if_necessary();
+    log_msg(INFO, "duplicating 2 fd");
     return ((funcptr_dup2)libc_dup2)(oldfd, newfd);
 }
 
 off_t lseek(int fd, off_t offset, int whence){
-    fprintf(stderr, "lseek\n");
     initialize_passthrough_if_necessary();
+    log_msg(INFO, "lseek");
     return ((funcptr_lseek)libc_lseek)(fd, offset, whence);
 }
 
 int stat(const char *pathname, struct stat *statbuf){
-    fprintf(stderr, "stat %s\n", pathname);
+    initialize_passthrough_if_necessary();
+    log_msg(INFO, "stat %s", pathname);
     char passpath[PATH_MAX];
     get_path(pathname, passpath);
-    initialize_passthrough_if_necessary();
     return ((funcptr_stat)libc_stat)(passpath, statbuf);
 }
 
 int fstat(int fd, struct stat *statbuf){
-    fprintf(stderr, "fstat\n");
     initialize_passthrough_if_necessary();
+    log_msg(INFO, "fstat");
     return ((funcptr_fstat)libc_fstat)(fd, statbuf);
 }
 
 int __xstat(int ver, const char *path, struct stat *statbuf){
-    fprintf(stderr, "xstat %s\n", path);
+    initialize_passthrough_if_necessary();
+    log_msg(INFO, "xstat %s", path);
     char passpath[PATH_MAX];
     get_path(path, passpath);
-    initialize_passthrough_if_necessary();
     return ((funcptr___xstat)libc___xstat)(ver, passpath, statbuf);
 }
 
 int __xstat64(int ver, const char *path, struct stat64 *statbuf){
-    fprintf(stderr, "xstat64 %s\n", path);
+    initialize_passthrough_if_necessary();
+    log_msg(INFO, "xstat64 %s", path);
     char passpath[PATH_MAX];
     get_path(path, passpath);
-    initialize_passthrough_if_necessary();
     return ((funcptr___xstat64)libc___xstat64)(ver, passpath, statbuf);
 }
 
 int __fxstat(int ver, int fd, struct stat *statbuf){
-    fprintf(stderr, "fxstat \n");
     initialize_passthrough_if_necessary();
+    log_msg(INFO, "fxstat");
     return ((funcptr___fxstat)libc___fxstat)(ver, fd, statbuf);
 }
 
 int __fxstat64(int ver, int fd, struct stat64 *statbuf){
-    fprintf(stderr, "fxstat64 \n");
     initialize_passthrough_if_necessary();
+    log_msg(INFO, "fxstat64");
     return ((funcptr___fxstat64)libc___fxstat64)(ver, fd, statbuf);
 }
 
 int __lxstat(int ver, const char *path, struct stat *statbuf){
-    fprintf(stderr, "lxstat %s\n", path);
+    initialize_passthrough_if_necessary();
+    log_msg(INFO, "lxstat %s", path);
     char passpath[PATH_MAX];
     get_path(path, passpath);
-    initialize_passthrough_if_necessary();
     return ((funcptr___lxstat)libc___lxstat)(ver, passpath, statbuf);
 }
 
 int __lxstat64(int ver, const char *path, struct stat64 *statbuf){
-    fprintf(stderr, "lxstat64 %s\n", path);
+    initialize_passthrough_if_necessary();
+    log_msg(INFO, "lxstat64 %s", path);
     char passpath[PATH_MAX];
     get_path(path, passpath);
-    initialize_passthrough_if_necessary();
     return ((funcptr___lxstat64)libc___lxstat64)(ver, passpath, statbuf);
 }
 
 FILE* fopen(const char *path, const char *mode){
-    fprintf(stderr, "fopen %s\n", path);
+    initialize_passthrough_if_necessary();
+    fprintf(stderr, "fopen %s %s", path, mode);
     char passpath[PATH_MAX];
     get_path(path, passpath);
-    initialize_passthrough_if_necessary();
     return ((funcptr_fopen)libc_fopen)(passpath, mode);
 }
 
+FILE* log_fopen(const char *path, const char *mode){
+    return ((funcptr_fopen)libc_fopen)(path, mode);
+}
+
 int truncate(const char *path, off_t offset){
-    fprintf(stderr, "truncate %s\n", path);
+    initialize_passthrough_if_necessary();
+    log_msg(INFO, "truncate %s", path);
     char passpath[PATH_MAX];
     get_path(path, passpath);
-    initialize_passthrough_if_necessary();
     return ((funcptr_truncate)libc_truncate)(passpath, offset);
 }
 
 int ftruncate(int fd, off_t offset){
-    fprintf(stderr, "ftruncate\n");
     initialize_passthrough_if_necessary();
+    log_msg(INFO, "ftruncate");
     return ((funcptr_ftruncate)libc_ftruncate)(fd, offset);
 }
 
 int setxattr(const char* path, const char *name, const void *value, size_t size, int flags){
-    fprintf(stderr, "setxattr %s\n", path);
+    initialize_passthrough_if_necessary();
+    log_msg(INFO, "setxattr %s", path);
     char passpath[PATH_MAX];
     get_path(path, passpath);
-    initialize_passthrough_if_necessary();
     return ((funcptr_setxattr)libattr_setxattr)(passpath, name, value, size, flags);
 }
 
 int fsetxattr(int fd, const char *name, const void *value, size_t size, int flags){
-    fprintf(stderr, "fsetxattr \n");
     initialize_passthrough_if_necessary();
+    log_msg(INFO, "fsetxattr");
     return ((funcptr_fsetxattr)libattr_fsetxattr)(fd, name, value, size, flags);
 }

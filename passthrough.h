@@ -71,6 +71,8 @@ extern void* libattr_setxattr;
 extern void* libattr_fsetxattr;
 
 void initialize_passthrough_if_necessary();
+FILE* log_fopen(const char*, const char*);
+static const char* get_lvlname(int lvl);
 
 #ifdef XTREEMFS_PRELOAD_QUIET
   #define xprintf(...)
