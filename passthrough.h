@@ -10,8 +10,10 @@
 
 #include <stdio.h>
 #include <unistd.h>
+#include <sys/types.h>
 
-typedef int (*funcptr_open)(const char*, int, int);
+typedef int (*funcptr_open)(const char*, int, mode_t);
+typedef int (*funcptr_openat)(int, const char*, int);
 typedef int (*funcptr_close)(int);
 
 typedef ssize_t (*funcptr_read)(int, void*, size_t);
@@ -41,9 +43,11 @@ typedef int (*funcptr_fsetxattr)(int, const char*, const void*, size_t, int);
 
 
 extern void* libc_open;
+extern void* libc_openat;
 extern void* libc_close;
 extern void* libc___close;
 extern void* libc_pread;
+extern void* libc_pwrite;
 extern void* libc_read;
 extern void* libc_write;
 extern void* libc_dup;
