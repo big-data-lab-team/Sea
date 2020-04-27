@@ -22,7 +22,7 @@
 #include <unistd.h>
 
 #define MAX_LOG 200
-#define DEBUG_LVL 4
+#define DEBUG_LVL 0
 #define LOG_FOREGROUND 0 // currently doesn't really work when set to 1
 
 void* libc;
@@ -156,7 +156,7 @@ static void get_path(const char* oldpath, char passpath[PATH_MAX]){
 }
 
 static void initialize_passthrough() {
-  xprintf("initialize_passthrough(): Setting up pass-through\n");
+  //xprintf("initialize_passthrough(): Setting up pass-through\n");
   libc = dlopen("libc.so.6", RTLD_LAZY); // TODO: link with correct libc, version vs. 32 bit vs. 64 bit
   libc_open = dlsym(libc, "open");
   libc_openat = dlsym(libc, "openat");
@@ -207,7 +207,7 @@ static void initialize_passthrough() {
     fdout = fdopen(stdout2, "a");
   }
 
-  xprintf("initialize_passthrough(): New stdout %d\n", stdout2);
+  //xprintf("initialize_passthrough(): New stdout %d\n", stdout2);
   if (realpath(relmount, mount_dir) == NULL)
       log_msg(ERROR, "Was not able to obtain absolute path of mount dir");
 }
