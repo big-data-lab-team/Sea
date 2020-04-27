@@ -11,12 +11,15 @@
 #include <pthread.h>
 #include <stdio.h>
 #include <fcntl.h>
-#include <unistd.h>
 #include <limits.h>
 #include <string.h>
 #include <stdlib.h>
 #include <stdarg.h>
 #include <time.h>
+#include <sys/types.h>
+#include <sys/statvfs.h>
+#include <sys/stat.h>
+#include <unistd.h>
 
 #define MAX_LOG 200
 #define DEBUG_LVL 4
@@ -25,6 +28,7 @@
 void* libc;
 void* libc_open;
 void* libc_openat;
+void* libc_opendir;
 void* libc_close;
 void* libc___close;
 void* libc_read;
@@ -34,12 +38,24 @@ void* libc_pwrite;
 void* libc_dup;
 void* libc_dup2;
 void* libc_lseek;
+void* libc_remove;
+void* libc_unlink;
+void* libc_unlinkat;
+void* libc_mkdir;
+void* libc_access;
+void* libc_faccessat;
 void* libc_stat;
 void* libc_fstat;
+void* libc_fstatat;
+void* libc_lstat;
+void* libc_lstat64;
+void* libc_statvfs;
 void* libc___xstat;
 void* libc___xstat64;
 void* libc___fxstat;
+void* libc___fxstatat;
 void* libc___fxstat64;
+void* libc___fxstatat64;
 void* libc___lxstat;
 void* libc___lxstat64;
 
@@ -144,6 +160,7 @@ static void initialize_passthrough() {
   libc = dlopen("libc.so.6", RTLD_LAZY); // TODO: link with correct libc, version vs. 32 bit vs. 64 bit
   libc_open = dlsym(libc, "open");
   libc_openat = dlsym(libc, "openat");
+  libc_opendir = dlsym(libc, "opendir");
   libc_close = dlsym(libc, "close");
   libc___close = dlsym(libc, "__close");
   libc_read = dlsym(libc, "read");
@@ -154,12 +171,25 @@ static void initialize_passthrough() {
   libc_dup2 = dlsym(libc, "dup2");
   libc_lseek = dlsym(libc, "lseek");
 
+  libc_mkdir = dlsym(libc, "mkdir");
+  libc_remove = dlsym(libc, "remove");
+  libc_unlink = dlsym(libc, "unlink");
+  libc_unlinkat = dlsym(libc, "unlinkat");
+
+  libc_access = dlsym(libc, "access");
+  libc_faccessat = dlsym(libc, "faccessat");
   libc_stat = dlsym(libc, "stat");
+  libc_lstat = dlsym(libc, "lstat");
+  libc_lstat64 = dlsym(libc, "lstat64");
   libc_fstat = dlsym(libc, "fstat");
+  libc_fstatat = dlsym(libc, "fstatat");
+  libc_statvfs = dlsym(libc, "statvfs");
   libc___xstat = dlsym(libc, "__xstat");
   libc___xstat64 = dlsym(libc, "__xstat64");
   libc___fxstat = dlsym(libc, "__fxstat");
+  libc___fxstatat = dlsym(libc, "__fxstatat");
   libc___fxstat64 = dlsym(libc, "__fxstat64");
+  libc___fxstatat64 = dlsym(libc, "__fxstatat64");
   libc___lxstat = dlsym(libc, "__lxstat");
   libc___lxstat64 = dlsym(libc, "__lxstat64");
 
@@ -221,6 +251,14 @@ int openat(int dirfd, const char* pathname, int flags){
     return ((funcptr_openat)libc_openat)(dirfd, passpath, flags);
 }
 
+DIR* opendir(const char* pathname){
+    initialize_passthrough_if_necessary();
+    log_msg(INFO, "opening directory %s", pathname);
+    char passpath[PATH_MAX];
+    get_path(pathname, passpath);
+    return ((funcptr_opendir)libc_opendir)(passpath);
+}
+
 
 #undef creat
 int creat(__const char *name, mode_t mode) {
@@ -278,6 +316,54 @@ off_t lseek(int fd, off_t offset, int whence){
     return ((funcptr_lseek)libc_lseek)(fd, offset, whence);
 }
 
+int mkdir(const char *pathname, mode_t mode){
+    initialize_passthrough_if_necessary();
+    log_msg(INFO, "mkdir path %s", pathname);
+    char passpath[PATH_MAX];
+    get_path(pathname, passpath);
+    return ((funcptr_mkdir)libc_mkdir)(passpath, mode);
+}
+
+int remove(const char *pathname){
+    initialize_passthrough_if_necessary();
+    log_msg(INFO, "remove file %s", pathname);
+    char passpath[PATH_MAX];
+    get_path(pathname, passpath);
+    return ((funcptr_remove)libc_remove)(passpath);
+}
+
+int unlink(const char *pathname){
+    initialize_passthrough_if_necessary();
+    log_msg(INFO, "unlink file %s", pathname);
+    char passpath[PATH_MAX];
+    get_path(pathname, passpath);
+    return ((funcptr_unlink)libc_unlink)(passpath);
+}
+
+int unlinkat(int dirfd, const char *pathname, int flags){
+    initialize_passthrough_if_necessary();
+    char passpath[PATH_MAX];
+    get_path(pathname, passpath);
+    log_msg(INFO, "unlinkat file %s", pathname);
+    return ((funcptr_unlinkat)libc_unlinkat)(dirfd, passpath, flags);
+}
+
+int access(const char *pathname, int mode){
+    initialize_passthrough_if_necessary();
+    log_msg(INFO, "access path %s", pathname);
+    char passpath[PATH_MAX];
+    get_path(pathname, passpath);
+    return ((funcptr_access)libc_access)(passpath, mode);
+}
+
+int faccessat(int dirfd, const char *pathname, int mode, int flags){
+    initialize_passthrough_if_necessary();
+    char passpath[PATH_MAX];
+    get_path(pathname, passpath);
+    log_msg(INFO, "faccessat path %s", passpath);
+    return ((funcptr_faccessat)libc_faccessat)(dirfd, passpath, mode, flags);
+}
+
 int stat(const char *pathname, struct stat *statbuf){
     initialize_passthrough_if_necessary();
     log_msg(INFO, "stat %s", pathname);
@@ -286,10 +372,42 @@ int stat(const char *pathname, struct stat *statbuf){
     return ((funcptr_stat)libc_stat)(passpath, statbuf);
 }
 
+int lstat(const char *pathname, struct stat *statbuf){
+    initialize_passthrough_if_necessary();
+    char passpath[PATH_MAX];
+    get_path(pathname, passpath);
+    log_msg(INFO, "lstat %s", passpath);
+    return ((funcptr_lstat)libc_lstat)(passpath, statbuf);
+}
+
+int lstat64(const char *pathname, struct stat64 *statbuf){
+    initialize_passthrough_if_necessary();
+    char passpath[PATH_MAX];
+    get_path(pathname, passpath);
+    log_msg(INFO, "lstat64 %s", passpath);
+    return ((funcptr_lstat64)libc_lstat64)(passpath, statbuf);
+}
+
 int fstat(int fd, struct stat *statbuf){
     initialize_passthrough_if_necessary();
     log_msg(INFO, "fstat");
     return ((funcptr_fstat)libc_fstat)(fd, statbuf);
+}
+
+int fstatat(int dirfd, char const *path, struct stat *statbuf, int flags){
+    initialize_passthrough_if_necessary();
+    char passpath[PATH_MAX];
+    get_path(path, passpath);
+    log_msg(INFO, "fstatat %s", passpath);
+    return ((funcptr_fstatat)libc_fstatat)(dirfd, passpath, statbuf, flags);
+}
+
+int statvfs(const char *path, struct statvfs *buf){
+    initialize_passthrough_if_necessary();
+    log_msg(INFO, "statvfs %s", path);
+    char passpath[PATH_MAX];
+    get_path(path, passpath);
+    return ((funcptr_statvfs)libc_statvfs)(passpath, buf);
 }
 
 int __xstat(int ver, const char *path, struct stat *statbuf){
@@ -314,17 +432,33 @@ int __fxstat(int ver, int fd, struct stat *statbuf){
     return ((funcptr___fxstat)libc___fxstat)(ver, fd, statbuf);
 }
 
+int __fxstatat(int ver, int fd, const char *path, struct stat *statbuf, int flag){
+    initialize_passthrough_if_necessary();
+    char passpath[PATH_MAX];
+    get_path(path, passpath);
+    log_msg(INFO, "fxstatat %s", passpath);
+    return ((funcptr___fxstatat)libc___fxstatat)(ver, fd, passpath, statbuf, flag);
+}
+
 int __fxstat64(int ver, int fd, struct stat64 *statbuf){
     initialize_passthrough_if_necessary();
     log_msg(INFO, "fxstat64");
     return ((funcptr___fxstat64)libc___fxstat64)(ver, fd, statbuf);
 }
 
-int __lxstat(int ver, const char *path, struct stat *statbuf){
+int __fxstatat64(int ver, int fd, const char *path, struct stat64 *statbuf, int flag){
     initialize_passthrough_if_necessary();
-    log_msg(INFO, "lxstat %s", path);
     char passpath[PATH_MAX];
     get_path(path, passpath);
+    log_msg(INFO, "fxstatat64 %s", passpath);
+    return ((funcptr___fxstatat64)libc___fxstatat64)(ver, fd, passpath, statbuf, flag);
+}
+
+int __lxstat(int ver, const char *path, struct stat *statbuf){
+    initialize_passthrough_if_necessary();
+    char passpath[PATH_MAX];
+    get_path(path, passpath);
+    log_msg(INFO, "lxstat %s", passpath);
     return ((funcptr___lxstat)libc___lxstat)(ver, passpath, statbuf);
 }
 
@@ -338,7 +472,7 @@ int __lxstat64(int ver, const char *path, struct stat64 *statbuf){
 
 FILE* fopen(const char *path, const char *mode){
     initialize_passthrough_if_necessary();
-    fprintf(stderr, "fopen %s %s", path, mode);
+    log_msg(INFO, "fopen %s %s", path, mode);
     char passpath[PATH_MAX];
     get_path(path, passpath);
     return ((funcptr_fopen)libc_fopen)(passpath, mode);

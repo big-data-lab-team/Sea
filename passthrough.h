@@ -11,9 +11,14 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <sys/types.h>
+#include <dirent.h>
+#include <fcntl.h>
+#include <sys/statvfs.h>
+#include <sys/stat.h>
 
 typedef int (*funcptr_open)(const char*, int, mode_t);
 typedef int (*funcptr_openat)(int, const char*, int);
+typedef DIR* (*funcptr_opendir)(const char*);
 typedef int (*funcptr_close)(int);
 
 typedef ssize_t (*funcptr_read)(int, void*, size_t);
@@ -25,12 +30,25 @@ typedef int (*funcptr_dup)(int);
 typedef int (*funcptr_dup2)(int, int);
 typedef off_t (*funcptr_lseek)(int, off_t, int);
 
+typedef int (*funcptr_mkdir)(const char*, mode_t mode);
+typedef int (*funcptr_remove)(const char*);
+typedef int (*funcptr_unlink)(const char*);
+typedef int (*funcptr_unlinkat)(int dirfd, char const*, int flags);
+
+typedef int (*funcptr_access)(const char*, int);
+typedef int (*funcptr_faccessat)(int, const char*, int, int);
 typedef int (*funcptr_stat)(const char*, struct stat*);
+typedef int (*funcptr_lstat)(const char*, struct stat*);
+typedef int (*funcptr_lstat64)(const char*, struct stat64*);
 typedef int (*funcptr_fstat)(int, struct stat*);
+typedef int (*funcptr_fstatat)(int dirfd, const char *, struct stat *buf, int flag);
+typedef int (*funcptr_statvfs)(const char*, struct statvfs*);
 typedef int (*funcptr___xstat)(int, const char*, struct stat*);
 typedef int (*funcptr___xstat64)(int, const char*, struct stat64*);
 typedef int (*funcptr___fxstat)(int, int, struct stat*);
+typedef int (*funcptr___fxstatat)(int, int, const char*, struct stat*, int);
 typedef int (*funcptr___fxstat64)(int, int, struct stat64*);
+typedef int (*funcptr___fxstatat64)(int, int, const char*, struct stat64*, int);
 typedef int (*funcptr___lxstat)(int, const char*, struct stat*);
 typedef int (*funcptr___lxstat64)(int, const char*, struct stat64*);
 
@@ -44,6 +62,7 @@ typedef int (*funcptr_fsetxattr)(int, const char*, const void*, size_t, int);
 
 extern void* libc_open;
 extern void* libc_openat;
+extern void* libc_opendir;
 extern void* libc_close;
 extern void* libc___close;
 extern void* libc_pread;
@@ -54,12 +73,25 @@ extern void* libc_dup;
 extern void* libc_dup2;
 extern void* libc_lseek;
 
+extern void* libc_remove;
+extern void* libc_unlink;
+extern void* libc_unlinkat;
+extern void* libc_mkdir;
+
+extern void* libc_access;
+extern void* libc_faccessat;
 extern void* libc_stat;
+extern void* libc_lstat;
+extern void* libc_lstat64;
 extern void* libc_fstat;
+extern void* libc_fstatat;
+extern void* libc_statvfs;
 extern void* libc___xstat;
 extern void* libc___xstat64;
 extern void* libc___fxstat;
+extern void* libc___fxstatat;
 extern void* libc___fxstat64;
+extern void* libc___fxstatat64;
 extern void* libc___lxstat;
 extern void* libc___lxstat64;
 
