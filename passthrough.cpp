@@ -22,7 +22,7 @@
 #include <unistd.h>
 
 #define MAX_LOG 200
-#define DEBUG_LVL 0
+#define DEBUG_LVL 4
 #define LOG_FOREGROUND 0 // currently doesn't really work when set to 1
 
 void* libc;
@@ -38,6 +38,9 @@ void* libc_pwrite;
 void* libc_dup;
 void* libc_dup2;
 void* libc_lseek;
+void* libc_rename;
+void* libc_renameat;
+void* libc_renameat2;
 void* libc_remove;
 void* libc_unlink;
 void* libc_unlinkat;
@@ -172,6 +175,9 @@ static void initialize_passthrough() {
   libc_lseek = dlsym(libc, "lseek");
 
   libc_mkdir = dlsym(libc, "mkdir");
+  libc_rename = dlsym(libc, "rename");
+  libc_renameat = dlsym(libc, "renameat");
+  libc_renameat2 = dlsym(libc, "renameat2");
   libc_remove = dlsym(libc, "remove");
   libc_unlink = dlsym(libc, "unlink");
   libc_unlinkat = dlsym(libc, "unlinkat");
@@ -318,10 +324,40 @@ off_t lseek(int fd, off_t offset, int whence){
 
 int mkdir(const char *pathname, mode_t mode){
     initialize_passthrough_if_necessary();
-    log_msg(INFO, "mkdir path %s", pathname);
     char passpath[PATH_MAX];
     get_path(pathname, passpath);
+    log_msg(INFO, "mkdir path %s", passpath);
     return ((funcptr_mkdir)libc_mkdir)(passpath, mode);
+}
+
+int rename(const char *oldpath, const char *newpath){
+    initialize_passthrough_if_necessary();
+    char oldpasspath[PATH_MAX];
+    char newpasspath[PATH_MAX];
+    get_path(oldpath, oldpasspath);
+    get_path(newpath, newpasspath);
+    log_msg(INFO, "rename file %s to %s", oldpasspath, newpasspath);
+    return ((funcptr_rename)libc_rename)(oldpasspath, newpasspath);
+}
+
+int renameat(int olddirfd, const char *oldpath, int newdirfd, const char *newpath){
+    initialize_passthrough_if_necessary();
+    char oldpasspath[PATH_MAX];
+    char newpasspath[PATH_MAX];
+    get_path(oldpath, oldpasspath);
+    get_path(newpath, newpasspath);
+    log_msg(INFO, "renameat file %s to %s", oldpasspath, newpasspath);
+    return ((funcptr_renameat)libc_renameat)(olddirfd, oldpasspath, newdirfd, newpasspath);
+}
+
+int renameat2(int olddirfd, const char *oldpath, int newdirfd, const char *newpath, unsigned int flags){
+    initialize_passthrough_if_necessary();
+    char oldpasspath[PATH_MAX];
+    char newpasspath[PATH_MAX];
+    get_path(oldpath, oldpasspath);
+    get_path(newpath, newpasspath);
+    log_msg(INFO, "renameat2 file %s to %s", oldpasspath, newpasspath);
+    return ((funcptr_renameat2)libc_renameat2)(olddirfd, oldpasspath, newdirfd, newpasspath, flags);
 }
 
 int remove(const char *pathname){

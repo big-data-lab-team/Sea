@@ -31,6 +31,9 @@ typedef int (*funcptr_dup2)(int, int);
 typedef off_t (*funcptr_lseek)(int, off_t, int);
 
 typedef int (*funcptr_mkdir)(const char*, mode_t mode);
+typedef int (*funcptr_rename)(const char*, const char*);
+typedef int (*funcptr_renameat)(int, const char*, int, const char*);
+typedef int (*funcptr_renameat2)(int, const char*, int, const char*, unsigned int);
 typedef int (*funcptr_remove)(const char*);
 typedef int (*funcptr_unlink)(const char*);
 typedef int (*funcptr_unlinkat)(int dirfd, char const*, int flags);
@@ -72,6 +75,10 @@ extern void* libc_write;
 extern void* libc_dup;
 extern void* libc_dup2;
 extern void* libc_lseek;
+
+extern void* libc_rename;
+extern void* libc_renameat;
+extern void* libc_renameat2;
 
 extern void* libc_remove;
 extern void* libc_unlink;
