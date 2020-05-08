@@ -171,23 +171,25 @@ static int check_path_exists(const char *path, char fullpath[PATH_MAX]){
     fprintf(stderr, "%s\n", path);
     // keep the best available temp path
     char path_holder[PATH_MAX];
-    while(source_mounts[i] != NULL){
+    while(source_mounts[i][0] != '\0'){
         char tmp_path[PATH_MAX];
         strncpy(tmp_path, source_mounts[i], PATH_MAX);
+        strncpy(path_holder, source_mounts[i], PATH_MAX);
         strncat(tmp_path, path, PATH_MAX);
         fprintf(stderr, "%s\n", tmp_path);
 
         struct stat sb;
         struct statvfs st_s;
-        if( orig_stat(tmp_path, &sb) == 0){
+        if( stat(tmp_path, &sb) == 0){
             // file exists
             ret = 1;
             strncpy(fullpath, tmp_path, PATH_MAX);
             break;
         }
-        else if (statvfs(source_mounts[i], &st_s) != 0 && st_s.f_bavail > 0 && st_s.f_favail > 0){
+        else if (statvfs(path_holder, &st_s) != 0 && st_s.f_bavail > 0 && st_s.f_favail > 0){
             strcpy(path_holder, tmp_path);
         }
+        i++;
 
     }
 
@@ -306,9 +308,10 @@ void initialize_passthrough_if_necessary() {
 FILE* log_fopen(const char *path, const char *mode){
     return ((funcptr_fopen)libc_fopen)(path, mode);
 }
-int orig_stat(const char *pathname, struct stat *statbuf){
-    return ((funcptr_stat)libc_stat)(pathname, statbuf);
-}
+//int orig_stat(const char *pathname, struct stat *statbuf){
+//    fprintf(stderr, "orig stat \n");
+//    return ((funcptr_stat)libc_stat)(pathname, statbuf);
+//}
 
 extern "C" {
 
@@ -626,14 +629,14 @@ extern "C" {
         return ((funcptr_faccessat)libc_faccessat)(dirfd, passpath, mode, flags);
     }
 
-    int stat(const char *pathname, struct stat *statbuf){
-        log_msg(INFO, "stat");
-        initialize_passthrough_if_necessary();
-        char passpath[PATH_MAX];
-        get_path(pathname, passpath);
-        log_msg(INFO, "stat %s", passpath);
-        return ((funcptr_stat)libc_stat)(passpath, statbuf);
-    }
+    //int stat(const char *pathname, struct stat *statbuf){
+    //    log_msg(INFO, "stat");
+    //    initialize_passthrough_if_necessary();
+    //    char passpath[PATH_MAX];
+    //    get_path(pathname, passpath);
+    //    log_msg(INFO, "stat %s", passpath);
+    //    return ((funcptr_stat)libc_stat)(passpath, statbuf);
+    //}
 
     int lstat(const char *pathname, struct stat *statbuf){
         initialize_passthrough_if_necessary();
