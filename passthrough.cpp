@@ -172,9 +172,10 @@ static int check_path_exists(const char *path, char fullpath[PATH_MAX]){
     // keep the best available temp path
     char path_holder[PATH_MAX];
     while(source_mounts[i] != NULL){
-        char *tmp_path = strdup(source_mounts[i]);
+        char tmp_path[PATH_MAX];
+        strncpy(tmp_path, source_mounts[i], PATH_MAX);
+        strncat(tmp_path, path, PATH_MAX);
         fprintf(stderr, "%s\n", tmp_path);
-        strncat(tmp_path,path, 2*PATH_MAX);
 
         struct stat sb;
         struct statvfs st_s;
