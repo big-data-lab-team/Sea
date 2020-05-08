@@ -9,7 +9,7 @@
 #define PRELOAD_PASSTHROUGH_H_
 
 #include <stdio.h>
-#include <unistd.h>
+//#include <unistd.h>
 #include <sys/types.h>
 #include <dirent.h>
 #include <fcntl.h>
@@ -30,6 +30,7 @@ typedef int (*funcptr_dup)(int);
 typedef int (*funcptr_dup2)(int, int);
 typedef off_t (*funcptr_lseek)(int, off_t, int);
 
+typedef struct dirent* (*funcptr_readdir)(DIR*);
 typedef int (*funcptr_mkdir)(const char*, mode_t mode);
 typedef int (*funcptr_rename)(const char*, const char*);
 typedef int (*funcptr_renameat)(int, const char*, int, const char*);
@@ -111,6 +112,7 @@ extern void* libattr_fsetxattr;
 
 void initialize_passthrough_if_necessary();
 FILE* log_fopen(const char*, const char*);
+int orig_stat(const char*, struct stat*);
 static const char* get_lvlname(int lvl);
 
 #ifdef XTREEMFS_PRELOAD_QUIET
