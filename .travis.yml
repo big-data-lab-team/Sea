@@ -29,11 +29,11 @@ jobs:
 before_install:
 - uname -a
 - cat /etc/os-release
-- docker build tests/docker -f ${DOCKERFILE} -t testimage:${TAGNAME}
+- docker build tests/docker -f ${DOCKERFILE} -t ${TAGNAME}
 
 install:
-- docker run --rm -v $PWD:$PWD -w $PWD testimage:${TAGNAME} make clean
-- docker run --rm -v $PWD:$PWD -w $PWD testimage:${TAGNAME} make
+- docker run --rm -v $PWD:$PWD -w $PWD ${TAGNAME} make clean
+- docker run --rm -v $PWD:$PWD -w $PWD ${TAGNAME} make
 
 script:
-- docker run --rm -v $PWD:$PWD -w $PWD testimage:${TAGNAME} bats tests/tests.bats
+- docker run --rm -v $PWD:$PWD -w $PWD ${TAGNAME} bats tests/tests.bats
