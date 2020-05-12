@@ -11,7 +11,7 @@ install:
 - make
 
 script:
-- bats tests/tests.bats
+- LD_LIBRARY_PATH=$PWD bats tests/tests.bats
 
 after_success:
 - coveralls
