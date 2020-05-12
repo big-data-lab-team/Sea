@@ -28,6 +28,7 @@ MOUNT="mount"
 
 @test "cp" {
     load setup
+    ls mount/
     cp a.txt ${MOUNT}
     load unset
     test -f ${SOURCE}/a.txt
@@ -46,4 +47,13 @@ MOUNT="mount"
     dd if=/dev/random of=${MOUNT}/file count=3
     load unset
     test -f ${SOURCE}/file
+}
+
+@test "echo" {
+    load setup
+    echo 'c' > ${MOUNT}/c.txt
+    load unset
+    test -f ${SOURCE}/c.txt
+    c=$(cat ${MOUNT}/c.txt)
+    [[ $c == 'c' ]]
 }
