@@ -5,10 +5,17 @@ services:
 
 jobs:
     include:
-        - env: DOCKERFILE=tests/docker/Dockerfile.centos8
-          name: "CentOS8"
+        - env: DOCKERFILE=tests/docker/Dockerfile.xenial
+          name: "Ubuntu Xenial"
+        - env: DOCKERFILE=tests/docker/Dockerfile.bionic
+          name: "Ubuntu Bionic"
         - env: DOCKERFILE=tests/docker/Dockerfile.centos7
-          name: "CentOS7"
+          name: "CentOS 7"
+        - env: DOCKERFILE=tests/docker/Dockerfile.centos8
+          name: "CentOS 8"
+        - env: DOCKERFILE=tests/docker/Dockerfile.fedora32
+          name: "Fedora 32"
+
 
 
 before_install:
