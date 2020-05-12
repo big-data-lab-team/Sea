@@ -1,7 +1,11 @@
-dist:
-    - bionic
-    - xenial
-    - trusty
+jobs:
+    include:
+        - dist: bionic
+          name: "Bionic"
+        - dist: xenial
+          name: "Xenial"
+        - dist: trusty
+          name: "Trusty"
 language: C
 os: linux
 compiler: gcc
