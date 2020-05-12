@@ -12,8 +12,3 @@ install:
 
 script:
 - bats tests/tests.bats
-
-after_success:
-- coveralls
-
-deploy:
