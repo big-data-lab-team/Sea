@@ -3,8 +3,13 @@ dist: xenial
 services:
     - docker 
 
-env:
-    - DOCKERFILE=tests/docker/Dockerfile.centos8
+jobs:
+    include:
+        - env: DOCKERFILE=tests/docker/Dockerfile.centos8
+          name: "CentOS8"
+        - env: DOCKERFILE=tests/docker/Dockerfile.centos7
+          name: "CentOS7"
+
 
 before_install:
 - uname -a
