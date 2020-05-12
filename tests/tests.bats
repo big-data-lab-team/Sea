@@ -19,6 +19,13 @@ MOUNT="mount"
     test -d ${SOURCE}/dir
 }
 
+@test "rm" {
+    load setup
+    rm ${MOUNT}/file_in_source.txt
+    load unset
+    [ ! -f ${SOURCE}/file_in_source.txt ]
+}
+
 @test "cp" {
     load setup
     cp a.txt ${MOUNT}
