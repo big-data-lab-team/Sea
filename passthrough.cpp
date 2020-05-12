@@ -81,7 +81,7 @@ static char source_mounts[MAX_MOUNTS][PATH_MAX];
 // maybe use tmpnam?
 static const char* log_fn = "passlogs.log";
 
-enum LogLevel { DEBUG=4, INFO=3, WARNING=2, ERROR=1, NONE=0};
+enum LogLevel { DEBUG=4, INFO=3, WARNING=2, ERROR=1, NONE=0 };
 
 static const char* get_lvlname(int lvl){
     switch(lvl){
@@ -121,12 +121,14 @@ static int log_msg(int lvl, const char* msg, ...){
     else {
         FILE* logs = log_fopen(log_fn, "a+");
         // write complete log string to file
-        if (logs != NULL){
-            fprintf(logs, "%s: %s: %s\n", strtok(asctime(timeinfo), "\n"), get_lvlname(lvl), fmsg);
+        if (logs == NULL)
+        {
+            xprintf("WARNING: Cannot write to log file %s: %s (%s)\n", log_fn, msg, get_lvlname(lvl));
+            return 1;
         }
+        fprintf(logs, "%s: %s: %s\n", strtok(asctime(timeinfo), "\n"), get_lvlname(lvl), fmsg);
         fclose(logs);
     }
-
     return 0;
 }
 
@@ -283,6 +285,11 @@ static void initialize_passthrough() {
     fdout = fdopen(stdout2, "a");
   }
 
+  // Print the last error that occurred in dlsym, if any
+  char * error = dlerror();
+  if(error)
+      xprintf("dlerror: %s\n",dlerror());
+
   init_sources();
 
   //xprintf("initialize_passthrough(): New stdout %d\n", stdout2);
@@ -305,7 +312,9 @@ void initialize_passthrough_if_necessary() {
 //}
 
 FILE* log_fopen(const char *path, const char *mode){
-    return ((funcptr_fopen)libc_fopen)(path, mode);
+    if(libc_fopen)
+        return ((funcptr_fopen)libc_fopen)(path, mode);
+    return NULL;
 }
 //int orig_stat(const char *pathname, struct stat *statbuf){
 //    fprintf(stderr, "orig stat \n");
