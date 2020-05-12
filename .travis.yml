@@ -6,27 +6,34 @@ services:
 jobs:
     include:
         - env: DOCKERFILE=tests/docker/Dockerfile.xenial
+          env: TAGNAME=xenial
           name: "Ubuntu Xenial"
         - env: DOCKERFILE=tests/docker/Dockerfile.bionic
+          env: TAGNAME=bionic
           name: "Ubuntu Bionic"
-        - env: DOCKERFILE=tests/docker/Dockerfile.centos7
+        - env: DOCKERFILE=tests/docker/Dockerfile.centos6
+          env: TAGNAME=centos6
           name: "CentOS 6"
         - env: DOCKERFILE=tests/docker/Dockerfile.centos7
           name: "CentOS 7"
+          env: TAGNAME=centos7
         - env: DOCKERFILE=tests/docker/Dockerfile.centos8
           name: "CentOS 8"
+          env: TAGNAME=centos8
         - env: DOCKERFILE=tests/docker/Dockerfile.fedora32
           name: "Fedora 32"
+          env: TAGNAME=fedora32
 
 
 
 before_install:
 - uname -a
-- docker build tests/docker -f ${DOCKERFILE} -t testimage
+- cat /etc/os-release
+- docker build tests/docker -f ${DOCKERFILE} -t testimage:${TAGNAME}
 
 install:
-- docker run --rm -v $PWD:$PWD -w $PWD testimage make clean
-- docker run --rm -v $PWD:$PWD -w $PWD testimage make
+- docker run --rm -v $PWD:$PWD -w $PWD testimage:${TAGNAME} make clean
+- docker run --rm -v $PWD:$PWD -w $PWD testimage:${TAGNAME} make
 
 script:
-- docker run --rm -v $PWD:$PWD -w $PWD testimage bats tests/tests.bats
+- docker run --rm -v $PWD:$PWD -w $PWD testimage:${TAGNAME} bats tests/tests.bats
