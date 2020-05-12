@@ -19,6 +19,7 @@
 #include <sys/types.h>
 #include <sys/statvfs.h>
 #include <sys/stat.h>
+#include <errno.h>
 //#include <unistd.h>
 
 #define MAX_LOG 200
@@ -74,14 +75,13 @@ void* libattr_fsetxattr;
 
 static const char* relmount = "./mount";
 static char mount_dir[PATH_MAX];
-static const char* source = "/dev/shm";
 static const char* source_file = "./sources.txt";
 static char source_mounts[MAX_MOUNTS][PATH_MAX];
 
 // maybe use tmpnam?
 static const char* log_fn = "passlogs.log";
 
-enum LogLevel { DEBUG=4, INFO=3, WARNING=2, ERROR=1, NONE=0};
+enum LogLevel { DEBUG=4, INFO=3, WARNING=2, ERROR=1, NONE=0 };
 
 static const char* get_lvlname(int lvl){
     switch(lvl){
@@ -121,12 +121,14 @@ static int log_msg(int lvl, const char* msg, ...){
     else {
         FILE* logs = log_fopen(log_fn, "a+");
         // write complete log string to file
-        if (logs != NULL){
-            fprintf(logs, "%s: %s: %s\n", strtok(asctime(timeinfo), "\n"), get_lvlname(lvl), fmsg);
+        if (logs == NULL)
+        {
+            xprintf("WARNING: Cannot write to log file %s: %s (%s)\n", log_fn, msg, get_lvlname(lvl));
+            return 1;
         }
+        fprintf(logs, "%s: %s: %s\n", strtok(asctime(timeinfo), "\n"), get_lvlname(lvl), fmsg);
         fclose(logs);
     }
-
     return 0;
 }
 
@@ -156,7 +158,7 @@ static void init_sources(){
         int len = strlen(source_mounts[i]);
         if (len > 0 && source_mounts[i][len-1] == '\n')
             source_mounts[i][len - 1] = 0;
-        log_msg(DEBUG, "sourcename %s.", source_mounts[i]);
+        log_msg(DEBUG, "sourcename: %s", source_mounts[i]);
         i++;
     }
     fclose(fhierarchy);
@@ -205,7 +207,7 @@ static int get_path(const char* oldpath, char passpath[PATH_MAX]){
     char actualpath [PATH_MAX + 1];
     realpath(oldpath, actualpath);
     int len = strlen(mount_dir);
-    strcpy(passpath, source);
+    strcpy(passpath, source_mounts[0]);
     int match_found = 0;
 
     //log_msg(DEBUG, "actualpath: %s, mount_dir: %s", actualpath, mount_dir);
@@ -215,8 +217,7 @@ static int get_path(const char* oldpath, char passpath[PATH_MAX]){
             log_msg(DEBUG, "match null");
         log_msg(DEBUG, "match");
         *match = '\0';
-        check_path_exists(match + len, passpath);
-        //strcat(passpath, match + len);
+        strcat(passpath, match + len);
         match_found = 1;
     }
     else{
@@ -284,6 +285,11 @@ static void initialize_passthrough() {
     fdout = fdopen(stdout2, "a");
   }
 
+  // Print the last error that occurred in dlsym, if any
+  char * error = dlerror();
+  if(error)
+      xprintf("dlerror: %s\n",dlerror());
+
   init_sources();
 
   //xprintf("initialize_passthrough(): New stdout %d\n", stdout2);
@@ -306,7 +312,9 @@ void initialize_passthrough_if_necessary() {
 //}
 
 FILE* log_fopen(const char *path, const char *mode){
-    return ((funcptr_fopen)libc_fopen)(path, mode);
+    if(libc_fopen)
+        return ((funcptr_fopen)libc_fopen)(path, mode);
+    return NULL;
 }
 //int orig_stat(const char *pathname, struct stat *statbuf){
 //    fprintf(stderr, "orig stat \n");
@@ -487,9 +495,10 @@ extern "C" {
 
         struct dirent *d;
         log_msg(INFO, "readdir");
+        errno = 0;
         d = ((funcptr_readdir)libc_readdir)(dirp);
 
-        if (d != NULL)
+        if (d == NULL && errno)
             log_msg(ERROR, "reading dir %s", d->d_name);
         return d;
     }

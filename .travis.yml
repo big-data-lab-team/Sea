@@ -1,0 +1,19 @@
+jobs:
+    include:
+        - dist: bionic
+          name: "Bionic"
+        - dist: xenial
+          name: "Xenial"
+language: C
+os: linux
+compiler: gcc
+
+before_install:
+- sudo apt-get update -qq
+- sudo apt-get install -qq bats
+
+install:
+- make
+
+script:
+- bats tests/tests.bats
