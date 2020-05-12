@@ -4,8 +4,6 @@ jobs:
           name: "Bionic"
         - dist: xenial
           name: "Xenial"
-        - dist: trusty
-          name: "Trusty"
 language: C
 os: linux
 compiler: gcc
