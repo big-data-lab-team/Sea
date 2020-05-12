@@ -8,6 +8,7 @@ MOUNT="mount"
 @test "ls" {
     load setup
     ls
+    load unset
 }
 
 @test "mkdir" {
