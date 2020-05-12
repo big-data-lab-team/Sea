@@ -1,19 +1,18 @@
-jobs:
-    include:
-        - dist: bionic
-          name: "Bionic"
-        - dist: xenial
-          name: "Xenial"
-language: C
 os: linux
-compiler: gcc
+dist: xenial
+services:
+    - docker 
+
+env:
+    - DOCKERFILE=tests/docker/Dockerfile.centos8
 
 before_install:
-- sudo apt-get update -qq
-- sudo apt-get install -qq bats
+- uname -a
+- docker build tests/docker -f ${DOCKERFILE} -t testimage
 
 install:
-- make
+- docker run --rm -v $PWD:$PWD -w $PWD testimage make clean
+- docker run --rm -v $PWD:$PWD -w $PWD testimage make
 
 script:
-- bats tests/tests.bats
+- docker run --rm -v $PWD:$PWD -w $PWD testimage bats tests/tests.bats
