@@ -11,7 +11,7 @@ install:
 - make
 
 script:
-- bats -p tests/tests.bats
+- bats tests/tests.bats
 
 after_success:
 - coveralls
