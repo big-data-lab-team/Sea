@@ -1,0 +1,19 @@
+dist: xenial
+language: C
+os: linux
+compiler: gcc
+
+before_install:
+- sudo apt-get update -qq
+- sudo apt-get install -qq bats
+
+install:
+- make
+
+script:
+- bats tests/tests.bats
+
+after_success:
+- coveralls
+
+deploy:
