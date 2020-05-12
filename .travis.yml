@@ -10,6 +10,8 @@ jobs:
         - env: DOCKERFILE=tests/docker/Dockerfile.bionic
           name: "Ubuntu Bionic"
         - env: DOCKERFILE=tests/docker/Dockerfile.centos7
+          name: "CentOS 6"
+        - env: DOCKERFILE=tests/docker/Dockerfile.centos7
           name: "CentOS 7"
         - env: DOCKERFILE=tests/docker/Dockerfile.centos8
           name: "CentOS 8"
