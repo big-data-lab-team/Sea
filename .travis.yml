@@ -1,4 +1,7 @@
-dist: xenial
+dist:
+    - bionic
+    - xenial
+    - trusty
 language: C
 os: linux
 compiler: gcc

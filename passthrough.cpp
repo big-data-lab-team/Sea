@@ -676,14 +676,14 @@ extern "C" {
         return ((funcptr_statvfs)libc_statvfs)(passpath, buf);
     }
 
-    // int __xstat(int ver, const char *path, struct stat *statbuf){
-    //     log_msg(INFO, "xstat");
-    //     initialize_passthrough_if_necessary();
-    //     char passpath[PATH_MAX];
-    //     get_path(path, passpath);
-    //     log_msg(INFO, "xstat %s", passpath);
-    //     return ((funcptr___xstat)libc___xstat)(ver, passpath, statbuf);
-    // }
+    int __xstat(int ver, const char *path, struct stat *statbuf){
+        log_msg(INFO, "xstat");
+        initialize_passthrough_if_necessary();
+        char passpath[PATH_MAX];
+        get_path(path, passpath);
+        log_msg(INFO, "xstat %s", passpath);
+        return ((funcptr___xstat)libc___xstat)(ver, passpath, statbuf);
+    }
 
     int __xstat64(int ver, const char *path, struct stat64 *statbuf){
         log_msg(INFO, "xstat64");
