@@ -74,7 +74,6 @@ void* libattr_fsetxattr;
 
 static const char* relmount = "./mount";
 static char mount_dir[PATH_MAX];
-static const char* source = "/dev/shm";
 static const char* source_file = "./sources.txt";
 static char source_mounts[MAX_MOUNTS][PATH_MAX];
 
@@ -156,7 +155,7 @@ static void init_sources(){
         int len = strlen(source_mounts[i]);
         if (len > 0 && source_mounts[i][len-1] == '\n')
             source_mounts[i][len - 1] = 0;
-        log_msg(DEBUG, "sourcename %s.", source_mounts[i]);
+        log_msg(DEBUG, "sourcename: %s", source_mounts[i]);
         i++;
     }
     fclose(fhierarchy);
@@ -205,7 +204,7 @@ static int get_path(const char* oldpath, char passpath[PATH_MAX]){
     char actualpath [PATH_MAX + 1];
     realpath(oldpath, actualpath);
     int len = strlen(mount_dir);
-    strcpy(passpath, source);
+    strcpy(passpath, source_mounts[0]);
     int match_found = 0;
 
     //log_msg(DEBUG, "actualpath: %s, mount_dir: %s", actualpath, mount_dir);
@@ -215,8 +214,7 @@ static int get_path(const char* oldpath, char passpath[PATH_MAX]){
             log_msg(DEBUG, "match null");
         log_msg(DEBUG, "match");
         *match = '\0';
-        check_path_exists(match + len, passpath);
-        //strcat(passpath, match + len);
+        strcat(passpath, match + len);
         match_found = 1;
     }
     else{
