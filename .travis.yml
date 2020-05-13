@@ -32,10 +32,10 @@ jobs:
           name: "Fedora 32"
 
 before_install:
-- uname -a
-- mv --version
-- cat /etc/os-release
 - docker build tests/docker -f ${DOCKERFILE} -t imagetest:${TAGNAME}
+- docker run --rm -v $PWD:$PWD -w $PWD imagetest:${TAGNAME} uname -a
+- docker run --rm -v $PWD:$PWD -w $PWD imagetest:${TAGNAME} cat /etc/os-release
+- docker run --rm -v $PWD:$PWD -w $PWD imagetest:${TAGNAME} mv --version
 
 install:
 - docker run --rm -v $PWD:$PWD -w $PWD imagetest:${TAGNAME} make clean
