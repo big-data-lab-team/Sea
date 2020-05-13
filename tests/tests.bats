@@ -29,6 +29,7 @@ MOUNT="mount"
 
 @test "cp" {
     load setup
+    ls mount/
     cp a.txt ${MOUNT}
     load unset
     test -f ${SOURCE}/a.txt
