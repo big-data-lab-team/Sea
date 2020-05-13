@@ -7,6 +7,7 @@ MOUNT="mount"
 
 @test "ls" {
     load setup
+    ls ${MOUNT}/file_in_source.txt
     a=$(ls ${MOUNT})
     [[ $a == *"file_in_source.txt" ]] # passthrough init message is in a
     load unset
@@ -49,11 +50,31 @@ MOUNT="mount"
     test -f ${SOURCE}/file
 }
 
-@test "echo" {
+@test "rm -rf" {
+    mkdir ${SOURCE}/dir
+    echo a > ${SOURCE}/dir/a.txt
     load setup
-    echo 'c' > ${MOUNT}/c.txt
+    rm -rf ${MOUNT}/dir
     load unset
-    test -f ${SOURCE}/c.txt
-    c=$(cat ${MOUNT}/c.txt)
-    [[ $c == 'c' ]]
+    [ ! -d ${SOURCE}/dir ]
+    [ ! -d ${MOUNT}/dir ]
+}
+
+@test "md5sum" {
+    load setup
+    m=$(md5sum ${MOUNT}/file_in_source.txt)
+    echo $m
+    [[ "$m" == *"3b5d5c3712955042212316173ccf37be"* ]]
+
+}
+
+@test "find" {
+    load setup
+    f=$(find ${MOUNT} -name file_in_source.txt)
+    [[ "$f" == *"mount/file_in_source.txt" ]]
+}
+
+@test "grep" {
+    load setup
+    grep b ${MOUNT}/file_in_source.txt
 }

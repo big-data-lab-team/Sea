@@ -1,19 +1,44 @@
+os: linux
+dist: xenial
+services:
+    - docker 
+
 jobs:
     include:
-        - dist: bionic
-          name: "Bionic"
-        - dist: xenial
-          name: "Xenial"
-language: C
-os: linux
-compiler: gcc
+        - env: 
+            - DOCKERFILE=tests/docker/Dockerfile.xenial
+            - TAGNAME=xenial
+          name: "Ubuntu Xenial"
+        - env: 
+            - DOCKERFILE=tests/docker/Dockerfile.bionic
+            - TAGNAME=bionic
+          name: "Ubuntu Bionic"
+        - env:
+            - DOCKERFILE=tests/docker/Dockerfile.centos6
+            - TAGNAME=centos6
+          name: "CentOS 6"
+        - env:
+            - DOCKERFILE=tests/docker/Dockerfile.centos7
+            - TAGNAME=centos7
+          name: "CentOS 7"
+          
+        - env:
+            - DOCKERFILE=tests/docker/Dockerfile.centos8
+            - TAGNAME=centos8
+          name: "CentOS 8" 
+        - env:
+            - DOCKERFILE=tests/docker/Dockerfile.fedora32
+            - TAGNAME=fedora32
+          name: "Fedora 32"
 
 before_install:
-- sudo apt-get update -qq
-- sudo apt-get install -qq bats
+- docker build tests/docker -f ${DOCKERFILE} -t imagetest:${TAGNAME}
+- docker run --rm -v $PWD:$PWD -w $PWD imagetest:${TAGNAME} uname -a
+- docker run --rm -v $PWD:$PWD -w $PWD imagetest:${TAGNAME} mv --version
 
 install:
-- make
+- docker run --rm -v $PWD:$PWD -w $PWD imagetest:${TAGNAME} make clean
+- docker run --rm -v $PWD:$PWD -w $PWD imagetest:${TAGNAME} make
 
 script:
-- bats tests/tests.bats
+- docker run --rm -v $PWD:$PWD -w $PWD imagetest:${TAGNAME} bats tests/tests.bats

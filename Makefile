@@ -4,4 +4,4 @@ passthrough.o: passthrough.cpp passthrough.h
 passthrough.so: passthrough.o
 	gcc -shared -g -o passthrough.so passthrough.o -ldl -lpthread -ggdb -lstdc++
 clean:
-	rm passthrough.o passthrough.so
+	\rm -f passthrough.o passthrough.so
