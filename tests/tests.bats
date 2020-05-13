@@ -7,6 +7,7 @@ MOUNT="mount"
 
 @test "ls" {
     load setup
+    ls ${MOUNT}/file_in_source.txt
     a=$(ls ${MOUNT})
     [[ $a == *"file_in_source.txt" ]] # passthrough init message is in a
     load unset
