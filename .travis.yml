@@ -33,6 +33,7 @@ jobs:
 
 before_install:
 - uname -a
+- mv --version
 - cat /etc/os-release
 - docker build tests/docker -f ${DOCKERFILE} -t imagetest:${TAGNAME}
 
