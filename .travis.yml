@@ -34,7 +34,6 @@ jobs:
 before_install:
 - docker build tests/docker -f ${DOCKERFILE} -t imagetest:${TAGNAME}
 - docker run --rm -v $PWD:$PWD -w $PWD imagetest:${TAGNAME} uname -a
-- docker run --rm -v $PWD:$PWD -w $PWD imagetest:${TAGNAME} cat /etc/os-release
 - docker run --rm -v $PWD:$PWD -w $PWD imagetest:${TAGNAME} mv --version
 
 install:
