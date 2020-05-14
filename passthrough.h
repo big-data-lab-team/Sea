@@ -15,6 +15,7 @@
 #include <fcntl.h>
 #include <sys/statvfs.h>
 #include <sys/stat.h>
+#include <stdarg.h>
 
 typedef int (*funcptr_open)(const char*, int, mode_t);
 typedef int (*funcptr_openat)(int, const char*, int);
@@ -85,6 +86,7 @@ extern void* libc_remove;
 extern void* libc_unlink;
 extern void* libc_unlinkat;
 extern void* libc_mkdir;
+extern void* libc_readdir;
 
 extern void* libc_access;
 extern void* libc_faccessat;
@@ -111,9 +113,7 @@ extern void* libattr_setxattr;
 extern void* libattr_fsetxattr;
 
 void initialize_passthrough_if_necessary();
-FILE* log_fopen(const char*, const char*);
-int orig_stat(const char*, struct stat*);
-static const char* get_lvlname(int lvl);
+int pass_getpath(const char*, char[PATH_MAX]);
 
 #ifdef XTREEMFS_PRELOAD_QUIET
   #define xprintf(...)
