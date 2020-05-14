@@ -84,3 +84,15 @@ MOUNT="mount"
     f=$(file mount/file_in_source.txt)
     [[ "$f" == "mount/file_in_source.txt: ASCII text" ]]
 }
+
+@test "read python" {
+    load setup
+    a=$(python tests/read.py ${MOUNT}/file_in_source.txt)
+}
+
+@test "write python" {
+    load setup
+    python tests/write.py ${MOUNT}/hello.txt
+    load unset
+    test -f ${SOURCE}/hello.txt
+}
