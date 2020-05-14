@@ -34,7 +34,24 @@ extern "C" {
             va_end(ap);
         }
 
-        return ((funcptr_open)libc_open)(passpath, flags, mode);
+        return ((funcptr___open)libc___open)(passpath, flags, mode);
+    }
+
+    int open64(const char* pathname, int flags, ...){
+        initialize_passthrough_if_necessary();
+        log_msg(INFO, "open64 %s", pathname);
+        char passpath[PATH_MAX];
+        pass_getpath(pathname, passpath);
+
+        mode_t mode;
+        if (flags & O_CREAT) {
+            va_list ap;
+            va_start(ap, flags);
+            mode = va_arg(ap, mode_t);
+            va_end(ap);
+        }
+
+        return ((funcptr_open64)libc_open64)(passpath, flags, mode);
     }
 
     int __open64(__const char* pathname, int flags, ...){
@@ -51,7 +68,7 @@ extern "C" {
             va_end(ap);
         }
 
-        return ((funcptr_open)libc_open)(passpath, flags, mode);
+        return ((funcptr___open64)libc___open64)(passpath, flags, mode);
     }
 
     int openat(int dirfd, const char* pathname, int flags, ...){
