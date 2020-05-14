@@ -16,7 +16,6 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdarg.h>
-#include <time.h>
 #include <sys/types.h>
 #include <sys/statvfs.h>
 #include <sys/stat.h>
@@ -70,6 +69,9 @@ void* libattr;
 void* libattr_setxattr;
 void* libattr_fsetxattr;
 
+void* libmagic;
+void* libmagic_magic_file;
+
 static const char* relmount = "./mount";
 static char mount_dir[PATH_MAX];
 static const char* source_file = "./sources.txt";
@@ -107,42 +109,6 @@ static void init_sources(){
     fclose(fhierarchy);
 
 
-}
-
-static int check_path_exists(const char *path, char fullpath[PATH_MAX]){
-    int i = 0;
-    int ret = 0;
-
-    fprintf(stderr, "%s\n", path);
-    // keep the best available temp path
-    char path_holder[PATH_MAX];
-    while(source_mounts[i][0] != '\0'){
-        char tmp_path[PATH_MAX];
-        strncpy(tmp_path, source_mounts[i], PATH_MAX);
-        strncpy(path_holder, source_mounts[i], PATH_MAX);
-        strncat(tmp_path, path, PATH_MAX);
-        fprintf(stderr, "%s\n", tmp_path);
-
-        struct stat sb;
-        struct statvfs st_s;
-        if( stat(tmp_path, &sb) == 0){
-            // file exists
-            ret = 1;
-            strncpy(fullpath, tmp_path, PATH_MAX);
-            break;
-        }
-        else if (statvfs(path_holder, &st_s) != 0 && st_s.f_bavail > 0 && st_s.f_favail > 0){
-            strcpy(path_holder, tmp_path);
-        }
-        i++;
-
-    }
-
-    if (ret == 0){
-        strcpy(fullpath, path_holder);
-    }
-
-    return ret;
 }
 
 int pass_getpath(const char* oldpath, char passpath[PATH_MAX]){
@@ -221,6 +187,10 @@ static void initialize_passthrough() {
   libattr = dlopen("libattr.so.1", RTLD_LAZY);
   libattr_setxattr = dlsym(libattr, "setxattr");
   libattr_fsetxattr = dlsym(libattr, "setxattr");
+
+  //added libmagic
+  libmagic = dlopen("libmagic.so.1", RTLD_LAZY);
+  libmagic_magic_file = dlsym(libmagic, "magic_file");
 
   int stdout2 = ((funcptr_dup)libc_dup)(1);
 

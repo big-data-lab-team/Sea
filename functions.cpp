@@ -145,12 +145,14 @@ extern "C" {
     int scandir(const char *dirp, struct dirent ***namelist,
                   int (*filter)(const struct dirent *),
                   int (*compar)(const struct dirent **, const struct dirent **)){
+        initialize_passthrough_if_necessary();
         log_msg(INFO, "scandir test");
         return 0;
     }
     int scandir64(const char *dirp, struct dirent64 ***namelist,
                   int (*select)(const struct dirent64 *),
                   int (*cmp)(const struct dirent64 **, const struct dirent64 **)){
+        initialize_passthrough_if_necessary();
         log_msg(INFO, "scandir64 test");
         return 0;
     }
@@ -159,6 +161,7 @@ extern "C" {
              int (*select) (const struct dirent *),
              int (*cmp) (const struct dirent **, const struct dirent **))
     {
+        initialize_passthrough_if_necessary();
         log_msg(INFO, "scandirat test");
         return 0;
     }
@@ -167,12 +170,14 @@ extern "C" {
              int (*select) (const struct dirent64 *),
              int (*cmp) (const struct dirent64 **, const struct dirent64 **))
     {
+        initialize_passthrough_if_necessary();
         log_msg(INFO, "scandir64 test");
         return 0;
     }
 
     struct dirent *readdir(DIR *dirp){
 
+        initialize_passthrough_if_necessary();
         struct dirent *d;
         log_msg(INFO, "readdir");
         errno = 0;
@@ -186,6 +191,7 @@ extern "C" {
 
 #undef creat
     int creat(__const char *name, mode_t mode) {
+      initialize_passthrough_if_necessary();
       log_msg(INFO, "creating file %s", name);
       return open(name, O_CREAT | O_WRONLY | O_TRUNC, mode);
     }
@@ -366,7 +372,6 @@ extern "C" {
     }
 
     int __xstat(int ver, const char *path, struct stat *statbuf){
-        log_msg(INFO, "xstat");
         initialize_passthrough_if_necessary();
         char passpath[PATH_MAX];
         pass_getpath(path, passpath);
@@ -375,7 +380,6 @@ extern "C" {
     }
 
     int __xstat64(int ver, const char *path, struct stat64 *statbuf){
-        log_msg(INFO, "xstat64");
         initialize_passthrough_if_necessary();
         char passpath[PATH_MAX];
         pass_getpath(path, passpath);
@@ -438,9 +442,9 @@ extern "C" {
 
     int truncate(const char *path, off_t offset){
         initialize_passthrough_if_necessary();
-        log_msg(INFO, "truncate %s", path);
         char passpath[PATH_MAX];
         pass_getpath(path, passpath);
+        log_msg(INFO, "truncate %s", passpath);
         return ((funcptr_truncate)libc_truncate)(passpath, offset);
     }
 
@@ -463,4 +467,14 @@ extern "C" {
         log_msg(INFO, "fsetxattr");
         return ((funcptr_fsetxattr)libattr_fsetxattr)(fd, name, value, size, flags);
     }
+
+#ifdef LIBMAGIC 
+    const char* magic_file(magic_t cookie, const char *filename){
+        initialize_passthrough_if_necessary();
+        char passpath[PATH_MAX];
+        pass_getpath(filename, passpath);
+        return ((funcptr_magic_file)libmagic_magic_file)(cookie, passpath);
+
+    }
+#endif
 }

@@ -78,3 +78,9 @@ MOUNT="mount"
     load setup
     grep b ${MOUNT}/file_in_source.txt
 }
+
+@test "file" {
+    load setup
+    f=$(file mount/file_in_source.txt)
+    [[ "$f" == "mount/file_in_source.txt: ASCII text" ]]
+}
