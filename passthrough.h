@@ -22,6 +22,9 @@
 #endif
 
 typedef int (*funcptr_open)(const char*, int, mode_t);
+typedef int (*funcptr___open)(const char*, int, mode_t);
+typedef int (*funcptr_open64)(const char*, int, mode_t);
+typedef int (*funcptr___open64)(const char*, int, mode_t);
 typedef int (*funcptr_openat)(int, const char*, int);
 typedef DIR* (*funcptr_opendir)(const char*);
 typedef int (*funcptr_close)(int);
@@ -73,6 +76,9 @@ typedef const char* (*funcptr_magic_file)(magic_t, const char* filename);
 #endif
 
 extern void* libc_open;
+extern void* libc___open;
+extern void* libc_open64;
+extern void* libc___open64;
 extern void* libc_openat;
 extern void* libc_opendir;
 extern void* libc_close;
