@@ -16,6 +16,10 @@
 #include <sys/statvfs.h>
 #include <sys/stat.h>
 #include <stdarg.h>
+#if __has_include(<magic.h>)
+    #include <magic.h>
+    #define LIBMAGIC 1
+#endif
 
 typedef int (*funcptr_open)(const char*, int, mode_t);
 typedef int (*funcptr_openat)(int, const char*, int);
@@ -64,6 +68,9 @@ typedef int (*funcptr_ftruncate)(int, off_t);
 typedef int (*funcptr_setxattr)(const char*, const char*, const void*, size_t, int);
 typedef int (*funcptr_fsetxattr)(int, const char*, const void*, size_t, int);
 
+#ifdef LIBMAGIC
+typedef const char* (*funcptr_magic_file)(magic_t, const char* filename);
+#endif
 
 extern void* libc_open;
 extern void* libc_openat;
@@ -111,6 +118,8 @@ extern void* libc_ftruncate;
 
 extern void* libattr_setxattr;
 extern void* libattr_fsetxattr;
+
+extern void* libmagic_magic_file;
 
 void initialize_passthrough_if_necessary();
 int pass_getpath(const char*, char[PATH_MAX]);
