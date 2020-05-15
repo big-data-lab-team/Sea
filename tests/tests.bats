@@ -2,14 +2,15 @@
 
 # Source and mount are
 # cleaned up in setup
-SOURCE="source"
-MOUNT="mount"
+SOURCE="$PWD/source"
+MOUNT="$PWD/mount"
 
 @test "test" {
     load setup
-    test -d ${MOUNT}/subdir
-    test -f ${MOUNT}/file_in_source.txt
-    test -f ${MOUNT}/subdir/file_in_subdir.txt
+    # careful, test is a bash internal
+    bash -c "test -d ${MOUNT}/subdir"
+    bash -c "test -f ${MOUNT}/file_in_source.txt"
+    bash -c "test -f ${MOUNT}/subdir/file_in_subdir.txt"
 }
 
 @test "ls" {
@@ -88,7 +89,7 @@ MOUNT="mount"
     f=$(find ${MOUNT} -name file_in_subdir.txt)
     [[ "$f" == *"mount/subdir/file_in_subdir.txt" ]]
     f=$(find ${MOUNT} -name file_in_source.txt)
-    [[ "$f" == *"mount/subdir/file_in_source.txt" ]]
+    [[ "$f" == *"mount/file_in_source.txt" ]]
 }
 
 @test "grep" {
@@ -117,7 +118,7 @@ MOUNT="mount"
 @test "read python2" {
     load setup
     python2 tests/read.py ${MOUNT}/file_in_source.txt
-    python2 tests/read.py ${MOUNT}/subir/file_in_subdir.txt
+    python2 tests/read.py ${MOUNT}/subdir/file_in_subdir.txt
 }
 
 @test "read python3" {
