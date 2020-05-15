@@ -7,9 +7,10 @@ MOUNT="mount"
 
 @test "test" {
     load setup
-    test -d ${MOUNT}/subdir
-    test -f ${MOUNT}/file_in_source.txt
-    test -f ${MOUNT}/subdir/file_in_subdir.txt
+    # careful, test is a bash internal
+    bash -c "test -d ${MOUNT}/subdir"
+    bash -c "test -f ${MOUNT}/file_in_source.txt"
+    bash -c "test -f ${MOUNT}/subdir/file_in_subdir.txt"
 }
 
 @test "ls" {
