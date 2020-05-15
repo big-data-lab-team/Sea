@@ -149,9 +149,11 @@ MOUNT="$PWD/mount"
 @test "chown" {
     load setup
     a=$(chown tmpu:tmpu ${MOUNT}/file_in_source.txt)
+    chown -R tmpu:tmpu ${MOUNT}/subdir
 }
 
 @test "chmod" {
     load setup
     chmod 600 ${MOUNT/file_in_source.txt}
+    chmod -R 600 ${MOUNT}/subdir
 }
