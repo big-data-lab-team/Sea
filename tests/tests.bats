@@ -118,7 +118,7 @@ MOUNT="mount"
 @test "read python2" {
     load setup
     python2 tests/read.py ${MOUNT}/file_in_source.txt
-    python2 tests/read.py ${MOUNT}/subir/file_in_subdir.txt
+    python2 tests/read.py ${MOUNT}/subdir/file_in_subdir.txt
 }
 
 @test "read python3" {
