@@ -22,6 +22,7 @@ extern char* log_fn;
 
 typedef int (*funcptr_open)(const char*, int, mode_t);
 typedef int (*funcptr___open)(const char*, int, mode_t);
+typedef int (*funcptr___open_2)(const char *file, int oflag);
 typedef int (*funcptr_open64)(const char*, int, mode_t);
 typedef int (*funcptr___open64)(const char*, int, mode_t);
 typedef int (*funcptr_openat)(int, const char*, int);
@@ -81,6 +82,7 @@ typedef const char* (*funcptr_magic_file)(magic_t, const char* filename);
 
 extern void* libc_open;
 extern void* libc___open;
+extern void* libc___open_2;
 extern void* libc_open64;
 extern void* libc___open64;
 extern void* libc_openat;

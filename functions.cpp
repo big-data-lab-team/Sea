@@ -37,6 +37,15 @@ extern "C" {
         return ((funcptr___open)libc___open)(passpath, flags, mode);
     }
 
+    int __open_2 (const char *file, int oflag){
+        initialize_passthrough_if_necessary();
+        log_msg(INFO, "opening file %s", file);
+        char passpath[PATH_MAX];
+        pass_getpath(file, passpath);
+        return ((funcptr___open_2)libc___open_2)(passpath, oflag);
+
+    }
+
     int open64(const char* pathname, int flags, ...){
         initialize_passthrough_if_necessary();
         log_msg(INFO, "open64 %s", pathname);

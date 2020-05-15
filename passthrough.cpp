@@ -26,6 +26,7 @@
 void* libc;
 void* libc_open;
 void* libc___open;
+void* libc___open_2;
 void* libc_open64;
 void* libc___open64;
 void* libc_openat;
@@ -263,6 +264,7 @@ static void initialize_passthrough() {
   libc = dlopen("libc.so.6", RTLD_LAZY); // TODO: link with correct libc, version vs. 32 bit vs. 64 bit
   libc_open = dlsym(libc, "open");
   libc___open = dlsym(libc, "__open");
+  libc___open_2 = dlsym(libc, "__open_2");
   libc_open64 = dlsym(libc, "open64");
   libc___open64 = dlsym(libc, "__open64");
   libc_openat = dlsym(libc, "openat");
