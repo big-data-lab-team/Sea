@@ -456,6 +456,13 @@ extern "C" {
         return ((funcptr_fopen)libc_fopen)(passpath, mode);
     }
 
+    FILE* fopen64(const char *path, const char *mode){
+        initialize_passthrough_if_necessary();
+        char passpath[PATH_MAX];
+        pass_getpath(path, passpath);
+        log_msg(INFO, "fopen %s %s", passpath, mode);
+        return ((funcptr_fopen64)libc_fopen64)(passpath, mode);
+    }
 
     int truncate(const char *path, off_t offset){
         initialize_passthrough_if_necessary();
@@ -484,4 +491,14 @@ extern "C" {
         log_msg(INFO, "fsetxattr");
         return ((funcptr_fsetxattr)libattr_fsetxattr)(fd, name, value, size, flags);
     }
+
+#ifdef LIBMAGIC 
+    const char* magic_file(magic_t cookie, const char *filename){
+        initialize_passthrough_if_necessary();
+        char passpath[PATH_MAX];
+        pass_getpath(filename, passpath);
+        return ((funcptr_magic_file)libmagic_magic_file)(cookie, passpath);
+
+    }
+#endif
 }

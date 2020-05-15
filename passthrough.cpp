@@ -65,12 +65,16 @@ void* libc___lxstat;
 void* libc___lxstat64;
 
 void* libc_fopen;
+void* libc_fopen64;
 void* libc_truncate;
 void* libc_ftruncate;
 
 void* libattr;
 void* libattr_setxattr;
 void* libattr_fsetxattr;
+
+void* libmagic;
+void* libmagic_magic_file;
 
 static const char* relmount = "./mount";
 static char mount_dir[PATH_MAX];
@@ -184,12 +188,17 @@ static void initialize_passthrough() {
   libc___lxstat64 = dlsym(libc, "__lxstat64");
 
   libc_fopen = dlsym(libc, "fopen");
+  libc_fopen64 = dlsym(libc, "fopen64");
   libc_truncate = dlsym(libc, "truncate");
   libc_ftruncate = dlsym(libc, "ftruncate");
 
   libattr = dlopen("libattr.so.1", RTLD_LAZY);
   libattr_setxattr = dlsym(libattr, "setxattr");
   libattr_fsetxattr = dlsym(libattr, "setxattr");
+
+  //added libmagic
+  libmagic = dlopen("libmagic.so.1", RTLD_LAZY);
+  libmagic_magic_file = dlsym(libmagic, "magic_file");
 
   int stdout2 = ((funcptr_dup)libc_dup)(1);
 

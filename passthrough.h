@@ -16,6 +16,9 @@
 #include <sys/statvfs.h>
 #include <sys/stat.h>
 #include <stdarg.h>
+#ifdef LIBMAGIC
+    #include <magic.h>
+#endif
 
 typedef int (*funcptr_open)(const char*, int, mode_t);
 typedef int (*funcptr___open)(const char*, int, mode_t);
@@ -61,11 +64,16 @@ typedef int (*funcptr___lxstat)(int, const char*, struct stat*);
 typedef int (*funcptr___lxstat64)(int, const char*, struct stat64*);
 
 typedef FILE* (*funcptr_fopen)(const char*, const char*);
+typedef FILE* (*funcptr_fopen64)(const char*, const char*);
 typedef int (*funcptr_truncate)(const char*, off_t);
 typedef int (*funcptr_ftruncate)(int, off_t);
 
 typedef int (*funcptr_setxattr)(const char*, const char*, const void*, size_t, int);
 typedef int (*funcptr_fsetxattr)(int, const char*, const void*, size_t, int);
+
+#ifdef LIBMAGIC
+typedef const char* (*funcptr_magic_file)(magic_t, const char* filename);
+#endif
 
 extern void* libc_open;
 extern void* libc___open;
@@ -111,11 +119,14 @@ extern void* libc___lxstat;
 extern void* libc___lxstat64;
 
 extern void* libc_fopen;
+extern void* libc_fopen64;
 extern void* libc_truncate;
 extern void* libc_ftruncate;
 
 extern void* libattr_setxattr;
 extern void* libattr_fsetxattr;
+
+extern void* libmagic_magic_file;
 
 void initialize_passthrough_if_necessary();
 int pass_getpath(const char*, char[PATH_MAX]);
