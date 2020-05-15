@@ -85,14 +85,28 @@ MOUNT="mount"
     [[ "$f" == "mount/file_in_source.txt: ASCII text" ]]
 }
 
-@test "read python" {
+@test "read python2" {
     load setup
-    a=$(python tests/read.py ${MOUNT}/file_in_source.txt)
+    a=$(python2 tests/read.py ${MOUNT}/file_in_source.txt)
 }
 
-@test "write python" {
+@test "read python3" {
+    type python3 || skip "Python 3 is not installed"
     load setup
-    python tests/write.py ${MOUNT}/hello.txt
+    a=$(python3 tests/read.py ${MOUNT}/file_in_source.txt)
+}
+
+@test "write python2" {
+    load setup
+    python2 tests/write.py ${MOUNT}/hello.txt
+    load unset
+    test -f ${SOURCE}/hello.txt
+}
+
+@test "write python3" {
+    type python3 || skip "Python 3 is not installed"
+    load setup
+    python2 tests/write.py ${MOUNT}/hello.txt
     load unset
     test -f ${SOURCE}/hello.txt
 }
