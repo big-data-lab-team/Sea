@@ -478,6 +478,30 @@ extern "C" {
         return ((funcptr_ftruncate)libc_ftruncate)(fd, offset);
     }
 
+    int chown(const char *pathname, uid_t owner, gid_t group){
+        initialize_passthrough_if_necessary();
+        char passpath[PATH_MAX];
+        pass_getpath(pathname, passpath);
+        log_msg(INFO, "chown %s", passpath);
+        return ((funcptr_chown)libc_chown)(passpath, owner, group);
+    }
+
+    int lchown(const char *pathname, uid_t owner, gid_t group){
+        initialize_passthrough_if_necessary();
+        char passpath[PATH_MAX];
+        pass_getpath(pathname, passpath);
+        log_msg(INFO, "lchown %s", passpath);
+        return ((funcptr_lchown)libc_lchown)(passpath, owner, group);
+    }
+
+    int fchownat(int dirfd, const char *pathname, uid_t owner, gid_t group, int flags){
+        initialize_passthrough_if_necessary();
+        char passpath[PATH_MAX];
+        pass_getpath(pathname, passpath);
+        log_msg(INFO, "fchownat %s", passpath);
+        return ((funcptr_fchownat)libc_fchownat)(dirfd, passpath, owner, group, flags);
+    }
+
     int setxattr(const char* path, const char *name, const void *value, size_t size, int flags){
         initialize_passthrough_if_necessary();
         log_msg(INFO, "setxattr %s", path);
