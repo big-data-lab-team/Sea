@@ -171,7 +171,7 @@ MOUNT="$PWD/mount"
 @test ">" {
     load setup
     bash -c "echo \"echo\" > ${MOUNT}/subdir/echo.txt"
-    a=$(cat ${MOUNT}/subdir/echo.txt)
+    a=$(cat ${SOURCE}/subdir/echo.txt)
     [[ "$a" == "echo" ]]
 }
 
