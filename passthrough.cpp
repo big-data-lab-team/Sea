@@ -72,9 +72,6 @@ void* libattr;
 void* libattr_setxattr;
 void* libattr_fsetxattr;
 
-void* libmagic;
-void* libmagic_magic_file;
-
 static const char* relmount = "./mount";
 static char mount_dir[PATH_MAX];
 static const char* source_file = "./sources.txt";
@@ -193,10 +190,6 @@ static void initialize_passthrough() {
   libattr = dlopen("libattr.so.1", RTLD_LAZY);
   libattr_setxattr = dlsym(libattr, "setxattr");
   libattr_fsetxattr = dlsym(libattr, "setxattr");
-
-  //added libmagic
-  libmagic = dlopen("libmagic.so.1", RTLD_LAZY);
-  libmagic_magic_file = dlsym(libmagic, "magic_file");
 
   int stdout2 = ((funcptr_dup)libc_dup)(1);
 
