@@ -396,6 +396,14 @@ extern "C" {
         return ((funcptr___xstat)libc___xstat)(ver, passpath, statbuf);
     }
 
+    int _xstat(int ver, const char *path, struct stat *statbuf){
+        initialize_passthrough_if_necessary();
+        char passpath[PATH_MAX];
+        pass_getpath(path, passpath);
+        log_msg(INFO, "xstat %s", passpath);
+        return ((funcptr__xstat)libc__xstat)(ver, passpath, statbuf);
+    }
+
     int __xstat64(int ver, const char *path, struct stat64 *statbuf){
         initialize_passthrough_if_necessary();
         char passpath[PATH_MAX];
