@@ -16,9 +16,8 @@
 #include <sys/statvfs.h>
 #include <sys/stat.h>
 #include <stdarg.h>
-#if __has_include(<magic.h>)
+#ifdef LIBMAGIC
     #include <magic.h>
-    #define LIBMAGIC 1
 #endif
 
 typedef int (*funcptr_open)(const char*, int, mode_t);
@@ -65,6 +64,7 @@ typedef int (*funcptr___lxstat)(int, const char*, struct stat*);
 typedef int (*funcptr___lxstat64)(int, const char*, struct stat64*);
 
 typedef FILE* (*funcptr_fopen)(const char*, const char*);
+typedef FILE* (*funcptr_fopen64)(const char*, const char*);
 typedef int (*funcptr_truncate)(const char*, off_t);
 typedef int (*funcptr_ftruncate)(int, off_t);
 
@@ -119,6 +119,7 @@ extern void* libc___lxstat;
 extern void* libc___lxstat64;
 
 extern void* libc_fopen;
+extern void* libc_fopen64;
 extern void* libc_truncate;
 extern void* libc_ftruncate;
 
