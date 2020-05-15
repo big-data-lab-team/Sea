@@ -1,6 +1,6 @@
 from centos:7
 
-RUN adduser tmpu
+RUN useradd --no-log-init -r tmpu
 
 # bats installation
 RUN yum update -y && yum install -y make gcc gcc-c++ git file file-devel python2 python3

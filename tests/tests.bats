@@ -113,6 +113,6 @@ MOUNT="mount"
 
 @test "chown" {
     load setup
-    a=$(chown tmpu:tmpu ${MOUNT}/hello.txt)
+    a=$(chown tmpu:tmpu ${MOUNT}/file_in_source.txt)
     
 }

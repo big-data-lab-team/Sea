@@ -1,6 +1,6 @@
 from centos:8
 
-RUN adduser tmpu
+RUN useradd --no-log-init -r tmpu
 
 # bats installation
 RUN dnf update -y && dnf install -y make gcc gcc-c++ git file python2 python3
