@@ -42,3 +42,6 @@ install:
 
 script:
 - docker run --rm -v $PWD:$PWD -w $PWD imagetest:${TAGNAME} bats tests/tests.bats
+
+after_success:
+    - bash <(curl -s https://codecov.io/bash)
