@@ -527,6 +527,22 @@ extern "C" {
         return ((funcptr_fchownat)libc_fchownat)(dirfd, passpath, owner, group, flags);
     }
 
+    int chmod(const char *pathname, mode_t mode){
+        initialize_passthrough_if_necessary();
+        char passpath[PATH_MAX];
+        pass_getpath(pathname, passpath);
+        log_msg(INFO, "chmod %s", passpath);
+        return ((funcptr_chmod)libc_chmod)(passpath, mode);
+    }
+
+    int fchmodat(int dirfd, const char *pathname, mode_t mode, int flags){
+        initialize_passthrough_if_necessary();
+        char passpath[PATH_MAX];
+        pass_getpath(pathname, passpath);
+        log_msg(INFO, "fchmodat %s", passpath);
+        return ((funcptr_fchmodat)libc_fchmodat)(dirfd, passpath, mode, flags);
+    }
+
     int setxattr(const char* path, const char *name, const void *value, size_t size, int flags){
         initialize_passthrough_if_necessary();
         log_msg(INFO, "setxattr %s", path);
