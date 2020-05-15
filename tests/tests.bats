@@ -2,8 +2,8 @@
 
 # Source and mount are
 # cleaned up in setup
-SOURCE="source"
-MOUNT="mount"
+SOURCE="$PWD/source"
+MOUNT="$PWD/mount"
 
 @test "test" {
     load setup
@@ -89,7 +89,7 @@ MOUNT="mount"
     f=$(find ${MOUNT} -name file_in_subdir.txt)
     [[ "$f" == *"mount/subdir/file_in_subdir.txt" ]]
     f=$(find ${MOUNT} -name file_in_source.txt)
-    [[ "$f" == *"mount/subdir/file_in_source.txt" ]]
+    [[ "$f" == *"mount/file_in_source.txt" ]]
 }
 
 @test "grep" {
