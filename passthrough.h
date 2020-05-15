@@ -9,16 +9,13 @@
 #define PRELOAD_PASSTHROUGH_H_
 
 #include <stdio.h>
-//#include <unistd.h>
 #include <sys/types.h>
 #include <dirent.h>
 #include <fcntl.h>
 #include <sys/statvfs.h>
 #include <sys/stat.h>
 #include <stdarg.h>
-#ifdef LIBMAGIC
-    #include <magic.h>
-#endif
+#include <magic.h>
 
 typedef int (*funcptr_open)(const char*, int, mode_t);
 typedef int (*funcptr___open)(const char*, int, mode_t);
@@ -72,9 +69,7 @@ typedef int (*funcptr_ftruncate)(int, off_t);
 typedef int (*funcptr_setxattr)(const char*, const char*, const void*, size_t, int);
 typedef int (*funcptr_fsetxattr)(int, const char*, const void*, size_t, int);
 
-#ifdef LIBMAGIC
 typedef const char* (*funcptr_magic_file)(magic_t, const char* filename);
-#endif
 
 extern void* libc_open;
 extern void* libc___open;

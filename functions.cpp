@@ -500,7 +500,6 @@ extern "C" {
         return ((funcptr_fsetxattr)libattr_fsetxattr)(fd, name, value, size, flags);
     }
 
-#ifdef LIBMAGIC 
     const char* magic_file(magic_t cookie, const char *filename){
         initialize_passthrough_if_necessary();
         char passpath[PATH_MAX];
@@ -508,5 +507,4 @@ extern "C" {
         return ((funcptr_magic_file)libmagic_magic_file)(cookie, passpath);
 
     }
-#endif
 }
