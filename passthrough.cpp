@@ -47,6 +47,7 @@ void* libc_unlink;
 void* libc_unlinkat;
 void* libc_readdir;
 void* libc_mkdir;
+void* libc_chdir;
 void* libc_access;
 void* libc_faccessat;
 void* libc_stat;
@@ -77,11 +78,28 @@ void* libattr_fsetxattr;
 void* libmagic;
 void* libmagic_magic_file;
 
-static const char* relmount = "./mount";
+static char relmount[PATH_MAX];
 static char mount_dir[PATH_MAX];
-static const char* source_file = "./sources.txt";
+static char source_file[PATH_MAX];
 static char source_mounts[1][PATH_MAX];
 
+
+static char * get_sea_home()
+{
+    char* sea_home;
+    sea_home = getenv("PWD");
+    return sea_home;
+}
+
+static void init_paths()
+{
+    char* sea_home = get_sea_home();
+    strcat(relmount, sea_home);
+    strcat(relmount, "/mount");
+
+    strcat(source_file, sea_home);
+    strcat(source_file, "/sources.txt");
+}
 
 // Our "copy" of stdout, because the application might close stdout
 // or reuse the first file descriptors for other purposes.
@@ -236,6 +254,8 @@ int pass_getpath(const char* oldpath, char passpath[PATH_MAX]){
 
 static void initialize_passthrough() {
   //xprintf("initialize_passthrough(): Setting up pass-through\n");
+  init_paths();
+
   libc = dlopen("libc.so.6", RTLD_LAZY); // TODO: link with correct libc, version vs. 32 bit vs. 64 bit
   libc_open = dlsym(libc, "open");
   libc___open = dlsym(libc, "__open");
@@ -255,6 +275,7 @@ static void initialize_passthrough() {
 
   libc_readdir = dlsym(libc, "readdir");
   libc_mkdir = dlsym(libc, "mkdir");
+  libc_chdir = dlsym(libc, "chdir");
   libc_rename = dlsym(libc, "rename");
   libc_renameat = dlsym(libc, "renameat");
   libc_renameat2 = dlsym(libc, "renameat2");

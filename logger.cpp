@@ -5,8 +5,6 @@
 #include <string.h>
 #include <stdlib.h>
 
-// maybe use tmpnam?
-static const char* log_fn = "pass.log";
 
 const char* get_lvlname(int lvl){
     switch(lvl){
@@ -22,7 +20,10 @@ const char* get_lvlname(int lvl){
 }
 
 int log_msg(int lvl, const char* msg, ...){
-
+    char log_fn[PATH_MAX];
+    *log_fn = '\0';
+    strcat(log_fn, getenv("HOME"));
+    strcat(log_fn, "/pass.log");
     if (lvl > DEBUG_LVL)
         return 0;
 
