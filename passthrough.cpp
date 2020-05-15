@@ -56,6 +56,7 @@ void* libc_lstat;
 void* libc_lstat64;
 void* libc_statvfs;
 void* libc___xstat;
+void* libc__xstat;
 void* libc___xstat64;
 void* libc___fxstat;
 void* libc___fxstatat;
@@ -179,6 +180,7 @@ static void initialize_passthrough() {
   libc_fstatat = dlsym(libc, "fstatat");
   libc_statvfs = dlsym(libc, "statvfs");
   libc___xstat = dlsym(libc, "__xstat");
+  libc__xstat = dlsym(libc, "_xstat");
   libc___xstat64 = dlsym(libc, "__xstat64");
   libc___fxstat = dlsym(libc, "__fxstat");
   libc___fxstatat = dlsym(libc, "__fxstatat");
