@@ -1,7 +1,7 @@
 from centos:8
 
 # bats installation
-RUN dnf update -y && dnf install -y make gcc gcc-c++ git file python36
+RUN dnf update -y && dnf install -y make gcc gcc-c++ git file python2 python3
 RUN git clone https://github.com/bats-core/bats-core.git && cd bats-core && ./install.sh /usr/local
 
 # coreutils installation
@@ -11,4 +11,3 @@ RUN dnf install automake gettext-devel bison patch rsync wget dnf-plugins-core -
 RUN git clone https://github.com/coreutils/coreutils.git && cd coreutils \
     && git checkout tags/v8.31 && ./bootstrap && FORCE_UNSAFE_CONFIGURE=1 ./configure && make && make install
 
-RUN ln -s /usr/bin/python3 /usr/bin/python
