@@ -9,16 +9,16 @@
 #define PRELOAD_PASSTHROUGH_H_
 
 #include <stdio.h>
-#include <unistd.h>
+
 #include <sys/types.h>
 #include <dirent.h>
 #include <fcntl.h>
 #include <sys/statvfs.h>
 #include <sys/stat.h>
 #include <stdarg.h>
-#ifdef LIBMAGIC
-    #include <magic.h>
-#endif
+#include <magic.h>
+
+extern char* log_fn;
 
 typedef int (*funcptr_open)(const char*, int, mode_t);
 typedef int (*funcptr___open)(const char*, int, mode_t);
@@ -39,6 +39,7 @@ typedef off_t (*funcptr_lseek)(int, off_t, int);
 
 typedef struct dirent* (*funcptr_readdir)(DIR*);
 typedef int (*funcptr_mkdir)(const char*, mode_t mode);
+typedef int (*funcptr_chdir)(const char*);
 typedef int (*funcptr_rename)(const char*, const char*);
 typedef int (*funcptr_renameat)(int, const char*, int, const char*);
 typedef int (*funcptr_renameat2)(int, const char*, int, const char*, unsigned int);
@@ -76,9 +77,7 @@ typedef int (*funcptr_chown)(const char*, uid_t, gid_t);
 typedef int (*funcptr_lchown)(const char*, uid_t, gid_t);
 typedef int (*funcptr_fchownat)(int, const char*, uid_t, gid_t, int);
 
-#ifdef LIBMAGIC
 typedef const char* (*funcptr_magic_file)(magic_t, const char* filename);
-#endif
 
 extern void* libc_open;
 extern void* libc___open;
@@ -104,6 +103,7 @@ extern void* libc_remove;
 extern void* libc_unlink;
 extern void* libc_unlinkat;
 extern void* libc_mkdir;
+extern void* libc_chdir;
 extern void* libc_readdir;
 
 extern void* libc_access;
