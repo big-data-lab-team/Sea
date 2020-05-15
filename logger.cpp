@@ -3,6 +3,7 @@
 
 #include <time.h>
 #include <string.h>
+#include <stdlib.h>
 
 // maybe use tmpnam?
 static const char* log_fn = "pass.log";
@@ -39,6 +40,15 @@ int log_msg(int lvl, const char* msg, ...){
     vsprintf(fmsg, msg ,arglist);
     va_end( arglist );
 
+    char* currtime;
+    char* formattime = (char *)malloc(sizeof(char*) * 7);
+    if (( currtime = asctime(timeinfo)) != NULL)
+       formattime = strtok(currtime, "\n"); 
+    else
+        strcpy(formattime, "UNKNOWN");
+
+
+
     if (LOG_FOREGROUND)
         fprintf(stderr, "%s: %s: %s\n", strtok(asctime(timeinfo), "\n"), get_lvlname(lvl), fmsg);
 
@@ -50,7 +60,7 @@ int log_msg(int lvl, const char* msg, ...){
             xprintf("WARNING: Cannot write to log file %s: %s (%s)\n", log_fn, msg, get_lvlname(lvl));
             return 1;
         }
-        fprintf(logs, "%s: %s: %s\n", strtok(asctime(timeinfo), "\n"), get_lvlname(lvl), fmsg);
+        fprintf(logs, "%s: %s: %s\n", formattime, get_lvlname(lvl), fmsg);
         fclose(logs);
     }
     return 0;
