@@ -110,3 +110,9 @@ MOUNT="mount"
     load unset
     test -f ${SOURCE}/hello.txt
 }
+
+@test "chown" {
+    load setup
+    a=$(chown tmpu:tmpu ${MOUNT}/hello.txt)
+    
+}
