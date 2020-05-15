@@ -26,6 +26,7 @@
 void* libc;
 void* libc_open;
 void* libc___open;
+void* libc___open_2;
 void* libc_open64;
 void* libc___open64;
 void* libc_openat;
@@ -70,6 +71,10 @@ void* libc_fopen;
 void* libc_fopen64;
 void* libc_truncate;
 void* libc_ftruncate;
+
+void* libc_chown;
+void* libc_lchown;
+void* libc_fchownat;
 
 void* libattr;
 void* libattr_setxattr;
@@ -259,6 +264,7 @@ static void initialize_passthrough() {
   libc = dlopen("libc.so.6", RTLD_LAZY); // TODO: link with correct libc, version vs. 32 bit vs. 64 bit
   libc_open = dlsym(libc, "open");
   libc___open = dlsym(libc, "__open");
+  libc___open_2 = dlsym(libc, "__open_2");
   libc_open64 = dlsym(libc, "open64");
   libc___open64 = dlsym(libc, "__open64");
   libc_openat = dlsym(libc, "openat");
@@ -305,6 +311,10 @@ static void initialize_passthrough() {
   libc_fopen64 = dlsym(libc, "fopen64");
   libc_truncate = dlsym(libc, "truncate");
   libc_ftruncate = dlsym(libc, "ftruncate");
+
+  libc_chown = dlsym(libc, "chown");
+  libc_lchown = dlsym(libc, "lchown");
+  libc_fchownat = dlsym(libc, "fchownat");
 
   libattr = dlopen("libattr.so.1", RTLD_LAZY);
   libattr_setxattr = dlsym(libattr, "setxattr");

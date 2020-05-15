@@ -22,6 +22,7 @@ extern char* log_fn;
 
 typedef int (*funcptr_open)(const char*, int, mode_t);
 typedef int (*funcptr___open)(const char*, int, mode_t);
+typedef int (*funcptr___open_2)(const char *file, int oflag);
 typedef int (*funcptr_open64)(const char*, int, mode_t);
 typedef int (*funcptr___open64)(const char*, int, mode_t);
 typedef int (*funcptr_openat)(int, const char*, int);
@@ -73,10 +74,15 @@ typedef int (*funcptr_ftruncate)(int, off_t);
 typedef int (*funcptr_setxattr)(const char*, const char*, const void*, size_t, int);
 typedef int (*funcptr_fsetxattr)(int, const char*, const void*, size_t, int);
 
+typedef int (*funcptr_chown)(const char*, uid_t, gid_t);
+typedef int (*funcptr_lchown)(const char*, uid_t, gid_t);
+typedef int (*funcptr_fchownat)(int, const char*, uid_t, gid_t, int);
+
 typedef const char* (*funcptr_magic_file)(magic_t, const char* filename);
 
 extern void* libc_open;
 extern void* libc___open;
+extern void* libc___open_2;
 extern void* libc_open64;
 extern void* libc___open64;
 extern void* libc_openat;
@@ -124,6 +130,10 @@ extern void* libc_fopen;
 extern void* libc_fopen64;
 extern void* libc_truncate;
 extern void* libc_ftruncate;
+
+extern void* libc_chown;
+extern void* libc_lchown;
+extern void* libc_fchownat;
 
 extern void* libattr_setxattr;
 extern void* libattr_fsetxattr;
