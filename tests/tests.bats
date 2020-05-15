@@ -157,3 +157,26 @@ MOUNT="$PWD/mount"
     chmod 600 ${MOUNT/file_in_source.txt}
     chmod -R 600 ${MOUNT}/subdir
 }
+
+@test "cd" {
+    load setup
+    bash -c "cd ${MOUNT}/subdir"
+}
+
+@test "which" {
+    load setup
+    bash -c "which ${MOUNT}/bin/hello.sh"
+}
+
+@test ">" {
+    load setup
+    bash -c "echo \"echo\" > ${MOUNT}/subdir/echo.txt"
+    a=$(cat ${MOUNT}/subdir/echo.txt)
+    [[ "$a" == "echo" ]]
+}
+
+@test "<" {
+    load setup
+    a=$(bash -c "bash < ${MOUNT}/bin/hello.sh")
+    [[ "$a" == "hello" ]]
+}
