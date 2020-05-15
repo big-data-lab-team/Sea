@@ -76,6 +76,9 @@ void* libc_chown;
 void* libc_lchown;
 void* libc_fchownat;
 
+void* libc_chmod;
+void* libc_fchmodat;
+
 void* libattr;
 void* libattr_setxattr;
 void* libattr_fsetxattr;
@@ -315,6 +318,9 @@ static void initialize_passthrough() {
   libc_chown = dlsym(libc, "chown");
   libc_lchown = dlsym(libc, "lchown");
   libc_fchownat = dlsym(libc, "fchownat");
+
+  libc_chmod = dlsym(libc, "chmod");
+  libc_fchmodat = dlsym(libc, "fchmodat");
 
   libattr = dlopen("libattr.so.1", RTLD_LAZY);
   libattr_setxattr = dlsym(libattr, "setxattr");
