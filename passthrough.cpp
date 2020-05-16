@@ -104,10 +104,15 @@ static char source_file[PATH_MAX];
 static char source_mounts[1][PATH_MAX];
 
 
-static char * get_sea_home()
+char * get_sea_home()
 {
     char* sea_home;
-    sea_home = getenv("PWD");
+    sea_home = getenv("SEA_HOME");
+    if(sea_home == NULL)
+    {
+      printf("SEA_HOME is not defined\n");
+      exit(1);
+    }
     return sea_home;
 }
 

@@ -11,4 +11,5 @@ mkdir ${SOURCE}/bin # where fake binaries will be located
 echo "#!/bin/bash" > ${SOURCE}/bin/hello.sh
 echo "echo \"hello\"" > ${SOURCE}/bin/hello.sh
 chmod +x ${SOURCE}/bin/hello.sh
+export SEA_HOME=$PWD
 export LD_PRELOAD=${PWD}/passthrough.so
