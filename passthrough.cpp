@@ -253,13 +253,19 @@ char *make_file_name_canonical(char const *file_path)
 int pass_getpath(const char* oldpath, char passpath[PATH_MAX]){
     char* match;
     char* actualpath;
-    actualpath = make_file_name_canonical(oldpath);
+    if(oldpath[0]=='/')
+    {
+      actualpath = (char*) oldpath;
+    }
+    else
+    {
+      actualpath = make_file_name_canonical(oldpath);
+    }
     int len = strlen(mount_dir);
     strcpy(passpath, source_mounts[0]);
     int match_found = 0;
 
     //log_msg(DEBUG, "actualpath: %s, mount_dir: %s", actualpath, mount_dir);
-
     if(mount_dir[0] != '\0' && (match = strstr(actualpath, mount_dir))){
         if (match == NULL)
             log_msg(DEBUG, "match null");
