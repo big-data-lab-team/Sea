@@ -89,6 +89,15 @@ void* libmagic_magic_file;
 void* libc_eaccess;
 void* libc_euidaccess;
 
+void* libc_mkstemp;
+void* libc_mkstemp64;
+void* libc_mkostemp;
+void* libc_mkostemp64;
+void* libc_mkstemps;
+void* libc_mkstemps64;
+void* libc_mkostemps;
+void* libc_mkostemps64;
+
 static char relmount[PATH_MAX];
 static char mount_dir[PATH_MAX];
 static char source_file[PATH_MAX];
@@ -335,6 +344,15 @@ static void initialize_passthrough() {
 
   libc_eaccess = dlsym(libc, "eaccess");
   libc_euidaccess = dlsym(libc, "euidaccess");
+
+  libc_mkstemp = dlsym(libc, "mkstemp");
+  libc_mkstemp64 = dlsym(libc, "mkstemp64");
+  libc_mkostemp = dlsym(libc, "mkostemp");
+  libc_mkostemp64 = dlsym(libc, "mkostemp64");
+  libc_mkstemps = dlsym(libc, "mkstemps");
+  libc_mkstemps64 = dlsym(libc, "mkstemps64");
+  libc_mkostemps = dlsym(libc, "mkostemps");
+  libc_mkostemps64 = dlsym(libc, "mkostemps64");
 
   int stdout2 = ((funcptr_dup)libc_dup)(1);
 

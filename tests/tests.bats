@@ -181,3 +181,16 @@ MOUNT="$PWD/mount"
     a=$(bash -c "bash < ${MOUNT}/bin/hello.sh")
     [[ "$a" == "hello" ]]
 }
+
+@test "awk" {
+    load setup
+    a=$(awk '$1=="a" {print $2}' ${MOUNT}/complex_file.txt)
+    [[ "$a" == "b" ]]
+}
+
+@test "sed" {
+    load setup
+    sed -i s,b,a,g ${MOUNT}/file_in_source.txt
+    a=$(cat ${MOUNT}/file_in_source.txt) # this also tests cat :)
+    [[ "$a" == "a" ]]
+}
