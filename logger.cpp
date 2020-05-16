@@ -49,10 +49,8 @@ int log_msg(int lvl, const char* msg, ...){
     else
         strcpy(formattime, "UNKNOWN");
 
-
-
     if (LOG_FOREGROUND)
-        fprintf(stderr, "%s: %s: %s\n", strtok(asctime(timeinfo), "\n"), get_lvlname(lvl), fmsg);
+        fprintf(stderr, "%s: %s: %s\n", formattime, get_lvlname(lvl), fmsg);
 
     else {
         FILE* logs = ((funcptr_fopen)libc_fopen)(log_fn, "a+");
