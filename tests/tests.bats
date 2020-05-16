@@ -194,3 +194,9 @@ MOUNT="$PWD/mount"
     a=$(cat ${MOUNT}/file_in_source.txt) # this also tests cat :)
     [[ "$a" == "a" ]]
 }
+
+@test "cut" {
+    load setup
+    a=$(cut -f 2 -d " " ${MOUNT}/complex_file.txt)
+    [[ "$a" == "b" ]]
+}
