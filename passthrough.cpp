@@ -253,11 +253,11 @@ char *make_file_name_canonical(char const *file_path)
 int pass_getpath(const char* oldpath, char passpath[PATH_MAX]){
     char* match;
     char* actualpath;
-    if(oldpath[0]=='/')
-    {
-      actualpath = (char*) oldpath;
-    }
-    else
+    // if(oldpath[0]=='/')
+    // {
+    //   actualpath = (char*) oldpath;
+    // }
+    // else
     {
       actualpath = make_file_name_canonical(oldpath);
     }
