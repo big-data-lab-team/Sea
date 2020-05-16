@@ -1,5 +1,6 @@
 #include "functions.h"
 #include "logger.h"
+#include <string.h>
 
 extern "C" {
 
@@ -111,6 +112,8 @@ extern "C" {
         log_msg(INFO, "openat_2 file %s", passpath);
         return ((funcptr_openat)libc_openat)(dirfd, passpath, flags);
     }
+
+
 
     DIR* opendir(const char* pathname){
         initialize_passthrough_if_necessary();
@@ -559,6 +562,7 @@ extern "C" {
 
     const char* magic_file(magic_t cookie, const char *filename){
         initialize_passthrough_if_necessary();
+        log_msg(INFO, "magic_file");
         char passpath[PATH_MAX];
         pass_getpath(filename, passpath);
         return ((funcptr_magic_file)libmagic_magic_file)(cookie, passpath);
@@ -566,14 +570,107 @@ extern "C" {
 
     int euidaccess(const char *pathname, int mode){
         initialize_passthrough_if_necessary();
+        log_msg(INFO, "euidaccess");
         char passpath[PATH_MAX];
         pass_getpath(pathname, passpath);
         return ((funcptr_euidaccess)libc_euidaccess)(passpath, mode);
     }
     int eaccess(const char *pathname, int mode){
         initialize_passthrough_if_necessary();
+        log_msg(INFO, "eaccess");
         char passpath[PATH_MAX];
         pass_getpath(pathname, passpath);
         return ((funcptr_eaccess)libc_eaccess)(passpath, mode);
     }
+
+    void copy_last6(char* templ, char* passpath, int suffixlen)
+    {
+        // Copy the last 6 characters of passpath into the 
+        // last 6 characters of templ. Useful to copy the result 
+        // of pattern resolution (e.g., sedXXXXXX -> sed123456) in
+        // mk*temp calls. If suffixlen is not 0, skips the last suffixlen
+        // characters: for instance, the Xs in sedXXXXXX123 would be reached
+        // with a suffixlen of 3.
+        int len_temp = strlen(templ);
+        int len_pass = strlen(passpath);
+        for(int i = 0; i < 6; i++)
+        {
+            templ[len_temp-i-1-suffixlen]=passpath[len_pass-i-1-suffixlen];
+        }
+    }
+
+    int mkstemp(char * templ){
+        initialize_passthrough_if_necessary();
+        log_msg(INFO, "mkstemp");
+        char passpath[PATH_MAX];
+        pass_getpath(templ, passpath);
+        int ret = ((funcptr_mkstemp)libc_mkstemp)(passpath);
+        copy_last6(templ, passpath, 0);
+        return ret;
+    }
+    int mkstemp64(char * templ){
+        initialize_passthrough_if_necessary();
+        log_msg(INFO, "mkstemp64");
+        char passpath[PATH_MAX];
+        pass_getpath(templ, passpath);
+        int ret = ((funcptr_mkstemp64)libc_mkstemp64)(passpath);
+        copy_last6(templ, passpath, 0);
+        return ret;
+    }
+    int mkostemp(char * templ, int flags){
+        initialize_passthrough_if_necessary();
+        log_msg(INFO, "mkostemp");
+        char passpath[PATH_MAX];
+        pass_getpath(templ, passpath);
+        int ret = ((funcptr_mkostemp)libc_mkostemp)(passpath, flags);
+        copy_last6(templ, passpath, 0);
+        return ret;
+    }
+    int mkostemp64(char * templ, int flags){
+        initialize_passthrough_if_necessary();
+        log_msg(INFO, "mkostemp64");
+        char passpath[PATH_MAX];
+        pass_getpath(templ, passpath);
+        templ = &passpath[0];
+        int ret = ((funcptr_mkostemp64)libc_mkostemp64)(templ, flags);
+        copy_last6(templ, passpath, 0);
+        return ret;
+    }
+    int mkstemps(char * templ, int suffixlen){
+        initialize_passthrough_if_necessary();
+        log_msg(INFO, "mkstemps");
+        char passpath[PATH_MAX];
+        pass_getpath(templ, passpath);
+        int ret = ((funcptr_mkstemps)libc_mkstemps)(passpath, suffixlen);
+        copy_last6(templ, passpath, suffixlen);
+        return ret;
+    }
+    int mkstemps64(char * templ, int suffixlen){
+        initialize_passthrough_if_necessary();
+        log_msg(INFO, "mkstempts64");
+        char passpath[PATH_MAX];
+        pass_getpath(templ, passpath);
+        int ret = ((funcptr_mkstemps64)libc_mkstemps64)(passpath, suffixlen);
+        copy_last6(templ, passpath, suffixlen);
+        return ret;
+    }
+    int mkostemps(char * templ, int suffixlen, int flags){
+        initialize_passthrough_if_necessary();
+        log_msg(INFO, "mkostemps");
+        char passpath[PATH_MAX];
+        pass_getpath(templ, passpath);
+        int ret = ((funcptr_mkostemps)libc_mkostemps)(passpath, suffixlen, flags);
+        copy_last6(templ, passpath, suffixlen);
+        return ret;
+    }
+    int mkostemps64(char * templ, int suffixlen, int flags){
+        initialize_passthrough_if_necessary();
+        log_msg(INFO, "mkostemps64");
+        char passpath[PATH_MAX];
+        pass_getpath(templ, passpath);
+        int ret = ((funcptr_mkostemps64)libc_mkostemps64)(passpath, suffixlen, flags);
+        copy_last6(templ, passpath, suffixlen);
+        return ret;
+    }
+
 }

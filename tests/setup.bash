@@ -6,6 +6,7 @@ echo a > a.txt # This file will be used in tests
 echo b > ${SOURCE}/file_in_source.txt # This file will be used in tests
 mkdir ${SOURCE}/subdir
 echo a > ${SOURCE}/subdir/file_in_subdir.txt
+echo "a b" > ${SOURCE}/complex_file.txt
 mkdir ${SOURCE}/bin # where fake binaries will be located
 echo "#!/bin/bash" > ${SOURCE}/bin/hello.sh
 echo "echo \"hello\"" > ${SOURCE}/bin/hello.sh

@@ -85,6 +85,16 @@ typedef const char* (*funcptr_magic_file)(magic_t, const char*);
 typedef int (*funcptr_euidaccess)(const char* filename, int);
 typedef int (*funcptr_eaccess)(const char* filename, int);
 
+typedef int (*funcptr_mkstemp)(char*);
+typedef int (*funcptr_mkostemp)(char*, int);
+typedef int (*funcptr_mkstemps)(char*, int);
+typedef int (*funcptr_mkostemps)(char*, int, int);
+
+typedef int (*funcptr_mkstemp64)(char*);
+typedef int (*funcptr_mkostemp64)(char*, int);
+typedef int (*funcptr_mkstemps64)(char*, int);
+typedef int (*funcptr_mkostemps64)(char*, int, int);
+
 
 extern void* libc_open;
 extern void* libc___open;
@@ -150,6 +160,15 @@ extern void* libattr_fsetxattr;
 extern void* libmagic_magic_file;
 extern void* libc_euidaccess;
 extern void* libc_eaccess;
+
+extern void* libc_mkstemp;
+extern void* libc_mkstemp64;
+extern void* libc_mkostemp;
+extern void* libc_mkostemp64;
+extern void* libc_mkstemps;
+extern void* libc_mkstemps64;
+extern void* libc_mkostemps;
+extern void* libc_mkostemps64;
 
 void initialize_passthrough_if_necessary();
 int pass_getpath(const char*, char[PATH_MAX]);
