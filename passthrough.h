@@ -81,7 +81,10 @@ typedef int (*funcptr_fchmodat)(int, const char*, mode_t, int);
 typedef int (*funcptr_setxattr)(const char*, const char*, const void*, size_t, int);
 typedef int (*funcptr_fsetxattr)(int, const char*, const void*, size_t, int);
 
-typedef const char* (*funcptr_magic_file)(magic_t, const char* filename);
+typedef const char* (*funcptr_magic_file)(magic_t, const char*);
+typedef int (*funcptr_euidaccess)(const char* filename, int);
+typedef int (*funcptr_eaccess)(const char* filename, int);
+
 
 extern void* libc_open;
 extern void* libc___open;
@@ -145,6 +148,8 @@ extern void* libattr_setxattr;
 extern void* libattr_fsetxattr;
 
 extern void* libmagic_magic_file;
+extern void* libc_euidaccess;
+extern void* libc_eaccess;
 
 void initialize_passthrough_if_necessary();
 int pass_getpath(const char*, char[PATH_MAX]);

@@ -86,6 +86,9 @@ void* libattr_fsetxattr;
 void* libmagic;
 void* libmagic_magic_file;
 
+void* libc_eaccess;
+void* libc_euidaccess;
+
 static char relmount[PATH_MAX];
 static char mount_dir[PATH_MAX];
 static char source_file[PATH_MAX];
@@ -329,6 +332,9 @@ static void initialize_passthrough() {
   //added libmagic
   libmagic = dlopen("libmagic.so.1", RTLD_LAZY);
   libmagic_magic_file = dlsym(libmagic, "magic_file");
+
+  libc_eaccess = dlsym(libc, "eaccess");
+  libc_euidaccess = dlsym(libc, "euidaccess");
 
   int stdout2 = ((funcptr_dup)libc_dup)(1);
 

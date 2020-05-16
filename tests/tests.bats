@@ -147,6 +147,7 @@ MOUNT="$PWD/mount"
 }
 
 @test "chown" {
+    id -u tmpu || skip "User tmpu not found"
     load setup
     a=$(chown tmpu:tmpu ${MOUNT}/file_in_source.txt)
     chown -R tmpu:tmpu ${MOUNT}/subdir
@@ -154,8 +155,8 @@ MOUNT="$PWD/mount"
 
 @test "chmod" {
     load setup
-    chmod 600 ${MOUNT/file_in_source.txt}
-    chmod -R 600 ${MOUNT}/subdir
+    chmod 600 ${MOUNT}/file_in_source.txt
+    chmod -R g-rwx ${MOUNT}/subdir
 }
 
 @test "cd" {

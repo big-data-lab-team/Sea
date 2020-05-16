@@ -562,6 +562,18 @@ extern "C" {
         char passpath[PATH_MAX];
         pass_getpath(filename, passpath);
         return ((funcptr_magic_file)libmagic_magic_file)(cookie, passpath);
+    }
 
+    int euidaccess(const char *pathname, int mode){
+        initialize_passthrough_if_necessary();
+        char passpath[PATH_MAX];
+        pass_getpath(pathname, passpath);
+        return ((funcptr_euidaccess)libc_euidaccess)(passpath, mode);
+    }
+    int eaccess(const char *pathname, int mode){
+        initialize_passthrough_if_necessary();
+        char passpath[PATH_MAX];
+        pass_getpath(pathname, passpath);
+        return ((funcptr_eaccess)libc_eaccess)(passpath, mode);
     }
 }
