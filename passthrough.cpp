@@ -185,7 +185,7 @@ static void init_sources(){
 //
 //   On failure, returns NULL.
 ////////////////////////////////////////////////////////////////////////////////
-char *make_file_name_canonical(char const *file_path)
+void make_file_name_canonical(char const *file_path, char actualpath[PATH_MAX])
 {
   char *canonical_file_path  = NULL;
   unsigned int file_path_len = strlen(file_path);
@@ -247,19 +247,18 @@ char *make_file_name_canonical(char const *file_path)
       free(file_path_copy);
     }
   }
-
-  return canonical_file_path;
+  strcpy(actualpath, canonical_file_path);
 }
 int pass_getpath(const char* oldpath, char passpath[PATH_MAX]){
     char* match;
-    char* actualpath;
-    // if(oldpath[0]=='/')
-    // {
-    //   actualpath = (char*) oldpath;
-    // }
-    // else
+    char actualpath[PATH_MAX];
+    if(oldpath[0]=='/')
     {
-      actualpath = make_file_name_canonical(oldpath);
+       strcpy(actualpath, oldpath);
+    }
+    else
+    {
+      make_file_name_canonical(oldpath, actualpath);
     }
     int len = strlen(mount_dir);
     strcpy(passpath, source_mounts[0]);
