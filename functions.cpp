@@ -176,15 +176,20 @@ extern "C" {
                   int (*filter)(const struct dirent *),
                   int (*compar)(const struct dirent **, const struct dirent **)){
         initialize_passthrough_if_necessary();
-        log_msg(INFO, "scandir test");
-        return 0;
+        char passpath[PATH_MAX];
+        pass_getpath(dirp, passpath);
+        log_msg(INFO, "scandir %s", passpath);
+        return ((funcptr_scandir)libc_scandir)(passpath, namelist, filter, compar);
     }
+
     int scandir64(const char *dirp, struct dirent64 ***namelist,
                   int (*select)(const struct dirent64 *),
                   int (*cmp)(const struct dirent64 **, const struct dirent64 **)){
         initialize_passthrough_if_necessary();
-        log_msg(INFO, "scandir64 test");
-        return 0;
+        char passpath[PATH_MAX];
+        pass_getpath(dirp, passpath);
+        log_msg(INFO, "scandir64 %s", passpath);
+        return ((funcptr_scandir64)libc_scandir64)(passpath, namelist, select, cmp);
     }
 
     int scandirat (int dfd, const char *dir, struct dirent ***namelist,
@@ -222,8 +227,18 @@ extern "C" {
 #undef creat
     int creat(__const char *name, mode_t mode) {
       initialize_passthrough_if_necessary();
-      log_msg(INFO, "creating file %s", name);
-      return open(name, O_CREAT | O_WRONLY | O_TRUNC, mode);
+      char passpath[PATH_MAX];
+      pass_getpath(name, passpath);
+      log_msg(INFO, "creat %s", name);
+      return ((funcptr_creat)libc_creat)(name, mode);
+    }
+
+    int creat64(__const char *name, mode_t mode) {
+      initialize_passthrough_if_necessary();
+      char passpath[PATH_MAX];
+      pass_getpath(name, passpath);
+      log_msg(INFO, "creat64 %s", name);
+      return ((funcptr_creat64)libc_creat64)(name, mode);
     }
 
     int close(int fd){
@@ -500,6 +515,23 @@ extern "C" {
         return ((funcptr_fopen64)libc_fopen64)(passpath, mode);
     }
 
+    FILE* freopen(const char *path, const char *mode, FILE *stream){
+        initialize_passthrough_if_necessary();
+        char passpath[PATH_MAX];
+        pass_getpath(path, passpath);
+        log_msg(INFO, "freopen %s %s", passpath, mode);
+        return ((funcptr_freopen)libc_freopen)(passpath, mode, stream);
+    }
+
+    FILE* freopen64(const char *path, const char *mode, FILE *stream){
+        initialize_passthrough_if_necessary();
+        char passpath[PATH_MAX];
+        pass_getpath(path, passpath);
+        log_msg(INFO, "freopen64 %s %s", passpath, mode);
+        return ((funcptr_freopen64)libc_freopen64)(passpath, mode, stream);
+    }
+
+
     int truncate(const char *path, off_t offset){
         initialize_passthrough_if_necessary();
         char passpath[PATH_MAX];
@@ -673,12 +705,65 @@ extern "C" {
     }
     int mkostemps64(char * templ, int suffixlen, int flags){
         initialize_passthrough_if_necessary();
-        log_msg(INFO, "mkostemps64");
         char passpath[PATH_MAX];
         pass_getpath(templ, passpath);
+        log_msg(INFO, "mkostemps64 %s", passpath);
         int ret = ((funcptr_mkostemps64)libc_mkostemps64)(passpath, suffixlen, flags);
         copy_last6(templ, passpath, suffixlen);
         return ret;
     }
 
+    FILE * setmntent (const char *file, const char *mode){
+        initialize_passthrough_if_necessary();
+        char passpath[PATH_MAX];
+        pass_getpath(file, passpath);
+        log_msg(INFO, "stmntent %s", passpath);
+        return ((funcptr_setmntent)libc_setmntent)(passpath, mode);
+
+    }
+
+    char * bindtextdomain (const char *domainname, const char *dirname){
+        initialize_passthrough_if_necessary();
+        char passpath[PATH_MAX];
+        pass_getpath(dirname, passpath);
+        log_msg(INFO, "bindtextdomain %s", passpath);
+        return ((funcptr_bindtextdomain)libc_bindtextdomain)(domainname, dirname);
+    }
+
+    int symlink (const char *oldname, const char *newname){
+        initialize_passthrough_if_necessary();
+        char old_passpath[PATH_MAX];
+        char new_passpath[PATH_MAX];
+        pass_getpath(oldname, old_passpath);
+        pass_getpath(newname, new_passpath);
+        log_msg(INFO, "symlink: old: %s new: %s", old_passpath, new_passpath);
+        return ((funcptr_symlink)libc_symlink)(old_passpath, new_passpath);
+    }
+
+    ssize_t readlink (const char *filename, char *buffer, size_t size){
+        initialize_passthrough_if_necessary();
+        char passpath[PATH_MAX];
+        pass_getpath(filename, passpath);
+        log_msg(INFO, "readlink %s", passpath);
+        return ((funcptr_readlink)libc_readlink)(passpath, buffer, size);
+    }
 }
+
+// Note: don't really need but keeping it here just in case
+//char* dirname(char* path){
+//    initialize_passthrough_if_necessary();
+//    char passpath[PATH_MAX];
+//    pass_getpath(path, passpath);
+//    log_msg(INFO, "dirname %s", passpath);
+//    return ((funcptr_dirname)libc_dirname)(passpath);
+//}
+
+// Note: don't really need but keeping it here just in case
+//const char* basename (const char *filename) throw() {
+//    initialize_passthrough_if_necessary();
+//    char passpath[PATH_MAX];
+//    pass_getpath(filename, passpath);
+//    log_msg(INFO, "basename %s", passpath);
+//    return ((funcptr_basename)libc_basename)(passpath);
+//}
+

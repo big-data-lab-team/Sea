@@ -20,6 +20,8 @@
 
 extern char* log_fn;
 
+typedef int (*funcptr_creat)(const char*, mode_t);
+typedef int (*funcptr_creat64)(const char*, mode_t);
 typedef int (*funcptr_open)(const char*, int, mode_t);
 typedef int (*funcptr___open)(const char*, int, mode_t);
 typedef int (*funcptr___open_2)(const char *file, int oflag);
@@ -27,6 +29,8 @@ typedef int (*funcptr_open64)(const char*, int, mode_t);
 typedef int (*funcptr___open64)(const char*, int, mode_t);
 typedef int (*funcptr_openat)(int, const char*, int);
 typedef DIR* (*funcptr_opendir)(const char*);
+typedef int (*funcptr_scandir)(const char *dir, struct dirent ***namelist, int (*selector) (const struct dirent *), int (*cmp) (const struct dirent **, const struct dirent **));
+typedef int (*funcptr_scandir64)(const char *dir, struct dirent64 ***namelist, int (*selector) (const struct dirent64 *), int (*cmp) (const struct dirent64 **, const struct dirent64 **));
 typedef int (*funcptr_close)(int);
 
 typedef ssize_t (*funcptr_read)(int, void*, size_t);
@@ -68,6 +72,8 @@ typedef int (*funcptr___lxstat64)(int, const char*, struct stat64*);
 
 typedef FILE* (*funcptr_fopen)(const char*, const char*);
 typedef FILE* (*funcptr_fopen64)(const char*, const char*);
+typedef FILE* (*funcptr_freopen)(const char*, const char*, FILE*);
+typedef FILE* (*funcptr_freopen64)(const char*, const char*, FILE*);
 typedef int (*funcptr_truncate)(const char*, off_t);
 typedef int (*funcptr_ftruncate)(int, off_t);
 
@@ -95,7 +101,17 @@ typedef int (*funcptr_mkostemp64)(char*, int);
 typedef int (*funcptr_mkstemps64)(char*, int);
 typedef int (*funcptr_mkostemps64)(char*, int, int);
 
+typedef FILE* (*funcptr_setmntent)(const char*, const char*);
 
+typedef char* (*funcptr_basename)(const char*);
+
+typedef char* (*funcptr_bindtextdomain)(const char*, const char*);
+
+typedef int (*funcptr_symlink)(const char*, const char*);
+typedef ssize_t (*funcptr_readlink)(const char*, char*, size_t);
+
+extern void* libc_creat;
+extern void* libc_creat64;
 extern void* libc_open;
 extern void* libc___open;
 extern void* libc___open_2;
@@ -103,6 +119,8 @@ extern void* libc_open64;
 extern void* libc___open64;
 extern void* libc_openat;
 extern void* libc_opendir;
+extern void* libc_scandir;
+extern void* libc_scandir64;
 extern void* libc_close;
 extern void* libc___close;
 extern void* libc_pread;
@@ -144,6 +162,8 @@ extern void* libc___lxstat64;
 
 extern void* libc_fopen;
 extern void* libc_fopen64;
+extern void* libc_freopen;
+extern void* libc_freopen64;
 extern void* libc_truncate;
 extern void* libc_ftruncate;
 
@@ -169,6 +189,15 @@ extern void* libc_mkstemps;
 extern void* libc_mkstemps64;
 extern void* libc_mkostemps;
 extern void* libc_mkostemps64;
+
+extern void* libc_setmntent;
+
+extern void* libc_basename;
+
+extern void* libc_bindtextdomain;
+
+extern void* libc_symlink;
+extern void* libc_readlink;
 
 void initialize_passthrough_if_necessary();
 void initialize_functions();
