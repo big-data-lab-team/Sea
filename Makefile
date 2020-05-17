@@ -12,4 +12,4 @@ logger.o: logger.cpp logger.h
 passthrough.so: passthrough.o functions.o logger.o config.o
 	gcc -shared passthrough.o functions.o logger.o config.o ${debug_opts} -o passthrough.so -ldl -lpthread -lstdc++ -liniparser
 clean:
-	\rm -f logger.o functions.o passthrough.o passthrough.so *.gcda *.gcov
+	\rm -f logger.o functions.o passthrough.o config.o passthrough.so *.gcda *.gcov *.gcno

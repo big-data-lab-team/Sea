@@ -24,7 +24,7 @@ int log_msg(int lvl, const char* msg, ...){
     *log_fn = '\0';
     char * sea_home = get_sea_home();
     strcat(log_fn, sea_home);
-    strcat(log_fn, "/pass.log");
+    strcat(log_fn, "/sea.log");
     if (lvl > DEBUG_LVL)
         return 0;
 
