@@ -12,4 +12,12 @@ echo "#!/bin/bash" > ${SOURCE}/bin/hello.sh
 echo "echo \"hello\"" > ${SOURCE}/bin/hello.sh
 chmod +x ${SOURCE}/bin/hello.sh
 export SEA_HOME=$PWD
+cat > ${SEA_HOME}/sea.ini << DOC
+# Sea configuration
+[Sea]
+mount_dir = ${SEA_HOME}/mount ;
+n_sources = 1 ;
+source_0 = ${SEA_HOME}/source ;
+log_level = 3 ; # 4 crashes tests
+DOC
 export LD_PRELOAD=${PWD}/passthrough.so
