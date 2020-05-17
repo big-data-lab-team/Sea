@@ -339,17 +339,17 @@ extern "C" {
 
     int remove(const char *pathname){
         initialize_passthrough_if_necessary();
-        log_msg(INFO, "remove file %s", pathname);
         char passpath[PATH_MAX];
         pass_getpath(pathname, passpath);
+        log_msg(INFO, "remove file %s", passpath);
         return ((funcptr_remove)libc_remove)(passpath);
     }
 
     int unlink(const char *pathname){
         initialize_passthrough_if_necessary();
-        log_msg(INFO, "unlink file %s", pathname);
         char passpath[PATH_MAX];
         pass_getpath(pathname, passpath);
+        log_msg(INFO, "unlink file %s", passpath);
         return ((funcptr_unlink)libc_unlink)(passpath);
     }
 
@@ -359,6 +359,14 @@ extern "C" {
         pass_getpath(pathname, passpath);
         log_msg(INFO, "unlinkat file %s", passpath);
         return ((funcptr_unlinkat)libc_unlinkat)(dirfd, passpath, flags);
+    }
+
+    int rmdir(const char *pathname){
+        initialize_passthrough_if_necessary();
+        char passpath[PATH_MAX];
+        pass_getpath(pathname, passpath);
+        log_msg(INFO, "rmdir %s", passpath);
+        return ((funcptr_rmdir)libc_rmdir)(passpath);
     }
 
     int access(const char *pathname, int mode){
