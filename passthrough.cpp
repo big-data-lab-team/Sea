@@ -7,6 +7,7 @@
 
 #include "logger.h"
 #include "passthrough.h"
+#include "config.h"
 
 #include <dlfcn.h>
 #include <pthread.h>
@@ -99,32 +100,6 @@ void* libc_mkostemps;
 void* libc_mkostemps64;
 
 static char relmount[PATH_MAX];
-static char mount_dir[PATH_MAX];
-static char source_file[PATH_MAX];
-static char source_mounts[1][PATH_MAX];
-
-
-char * get_sea_home()
-{
-    char* sea_home;
-    sea_home = getenv("SEA_HOME");
-    if(sea_home == NULL)
-    {
-      printf("SEA_HOME is not defined\n");
-      exit(1);
-    }
-    return sea_home;
-}
-
-static void init_paths()
-{
-    char* sea_home = get_sea_home();
-    strcat(relmount, sea_home);
-    strcat(relmount, "/mount");
-
-    strcat(source_file, sea_home);
-    strcat(source_file, "/sources.txt");
-}
 
 // Our "copy" of stdout, because the application might close stdout
 // or reuse the first file descriptors for other purposes.
@@ -132,31 +107,6 @@ static FILE* fdout = 0;
 
 FILE* xtreemfs_stdout() {
   return fdout;
-}
-
-// function that loads all the source mounts located in the sources file
-static void init_sources(){
-
-    log_msg(DEBUG, "initializing sources");
-    FILE* fhierarchy = ((funcptr_fopen)libc_fopen)(source_file, "r");
-    if (fhierarchy == NULL){
-        log_msg(ERROR, "error opening source mount file\n");
-        exit(1);
-    }
-
-    int i = 0;
-    while (fgets(source_mounts[i], sizeof(source_mounts[i]), fhierarchy) != NULL){
-        log_msg(DEBUG, "loading source %d", i);
-        // Strip newline character from filename string if present
-        int len = strlen(source_mounts[i]);
-        if (len > 0 && source_mounts[i][len-1] == '\n')
-            source_mounts[i][len - 1] = 0;
-        log_msg(DEBUG, "sourcename: %s", source_mounts[i]);
-        i++;
-    }
-    fclose(fhierarchy);
-
-
 }
 
 // Taken from https://stackoverflow.com/questions/11034002/how-to-get-absolute-path-of-file-or-directory-that-does-not-exist
@@ -250,8 +200,15 @@ void make_file_name_canonical(char const *file_path, char actualpath[PATH_MAX])
   strcpy(actualpath, canonical_file_path);
 }
 int pass_getpath(const char* oldpath, char passpath[PATH_MAX]){
+    
     char* match;
     char actualpath[PATH_MAX];
+
+    // Get config
+    struct config sea_config = get_sea_config();
+    char * mount_dir = sea_config.mount_dir;
+    char ** source_mounts = sea_config.source_mounts;
+
     if(oldpath[0]=='/')
     {
        strcpy(actualpath, oldpath);
@@ -282,10 +239,8 @@ int pass_getpath(const char* oldpath, char passpath[PATH_MAX]){
     return match_found;
 }
 
-static void initialize_passthrough() {
-  //xprintf("initialize_passthrough(): Setting up pass-through\n");
-  init_paths();
-
+void initialize_functions()
+{
   libc = dlopen("libc.so.6", RTLD_LAZY); // TODO: link with correct libc, version vs. 32 bit vs. 64 bit
   libc_open = dlsym(libc, "open");
   libc___open = dlsym(libc, "__open");
@@ -375,9 +330,12 @@ static void initialize_passthrough() {
   if(error)
       xprintf("dlerror: %s\n",dlerror());
 
-  init_sources();
+}
 
-  //xprintf("initialize_passthrough(): New stdout %d\n", stdout2);
+static void initialize_passthrough() {
+  initialize_functions();
+  struct config sea_config = get_sea_config();
+  char * mount_dir = sea_config.mount_dir;
   if (realpath(relmount, mount_dir) == NULL)
       log_msg(ERROR, "Was not able to obtain absolute path of mount dir");
 }

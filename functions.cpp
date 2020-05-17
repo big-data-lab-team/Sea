@@ -1,6 +1,7 @@
+#include <string.h>
 #include "functions.h"
 #include "logger.h"
-#include <string.h>
+#include "config.h"
 
 extern "C" {
 
@@ -477,6 +478,13 @@ extern "C" {
     }
 
     FILE* fopen(const char *path, const char *mode){
+        if(!strcmp(path, get_config_file()))
+        {
+            // Disable functions because config parsing requires fopen
+            initialize_functions();
+            FILE * f = ((funcptr_fopen)libc_fopen)(path, mode);
+            return f;
+        }
         initialize_passthrough_if_necessary();
         log_msg(INFO, "fopen %s %s", path, mode);
         char passpath[PATH_MAX];
