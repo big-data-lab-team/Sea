@@ -1,4 +1,6 @@
+extern "C"{
 #include <iniparser.h>
+}
 #include <linux/limits.h>
 #include <sys/stat.h>
 #include "config.h"
