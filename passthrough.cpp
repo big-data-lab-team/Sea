@@ -51,6 +51,7 @@ void* libc_renameat2;
 void* libc_remove;
 void* libc_unlink;
 void* libc_unlinkat;
+void* libc_rmdir;
 void* libc_readdir;
 void* libc_mkdir;
 void* libc_chdir;
@@ -287,6 +288,7 @@ void initialize_functions()
   libc_remove = dlsym(libc, "remove");
   libc_unlink = dlsym(libc, "unlink");
   libc_unlinkat = dlsym(libc, "unlinkat");
+  libc_unlink = dlsym(libc, "rmdir");
 
   libc_access = dlsym(libc, "access");
   libc_faccessat = dlsym(libc, "faccessat");

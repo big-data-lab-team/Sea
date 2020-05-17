@@ -51,6 +51,7 @@ typedef int (*funcptr_renameat2)(int, const char*, int, const char*, unsigned in
 typedef int (*funcptr_remove)(const char*);
 typedef int (*funcptr_unlink)(const char*);
 typedef int (*funcptr_unlinkat)(int dirfd, char const*, int flags);
+typedef int (*funcptr_rmdir)(const char*);
 
 typedef int (*funcptr_access)(const char*, int);
 typedef int (*funcptr_faccessat)(int, const char*, int, int);
@@ -138,6 +139,7 @@ extern void* libc_renameat2;
 extern void* libc_remove;
 extern void* libc_unlink;
 extern void* libc_unlinkat;
+extern void* libc_rmdir;
 extern void* libc_mkdir;
 extern void* libc_chdir;
 extern void* libc_readdir;
