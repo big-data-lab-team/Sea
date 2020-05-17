@@ -25,6 +25,8 @@
 #define MAX_MOUNTS 6
 
 void* libc;
+void* libc_creat;
+void* libc_creat64;
 void* libc_open;
 void* libc___open;
 void* libc___open_2;
@@ -32,6 +34,8 @@ void* libc_open64;
 void* libc___open64;
 void* libc_openat;
 void* libc_opendir;
+void* libc_scandir;
+void* libc_scandir64;
 void* libc_close;
 void* libc___close;
 void* libc_read;
@@ -70,6 +74,8 @@ void* libc___lxstat64;
 
 void* libc_fopen;
 void* libc_fopen64;
+void* libc_freopen;
+void* libc_freopen64;
 void* libc_truncate;
 void* libc_ftruncate;
 
@@ -98,6 +104,15 @@ void* libc_mkstemps;
 void* libc_mkstemps64;
 void* libc_mkostemps;
 void* libc_mkostemps64;
+
+void* libc_setmntent;
+
+void* libc_basename;
+
+void* libc_bindtextdomain;
+
+void* libc_symlink;
+void* libc_readlink;
 
 static char relmount[PATH_MAX];
 
@@ -242,6 +257,8 @@ int pass_getpath(const char* oldpath, char passpath[PATH_MAX]){
 void initialize_functions()
 {
   libc = dlopen("libc.so.6", RTLD_LAZY); // TODO: link with correct libc, version vs. 32 bit vs. 64 bit
+  libc_creat = dlsym(libc, "creat");
+  libc_creat64 = dlsym(libc, "creat64");
   libc_open = dlsym(libc, "open");
   libc___open = dlsym(libc, "__open");
   libc___open_2 = dlsym(libc, "__open_2");
@@ -249,6 +266,8 @@ void initialize_functions()
   libc___open64 = dlsym(libc, "__open64");
   libc_openat = dlsym(libc, "openat");
   libc_opendir = dlsym(libc, "opendir");
+  libc_scandir = dlsym(libc, "scandir");
+  libc_scandir64 = dlsym(libc, "scandir64");
   libc_close = dlsym(libc, "close");
   libc___close = dlsym(libc, "__close");
   libc_read = dlsym(libc, "read");
@@ -289,6 +308,8 @@ void initialize_functions()
 
   libc_fopen = dlsym(libc, "fopen");
   libc_fopen64 = dlsym(libc, "fopen64");
+  libc_freopen = dlsym(libc, "freopen");
+  libc_freopen64 = dlsym(libc, "freopen64");
   libc_truncate = dlsym(libc, "truncate");
   libc_ftruncate = dlsym(libc, "ftruncate");
 
@@ -318,6 +339,15 @@ void initialize_functions()
   libc_mkstemps64 = dlsym(libc, "mkstemps64");
   libc_mkostemps = dlsym(libc, "mkostemps");
   libc_mkostemps64 = dlsym(libc, "mkostemps64");
+
+  libc_setmntent = dlsym(libc, "setmntent");
+
+  libc_basename = dlsym(libc, "basename");
+
+  libc_bindtextdomain = dlsym(libc, "bindtextdomain");
+
+  libc_symlink = dlsym(libc, "symlink");
+  libc_readlink = dlsym(libc, "readlink");
 
   int stdout2 = ((funcptr_dup)libc_dup)(1);
 
