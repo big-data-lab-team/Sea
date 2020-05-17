@@ -45,10 +45,11 @@ void create_config_file(char * config_file)
             "#\n"
             "[Sea]\n"
             "mount_dir = %s/mount_dir ; # use absolute paths\n"
+            "log_file = %s/sea.log ;\n"
             "log_level = 1 ; # DEBUG=4, INFO=3, WARNING=2, ERROR=1, NONE=0 (use <= 3 tests)\n"
             "n_sources = 1 ;\n"
             "source_0 = %s/source ; # use absolute paths\n"
-            "\n", sea_home, sea_home);
+            "\n", sea_home, sea_home, sea_home);
     fclose(ini);
 }
 
@@ -57,9 +58,11 @@ void print_config()
     printf(
         "= Configuration =\n"
         " * mount_dir: %s\n"
+        " * log_file; %s\n"
         " * log_level: %d\n"
         " * n_sources: %d\n",
         sea_config.mount_dir,
+        sea_config.log_file,
         sea_config.log_level,
         sea_config.n_sources);
     for(int i = 0 ; i < sea_config.n_sources ; i++)
@@ -72,7 +75,7 @@ void parse_config()
     if(!exists)
     {
         create_config_file(config_file);
-        printf("WARNING: Couldn't find config file (%s) so created it"
+        printf("WARNING: Couldn't find config file %s so I created it"
                          " for you (you should really check it).\n", config_file);
     }
     dictionary * config_dict = iniparser_load(config_file);
@@ -100,6 +103,11 @@ void parse_config()
     if((sea_config.mount_dir = (char *) iniparser_getstring(config_dict, "sea:mount_dir", NULL))==0)
     {
         printf("Missing mount_dir in config file %s\n", config_file);
+        exit(1);
+    }
+    if((sea_config.log_file = (char *) iniparser_getstring(config_dict, "sea:log_file", NULL))==0)
+    {
+        printf("Missing log_file in config file %s\n", config_file);
         exit(1);
     }
     sea_config.log_level = iniparser_getint(config_dict, "sea:log_level", 1);

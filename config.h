@@ -7,6 +7,7 @@ typedef struct config
     int n_sources;
     char ** source_mounts;
     char * mount_dir;
+    char * log_file;
     int log_level;
 } config;
 
