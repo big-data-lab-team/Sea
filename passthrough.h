@@ -174,7 +174,6 @@ void initialize_passthrough_if_necessary();
 void initialize_functions();
 
 int pass_getpath(const char*, char[PATH_MAX]);
-char * get_sea_home();
 
 #ifdef XTREEMFS_PRELOAD_QUIET
   #define xprintf(...)

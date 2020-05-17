@@ -11,7 +11,6 @@ typedef struct config
     int log_level;
 } config;
 
-char * get_sea_home();
 char * get_config_file();
 struct config get_sea_config();
 
