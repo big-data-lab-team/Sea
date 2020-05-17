@@ -3,7 +3,7 @@
 
 typedef struct config
 {
-    bool parsed = false;
+    bool parsed;
     int n_sources;
     char ** source_mounts;
     char * mount_dir;
