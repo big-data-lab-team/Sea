@@ -18,5 +18,6 @@ mount_dir = ${MOUNT} ;
 n_sources = 1 ;
 source_0 = ${SOURCE} ;
 log_level = 3 ; # 4 crashes tests
+log_file = ${SEA_HOME}/sea.log ;
 DOC
 export LD_PRELOAD=${PWD}/passthrough.so
