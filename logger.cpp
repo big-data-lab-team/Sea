@@ -1,5 +1,6 @@
 #include "logger.h"
 #include "passthrough.h"
+#include "config.h"
 
 #include <time.h>
 #include <string.h>
@@ -20,11 +21,8 @@ const char* get_lvlname(int lvl){
 }
 
 int log_msg(int lvl, const char* msg, ...){
-    char log_fn[PATH_MAX];
-    *log_fn = '\0';
-    char * sea_home = get_sea_home();
-    strcat(log_fn, sea_home);
-    strcat(log_fn, "/sea.log");
+    config sea_config = get_sea_config();
+    char * log_fn = sea_config.log_file;
     if (lvl > DEBUG_LVL)
         return 0;
 
