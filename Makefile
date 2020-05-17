@@ -1,5 +1,5 @@
 gcc_opts=-Wall -fPIC -c
-debug_opts=-g -ggdb --coverage
+debug_opts=-g -ggdb
 all: passthrough.so
 passthrough.o: passthrough.cpp passthrough.h
 	gcc ${gcc_opts} ${debug_opts} passthrough.cpp
