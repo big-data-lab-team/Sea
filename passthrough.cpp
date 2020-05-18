@@ -72,6 +72,7 @@ void* libc___fxstat64;
 void* libc___fxstatat64;
 void* libc___lxstat;
 void* libc___lxstat64;
+void* libc_statfs;
 
 void* libc_fopen;
 void* libc_fopen64;
@@ -86,6 +87,13 @@ void* libc_fchownat;
 
 void* libc_chmod;
 void* libc_fchmodat;
+
+void* libc_removexattr;
+void* libc_lremovexattr;
+void* libc_listxattr;
+void* libc_llistxattr;
+void* libc_getxattr;
+void* libc_lgetxattr;
 
 void* libattr;
 void* libattr_setxattr;
@@ -114,6 +122,14 @@ void* libc_bindtextdomain;
 
 void* libc_symlink;
 void* libc_readlink;
+void* libc_nftw;
+void* libc_ftw;
+void* libc_name_to_handle_at;
+void* libc_chroot;
+void* libc_openat2;
+void* libc_execve;
+void* libc_execveat;
+//void* libc_fanotify_mark;
 
 static char relmount[PATH_MAX];
 
@@ -307,6 +323,7 @@ void initialize_functions()
   libc___fxstatat64 = dlsym(libc, "__fxstatat64");
   libc___lxstat = dlsym(libc, "__lxstat");
   libc___lxstat64 = dlsym(libc, "__lxstat64");
+  libc_statfs = dlsym(libc, "statfs");
 
   libc_fopen = dlsym(libc, "fopen");
   libc_fopen64 = dlsym(libc, "fopen64");
@@ -321,6 +338,13 @@ void initialize_functions()
 
   libc_chmod = dlsym(libc, "chmod");
   libc_fchmodat = dlsym(libc, "fchmodat");
+
+  libc_removexattr = dlsym(libc, "removexattr");
+  libc_lremovexattr = dlsym(libc, "lremovexattr");
+  libc_listxattr = dlsym(libc, "listxattr");
+  libc_llistxattr = dlsym(libc, "llistxattr");
+  libc_getxattr = dlsym(libc, "getxattr");
+  libc_lgetxattr = dlsym(libc, "lgetxattr");
 
   libattr = dlopen("libattr.so.1", RTLD_LAZY);
   libattr_setxattr = dlsym(libattr, "setxattr");
@@ -350,6 +374,14 @@ void initialize_functions()
 
   libc_symlink = dlsym(libc, "symlink");
   libc_readlink = dlsym(libc, "readlink");
+  libc_nftw = dlsym(libc, "nftw");
+  libc_ftw = dlsym(libc, "ftw");
+  libc_name_to_handle_at = dlsym(libc, "name_to_handle_at");
+  libc_chroot = dlsym(libc, "chroot");
+  libc_openat2 = dlsym(libc, "openat2");
+  libc_execve = dlsym(libc, "execve");
+  //libc_execveat = dlsym(libc, "execveat"); -- function not defined
+  //libc_fanotify_mark = dlsym(libc, "fanotify_mark");
 
   int stdout2 = ((funcptr_dup)libc_dup)(1);
 
