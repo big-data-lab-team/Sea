@@ -17,6 +17,7 @@
 #include <sys/stat.h>
 #include <stdarg.h>
 #include <magic.h>
+//#include <sys/fanotify.h>
 
 extern char* log_fn;
 
@@ -70,6 +71,7 @@ typedef int (*funcptr___fxstat64)(int, int, struct stat64*);
 typedef int (*funcptr___fxstatat64)(int, int, const char*, struct stat64*, int);
 typedef int (*funcptr___lxstat)(int, const char*, struct stat*);
 typedef int (*funcptr___lxstat64)(int, const char*, struct stat64*);
+typedef int (*funcptr_statfs)(const char*, struct statfs*);
 
 typedef FILE* (*funcptr_fopen)(const char*, const char*);
 typedef FILE* (*funcptr_fopen64)(const char*, const char*);
@@ -85,6 +87,12 @@ typedef int (*funcptr_fchownat)(int, const char*, uid_t, gid_t, int);
 typedef int (*funcptr_chmod)(const char*, mode_t);
 typedef int (*funcptr_fchmodat)(int, const char*, mode_t, int);
 
+typedef int (*funcptr_removexattr)(const char*, const char*);
+typedef int (*funcptr_lremovexattr)(const char*, const char*);
+typedef ssize_t (*funcptr_listxattr)(const char*, char*, size_t);
+typedef ssize_t (*funcptr_llistxattr)(const char*, char*, size_t);
+typedef ssize_t (*funcptr_getxattr)(const char*, const char*, void *, size_t);
+typedef ssize_t (*funcptr_lgetxattr)(const char*, const char*, void *, size_t);
 typedef int (*funcptr_setxattr)(const char*, const char*, const void*, size_t, int);
 typedef int (*funcptr_fsetxattr)(int, const char*, const void*, size_t, int);
 
@@ -110,6 +118,16 @@ typedef char* (*funcptr_bindtextdomain)(const char*, const char*);
 
 typedef int (*funcptr_symlink)(const char*, const char*);
 typedef ssize_t (*funcptr_readlink)(const char*, char*, size_t);
+typedef int (*funcptr_nftw)(const char*, int (*) (const char*, const struct stat*, int, struct FTW*),
+                 int, int);
+typedef int (*funcptr_ftw)(const char*, int (*) (const char *, const struct stat*, int), int);
+typedef int (*funcptr_name_to_handle_at)(int, const char*, struct file_handle*, int*, int);
+typedef int (*funcptr_chroot)(const char*);
+typedef int (*funcptr_openat2)(int, const char*, struct open_how*, size_t);
+typedef int (*funcptr_execve)(const char*, char *const[],
+                  char *const[]);
+//typedef int (*funcptr_execveat)(int, const char*, char *const[], char *const[], int);
+//typedef int (*funcptr_fanotify_mark)(int, unsigned int, uint64_t, int, const char*);
 
 extern void* libc_creat;
 extern void* libc_creat64;
@@ -161,6 +179,7 @@ extern void* libc___fxstat64;
 extern void* libc___fxstatat64;
 extern void* libc___lxstat;
 extern void* libc___lxstat64;
+extern void* libc_statfs;
 
 extern void* libc_fopen;
 extern void* libc_fopen64;
@@ -175,6 +194,13 @@ extern void* libc_fchownat;
 
 extern void* libc_chmod;
 extern void* libc_fchmodat;
+
+extern void* libc_removexattr;
+extern void* libc_lremovexattr;
+extern void* libc_listxattr;
+extern void* libc_llistxattr;
+extern void* libc_getxattr;
+extern void* libc_lgetxattr;
 
 extern void* libattr_setxattr;
 extern void* libattr_fsetxattr;
@@ -200,6 +226,14 @@ extern void* libc_bindtextdomain;
 
 extern void* libc_symlink;
 extern void* libc_readlink;
+extern void* libc_nftw;
+extern void* libc_ftw;
+extern void* libc_name_to_handle_at;
+extern void* libc_chroot;
+extern void* libc_openat2;
+extern void* libc_execve;
+//extern void* libc_execveat;
+//extern void* libc_fanotify_mark;
 
 void initialize_passthrough_if_necessary();
 void initialize_functions();

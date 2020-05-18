@@ -114,7 +114,14 @@ extern "C" {
         return ((funcptr_openat)libc_openat)(dirfd, passpath, flags);
     }
 
-
+    int openat2(int dirfd, const char *pathname,
+                   struct open_how *how, size_t size){
+        initialize_passthrough_if_necessary();
+        char passpath[PATH_MAX];
+        pass_getpath(pathname, passpath);
+        log_msg(INFO, "openat2 file %s", passpath);
+        return ((funcptr_openat2)libc_openat2)(dirfd, passpath, how, size);
+    }
 
     DIR* opendir(const char* pathname){
         initialize_passthrough_if_necessary();
@@ -227,18 +234,22 @@ extern "C" {
 #undef creat
     int creat(__const char *name, mode_t mode) {
       initialize_passthrough_if_necessary();
-      char passpath[PATH_MAX];
-      pass_getpath(name, passpath);
       log_msg(INFO, "creat %s", name);
-      return ((funcptr_creat)libc_creat)(name, mode);
+      return open(name, O_CREAT | O_WRONLY | O_TRUNC, mode);
+      //char passpath[PATH_MAX];
+      //pass_getpath(name, passpath);
+      //log_msg(INFO, "creat %s", name);
+      //return ((funcptr_creat)libc_creat)(name, mode);
     }
 
     int creat64(__const char *name, mode_t mode) {
       initialize_passthrough_if_necessary();
-      char passpath[PATH_MAX];
-      pass_getpath(name, passpath);
       log_msg(INFO, "creat64 %s", name);
-      return ((funcptr_creat64)libc_creat64)(name, mode);
+      return open(name, O_CREAT | O_WRONLY | O_TRUNC, mode);
+      //char passpath[PATH_MAX];
+      //pass_getpath(name, passpath);
+      //log_msg(INFO, "creat64 %s", name);
+      //return ((funcptr_creat64)libc_creat64)(name, mode);
     }
 
     int close(int fd){
@@ -385,14 +396,14 @@ extern "C" {
         return ((funcptr_faccessat)libc_faccessat)(dirfd, passpath, mode, flags);
     }
 
-    //int stat(const char *pathname, struct stat *statbuf){
-    //    log_msg(INFO, "stat");
-    //    initialize_passthrough_if_necessary();
-    //    char passpath[PATH_MAX];
-    //    pass_getpath(pathname, passpath);
-    //    log_msg(INFO, "stat %s", passpath);
-    //    return ((funcptr_stat)libc_stat)(passpath, statbuf);
-    //}
+    int stat(const char *pathname, struct stat *statbuf){
+        log_msg(INFO, "stat");
+        initialize_passthrough_if_necessary();
+        char passpath[PATH_MAX];
+        pass_getpath(pathname, passpath);
+        log_msg(INFO, "stat %s", passpath);
+        return ((funcptr_stat)libc_stat)(passpath, statbuf);
+    }
 
     int lstat(const char *pathname, struct stat *statbuf){
         initialize_passthrough_if_necessary();
@@ -500,6 +511,14 @@ extern "C" {
         return ((funcptr___lxstat64)libc___lxstat64)(ver, passpath, statbuf);
     }
 
+    int statfs(const char *path, struct statfs *buf){
+        initialize_passthrough_if_necessary();
+        char passpath[PATH_MAX];
+        pass_getpath(path, passpath);
+        log_msg(INFO, "statfs %s", passpath);
+        return ((funcptr_statfs)libc_statfs)(passpath, buf);
+    }
+
     FILE* fopen(const char *path, const char *mode){
         if(!strcmp(path, get_config_file()))
         {
@@ -592,6 +611,56 @@ extern "C" {
         pass_getpath(pathname, passpath);
         log_msg(INFO, "fchmodat %s", passpath);
         return ((funcptr_fchmodat)libc_fchmodat)(dirfd, passpath, mode, flags);
+    }
+
+    int removexattr(const char *path, const char *name){
+        initialize_passthrough_if_necessary();
+        char passpath[PATH_MAX];
+        pass_getpath(path, passpath);
+        log_msg(INFO, "removexattr %s", passpath);
+        return ((funcptr_removexattr)libc_removexattr)(passpath, name);
+    }
+
+    int lremovexattr(const char *path, const char *name){
+        initialize_passthrough_if_necessary();
+        char passpath[PATH_MAX];
+        pass_getpath(path, passpath);
+        log_msg(INFO, "lremovexattr %s", passpath);
+        return ((funcptr_lremovexattr)libc_lremovexattr)(passpath, name);
+    }
+
+    ssize_t listxattr(const char *path, char *list, size_t size){
+        initialize_passthrough_if_necessary();
+        char passpath[PATH_MAX];
+        pass_getpath(path, passpath);
+        log_msg(INFO, "listxattr %s", passpath);
+        return ((funcptr_listxattr)libc_listxattr)(passpath, list, size);
+    }
+
+    ssize_t llistxattr(const char *path, char *list, size_t size){
+        initialize_passthrough_if_necessary();
+        char passpath[PATH_MAX];
+        pass_getpath(path, passpath);
+        log_msg(INFO, "llistxattr %s", passpath);
+        return ((funcptr_llistxattr)libc_llistxattr)(passpath, list, size);
+    }
+
+    ssize_t getxattr(const char *path, const char *name,
+                        void *value, size_t size){
+        initialize_passthrough_if_necessary();
+        char passpath[PATH_MAX];
+        pass_getpath(path, passpath);
+        log_msg(INFO, "getxattr %s", passpath);
+        return ((funcptr_lgetxattr)libc_getxattr)(passpath, name, value, size);
+    }
+
+    ssize_t lgetxattr(const char *path, const char *name,
+                        void *value, size_t size){
+        initialize_passthrough_if_necessary();
+        char passpath[PATH_MAX];
+        pass_getpath(path, passpath);
+        log_msg(INFO, "lgetxattr %s", passpath);
+        return ((funcptr_lgetxattr)libc_lgetxattr)(passpath, name, value, size);
     }
 
     int setxattr(const char* path, const char *name, const void *value, size_t size, int flags){
@@ -755,6 +824,72 @@ extern "C" {
         log_msg(INFO, "readlink %s", passpath);
         return ((funcptr_readlink)libc_readlink)(passpath, buffer, size);
     }
+
+    int nftw(const char *dirpath,
+             int (*fn) (const char *fpath, const struct stat *sb, int typeflag, struct FTW *ftwbuf),
+             int nopenfd, int flags){
+
+        initialize_passthrough_if_necessary();
+        char passpath[PATH_MAX];
+        pass_getpath(dirpath, passpath);
+        log_msg(INFO, "nftw %s", passpath);
+        return ((funcptr_nftw)libc_nftw)(passpath, fn, nopenfd, flags);
+    }
+
+    int ftw(const char *dirpath,
+            int (*fn) (const char *fpath, const struct stat *sb, int typeflag),
+            int nopenfd){
+        initialize_passthrough_if_necessary();
+        char passpath[PATH_MAX];
+        pass_getpath(dirpath, passpath);
+        log_msg(INFO, "ftw %s", passpath);
+        return ((funcptr_ftw)libc_ftw)(passpath, fn, nopenfd);
+    }
+
+    int name_to_handle_at(int dirfd, const char *pathname, struct file_handle *handle, int *mount_id, int flags){
+        initialize_passthrough_if_necessary();
+        char passpath[PATH_MAX];
+        pass_getpath(pathname, passpath);
+        log_msg(INFO, "name_to_handle_at %s", passpath);
+        return ((funcptr_name_to_handle_at)libc_name_to_handle_at)(dirfd, passpath, handle, mount_id, flags);
+    }
+
+    int chroot(const char *path){
+        initialize_passthrough_if_necessary();
+        char passpath[PATH_MAX];
+        pass_getpath(path, passpath);
+        log_msg(INFO, "chroot %s", passpath);
+        return ((funcptr_chroot)libc_chroot)(passpath);
+    }
+
+    int execve(const char *pathname, char *const argv[], char *const envp[]){
+        initialize_passthrough_if_necessary();
+        char passpath[PATH_MAX];
+        pass_getpath(pathname, passpath);
+        log_msg(INFO, "execve %s", passpath);
+        return ((funcptr_execve)libc_execve)(passpath, argv, envp);
+    }
+
+    // removed as undefined
+    //int execveat(int dirfd, const char *pathname,
+    //                char *const argv[], char *const envp[],
+    //                int flags){
+    //    initialize_passthrough_if_necessary();
+    //    char passpath[PATH_MAX];
+    //    pass_getpath(pathname, passpath);
+    //    log_msg(INFO, "execveat %s", passpath);
+    //    return ((funcptr_execveat)libc_execveat)(dirfd, passpath, argv, envp, flags);
+    //}
+
+    //int fanotify_mark(int fanotify_fd, unsigned int flags,
+    //                     uint64_t mask, int dirfd, const char *pathname){
+    //    initialize_passthrough_if_necessary();
+    //    char passpath[PATH_MAX];
+    //    pass_getpath(pathname, passpath);
+    //    log_msg(INFO, "fanotify_mark %s", passpath);
+    //    return ((funcptr_fanotify_mark)libc_fanotify_mark)(fanotify_fd, flags, mask, dirfd, passpath);
+    //}
+
 }
 
 // Note: don't really need but keeping it here just in case
