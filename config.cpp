@@ -53,21 +53,6 @@ void create_config_file(char * config_file)
     fclose(ini);
 }
 
-void print_config()
-{
-    printf(
-        "= Configuration =\n"
-        " * mount_dir: %s\n"
-        " * log_file; %s\n"
-        " * log_level: %d\n"
-        " * n_sources: %d\n",
-        sea_config.mount_dir,
-        sea_config.log_file,
-        sea_config.log_level,
-        sea_config.n_sources);
-    for(int i = 0 ; i < sea_config.n_sources ; i++)
-        printf(" * source_%d: %s\n", i, sea_config.source_mounts[i]);
-}
 void parse_config()
 {
     char * config_file = get_config_file();
@@ -111,8 +96,6 @@ void parse_config()
         exit(1);
     }
     sea_config.log_level = iniparser_getint(config_dict, "sea:log_level", 1);
-    if(sea_config.log_level >= 4)
-        print_config();
     sea_config.parsed = true;
 }
 
