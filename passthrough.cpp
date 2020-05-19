@@ -167,7 +167,7 @@ FILE* xtreemfs_stdout() {
 ////////////////////////////////////////////////////////////////////////////////
 void make_file_name_canonical(char const *file_path, char actualpath[PATH_MAX])
 {
-  if(!strcmp(file_path, "") || file_path == NULL)
+  if(!strcmp(file_path, "") || file_path == NULL || strstr(file_path, "\n"))
   {
      return;
   }
