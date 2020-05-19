@@ -23,15 +23,13 @@ const char* get_lvlname(int lvl){
 int log_msg(int lvl, const char* msg, ...){
     config sea_config = get_sea_config();
     char * log_fn = sea_config.log_file;
-    if (lvl > DEBUG_LVL)
+    int debug_lvl = sea_config.log_level;
+    if (lvl > debug_lvl)
         return 0;
 
     //get current time
-    time_t rawtime;
-    struct tm *timeinfo;
-
-    time(&rawtime);
-    timeinfo = localtime(&rawtime);
+    time_t t;
+    time(&t);
 
     //format input string
     char fmsg[MAX_LOG];
@@ -40,25 +38,19 @@ int log_msg(int lvl, const char* msg, ...){
     vsprintf(fmsg, msg ,arglist);
     va_end( arglist );
 
-    char* currtime;
-    char* formattime = (char *)malloc(sizeof(char*) * 7);
-    if (( currtime = asctime(timeinfo)) != NULL)
-       formattime = strtok(currtime, "\n"); 
-    else
-        strcpy(formattime, "UNKNOWN");
 
     if (LOG_FOREGROUND)
-        fprintf(stderr, "%s: %s: %s\n", formattime, get_lvlname(lvl), fmsg);
+        fprintf(stderr, "%ld: %s: %s\n", t, get_lvlname(lvl), fmsg);
 
     else {
         FILE* logs = ((funcptr_fopen)libc_fopen)(log_fn, "a+");
         // write complete log string to file
         if (logs == NULL)
         {
-            xprintf("WARNING: Cannot write to log file %s: %s (%s)\n", log_fn, msg, get_lvlname(lvl));
+            xprintf("WARNING: Cannot write to log file: %s (%s)\n", msg, get_lvlname(lvl));
             return 1;
         }
-        fprintf(logs, "%s: %s: %s\n", formattime, get_lvlname(lvl), fmsg);
+            fprintf(logs, "%ld: %s: %s\n", t, get_lvlname(lvl), fmsg);
         fclose(logs);
     }
     return 0;
