@@ -361,7 +361,7 @@ extern "C" {
         char passpath[PATH_MAX];
         pass_getpath(pathname, passpath);
         log_msg(INFO, "unlink file %s", passpath);
-        return ((funcptr_unlink)libc_unlink)(passpath);
+        return ((funcptr_remove)libc_remove)(passpath);
     }
 
     int unlinkat(int dirfd, const char *pathname, int flags){
