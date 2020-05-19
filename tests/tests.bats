@@ -200,3 +200,9 @@ MOUNT="$PWD/mount"
     a=$(cut -f 2 -d " " ${MOUNT}/complex_file.txt)
     [[ "$a" == "b" ]]
 }
+
+@test "unlink" {
+    load setup
+    unlink ${MOUNT}/file_in_source.txt
+    unlink ${MOUNT}/subdir/file_in_subdir.txt
+}
