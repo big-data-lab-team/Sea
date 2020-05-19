@@ -131,8 +131,6 @@ void* libc_execve;
 void* libc_execveat;
 //void* libc_fanotify_mark;
 
-static char relmount[PATH_MAX];
-
 // Our "copy" of stdout, because the application might close stdout
 // or reuse the first file descriptors for other purposes.
 static FILE* fdout = 0;
@@ -169,6 +167,11 @@ FILE* xtreemfs_stdout() {
 ////////////////////////////////////////////////////////////////////////////////
 void make_file_name_canonical(char const *file_path, char actualpath[PATH_MAX])
 {
+  if(!strcmp(file_path, "") || file_path == NULL)
+  {
+     return;
+  }
+
   char *canonical_file_path  = NULL;
   unsigned int file_path_len = strlen(file_path);
 
@@ -253,7 +256,7 @@ int pass_getpath(const char* oldpath, char passpath[PATH_MAX]){
     strcpy(passpath, source_mounts[0]);
     int match_found = 0;
 
-    //log_msg(DEBUG, "actualpath: %s, mount_dir: %s", actualpath, mount_dir);
+    //log_msg(DEBUG, "oldpath: %s, actualpath: %s, mount_dir: %s", oldpath, actualpath, mount_dir);
     if(mount_dir[0] != '\0' && (match = strstr(actualpath, mount_dir))){
         if (match == NULL)
             log_msg(DEBUG, "match null");
@@ -304,7 +307,7 @@ void initialize_functions()
   libc_remove = dlsym(libc, "remove");
   libc_unlink = dlsym(libc, "unlink");
   libc_unlinkat = dlsym(libc, "unlinkat");
-  libc_unlink = dlsym(libc, "rmdir");
+  libc_rmdir = dlsym(libc, "rmdir");
 
   libc_access = dlsym(libc, "access");
   libc_faccessat = dlsym(libc, "faccessat");
@@ -398,10 +401,6 @@ void initialize_functions()
 
 static void initialize_passthrough() {
   initialize_functions();
-  struct config sea_config = get_sea_config();
-  char * mount_dir = sea_config.mount_dir;
-  if (realpath(relmount, mount_dir) == NULL)
-      log_msg(ERROR, "Was not able to obtain absolute path of mount dir");
 }
 
 static pthread_once_t passthrough_initialized = PTHREAD_ONCE_INIT;

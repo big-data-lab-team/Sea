@@ -1,7 +1,6 @@
 // logger settings
 
 #define MAX_LOG 200
-#define DEBUG_LVL 0
 #define LOG_FOREGROUND 0 // currently doesn't really work when set to 1
 
 
