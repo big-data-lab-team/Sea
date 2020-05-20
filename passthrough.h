@@ -133,6 +133,8 @@ typedef long int (*funcptr_pathconf)(const char*, int);
 typedef char* (*funcptr_tempnam)(const char*, const char*);
 typedef int (*funcptr_mkfifo)(const char*, mode_t);
 typedef char* (*funcptr_realpath)(const char*, char*);
+typedef char* (*funcptr_canonicalize_file_name)(const char*);
+typedef char* (*funcptr_getwd)(char*, size_t);
 //typedef int (*funcptr_mknod)(const char*, mode_t, dev_t);
 //typedef int (*funcptr_execveat)(int, const char*, char *const[], char *const[], int);
 //typedef int (*funcptr_fanotify_mark)(int, unsigned int, uint64_t, int, const char*);
@@ -246,6 +248,8 @@ extern void* libc_pathconf;
 extern void* libc_tempnam;
 extern void* libc_mkfifo;
 extern void* libc_realpath;
+extern void* libc_canonicalize_file_name;
+extern void* libc_getcwd;
 //extern void* libc_mknod;
 
 //extern void* libc_execveat;

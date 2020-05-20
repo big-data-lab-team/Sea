@@ -2,6 +2,7 @@
 #include "functions.h"
 #include "logger.h"
 #include "config.h"
+#include <stdlib.h>
 
 extern "C" {
 
@@ -924,13 +925,39 @@ extern "C" {
         return ((funcptr_mkfifo)libc_mkfifo)(passpath, mode);
     }
 
-    char *realpath(const char *path, char *resolved_path){
+    char* realpath(const char *path, char *resolved_path){
         initialize_passthrough_if_necessary();
         char passpath[PATH_MAX];
         // get masked path rather than real path
         pass_getpath(path, passpath, 1);
         log_msg(INFO, "realpath %s", passpath);
         return ((funcptr_realpath)libc_realpath)(passpath, resolved_path);
+    }
+
+    char* canonicalize_file_name (const char *name){
+        initialize_passthrough_if_necessary();
+        char passpath[PATH_MAX];
+        // get masked path rather than real path
+        pass_getpath(name, passpath, 1);
+        log_msg(INFO, "realpath %s", passpath);
+        return ((funcptr_canonicalize_file_name)libc_canonicalize_file_name)(passpath);
+    }
+
+    char* getcwd(char *buffer, size_t size){
+        initialize_passthrough_if_necessary();
+       
+        char* path;
+        char passpath[PATH_MAX];
+        path = ((funcptr_getwd)libc_getcwd)(buffer, size);
+        // get masked path rather than real path
+        pass_getpath(path, passpath, 1);
+
+        // make sure there are no trailing characters after memmove
+        if (strlen(path) > strlen(passpath))
+            path[strlen(passpath)] = '\0';
+        memmove(path, passpath, strlen(passpath));
+        log_msg(INFO, "getcwd %s", path);
+        return path;
     }
     
     //int mknod(const char *path, mode_t mode, dev_t dev){
