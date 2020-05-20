@@ -134,6 +134,8 @@ void* libc_pathconf;
 void* libc_tempnam;
 void* libc_mkfifo;
 void* libc_realpath;
+void* libc_canonicalize_file_name;
+void* libc_getcwd;
 //void* libc_mknod;
 //void* libc_execveat;
 //void* libc_fanotify_mark;
@@ -242,6 +244,9 @@ void make_file_name_canonical(char const *file_path, char actualpath[PATH_MAX])
   strcpy(actualpath, canonical_file_path);
 }
 int pass_getpath(const char* oldpath, char passpath[PATH_MAX], int masked_path){
+
+    if(oldpath == NULL)
+        return 0;
     
     char* match;
     char actualpath[PATH_MAX];
@@ -419,6 +424,8 @@ void initialize_functions()
   libc_tempnam = dlsym(libc, "tempnam");
   libc_mkfifo = dlsym(libc, "mkfifo");
   libc_realpath = dlsym(libc, "realpath");
+  libc_canonicalize_file_name = dlsym(libc, "canonicalize_file_name");
+  libc_getcwd = dlsym(libc, "getcwd");
   //libc_mknod = dlsym(libc, "mknod");
   //libc_execveat = dlsym(libc, "execveat"); -- function not defined
   //libc_fanotify_mark = dlsym(libc, "fanotify_mark");
