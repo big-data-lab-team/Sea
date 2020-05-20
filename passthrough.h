@@ -54,6 +54,9 @@ typedef int (*funcptr_unlink)(const char*);
 typedef int (*funcptr_unlinkat)(int dirfd, char const*, int flags);
 typedef int (*funcptr_rmdir)(const char*);
 
+typedef int (*funcptr_linkat)(int, const char*, int, const char*, int);
+typedef int (*funcptr_link)(const char*, const char*);
+
 typedef int (*funcptr_access)(const char*, int);
 typedef int (*funcptr_faccessat)(int, const char*, int, int);
 typedef int (*funcptr_stat)(const char*, struct stat*);
@@ -126,6 +129,11 @@ typedef int (*funcptr_chroot)(const char*);
 typedef int (*funcptr_openat2)(int, const char*, struct open_how*, size_t);
 typedef int (*funcptr_execve)(const char*, char *const[],
                   char *const[]);
+typedef long int (*funcptr_pathconf)(const char*, int);
+typedef char* (*funcptr_tempnam)(const char*, const char*);
+typedef int (*funcptr_mkfifo)(const char*, mode_t);
+typedef char* (*funcptr_realpath)(const char*, char*);
+//typedef int (*funcptr_mknod)(const char*, mode_t, dev_t);
 //typedef int (*funcptr_execveat)(int, const char*, char *const[], char *const[], int);
 //typedef int (*funcptr_fanotify_mark)(int, unsigned int, uint64_t, int, const char*);
 
@@ -154,6 +162,8 @@ extern void* libc_rename;
 extern void* libc_renameat;
 extern void* libc_renameat2;
 
+extern void* libc_link;
+extern void* libc_linkat;
 extern void* libc_remove;
 extern void* libc_unlink;
 extern void* libc_unlinkat;
@@ -232,13 +242,19 @@ extern void* libc_name_to_handle_at;
 extern void* libc_chroot;
 extern void* libc_openat2;
 extern void* libc_execve;
+extern void* libc_pathconf;
+extern void* libc_tempnam;
+extern void* libc_mkfifo;
+extern void* libc_realpath;
+//extern void* libc_mknod;
+
 //extern void* libc_execveat;
 //extern void* libc_fanotify_mark;
 
 void initialize_passthrough_if_necessary();
 void initialize_functions();
 
-int pass_getpath(const char*, char[PATH_MAX]);
+int pass_getpath(const char*, char[PATH_MAX], int);
 
 #ifdef XTREEMFS_PRELOAD_QUIET
   #define xprintf(...)

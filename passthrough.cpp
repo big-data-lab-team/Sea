@@ -48,6 +48,8 @@ void* libc_lseek;
 void* libc_rename;
 void* libc_renameat;
 void* libc_renameat2;
+void* libc_link;
+void* libc_linkat;
 void* libc_remove;
 void* libc_unlink;
 void* libc_unlinkat;
@@ -128,7 +130,12 @@ void* libc_name_to_handle_at;
 void* libc_chroot;
 void* libc_openat2;
 void* libc_execve;
-void* libc_execveat;
+void* libc_pathconf;
+void* libc_tempnam;
+void* libc_mkfifo;
+void* libc_realpath;
+//void* libc_mknod;
+//void* libc_execveat;
 //void* libc_fanotify_mark;
 
 // Our "copy" of stdout, because the application might close stdout
@@ -177,7 +184,7 @@ void make_file_name_canonical(char const *file_path, char actualpath[PATH_MAX])
 
   if (file_path_len > 0)
   {
-    canonical_file_path = realpath(file_path, NULL);
+    canonical_file_path = ((funcptr_realpath)libc_realpath)(file_path, NULL);
     if (canonical_file_path == NULL && errno == ENOENT)
     {
       // The file was not found. Back up to a segment which exists,
@@ -208,7 +215,7 @@ void make_file_name_canonical(char const *file_path, char actualpath[PATH_MAX])
           // Remove the slash character
           file_path_copy[char_idx] = '\0';
 
-          canonical_file_path = realpath(file_path_copy, NULL);
+          canonical_file_path = ((funcptr_realpath)libc_realpath)(file_path_copy, NULL);
           if (canonical_file_path != NULL)
           {
             // An existing path was found. Append the remainder of the path
@@ -234,7 +241,7 @@ void make_file_name_canonical(char const *file_path, char actualpath[PATH_MAX])
   }
   strcpy(actualpath, canonical_file_path);
 }
-int pass_getpath(const char* oldpath, char passpath[PATH_MAX]){
+int pass_getpath(const char* oldpath, char passpath[PATH_MAX], int masked_path){
     
     char* match;
     char actualpath[PATH_MAX];
@@ -252,22 +259,45 @@ int pass_getpath(const char* oldpath, char passpath[PATH_MAX]){
     {
       make_file_name_canonical(oldpath, actualpath);
     }
-    int len = strlen(mount_dir);
-    strcpy(passpath, source_mounts[0]);
+
     int match_found = 0;
 
     //log_msg(DEBUG, "oldpath: %s, actualpath: %s, mount_dir: %s", oldpath, actualpath, mount_dir);
-    if(mount_dir[0] != '\0' && (match = strstr(actualpath, mount_dir))){
-        if (match == NULL)
-            log_msg(DEBUG, "match null");
-        log_msg(DEBUG, "match");
-        *match = '\0';
-        strcat(passpath, match + len);
-        match_found = 1;
+    if (masked_path == 1){
+
+        int len = strlen(source_mounts[0]);
+        strcpy(passpath, mount_dir);
+
+        if(source_mounts[0][0] != '\0' && (match = strstr(actualpath, source_mounts[0]))){
+            if (match == NULL)
+                log_msg(DEBUG, "match null");
+            log_msg(DEBUG, "match");
+            *match = '\0';
+            strcat(passpath, match + len);
+            match_found = 1;
+        }
+        else{
+            log_msg(DEBUG, "no match");
+            strcpy(passpath, oldpath);
+        }
     }
-    else{
-        log_msg(DEBUG, "no match");
-        strcpy(passpath, oldpath);
+    else {
+
+        int len = strlen(mount_dir);
+        strcpy(passpath, source_mounts[0]);
+
+        if(mount_dir[0] != '\0' && (match = strstr(actualpath, mount_dir))){
+            if (match == NULL)
+                log_msg(DEBUG, "match null");
+            log_msg(DEBUG, "match");
+            *match = '\0';
+            strcat(passpath, match + len);
+            match_found = 1;
+        }
+        else{
+            log_msg(DEBUG, "no match");
+            strcpy(passpath, oldpath);
+        }
     }
 
     log_msg(INFO, "old fn %s ---> new fn %s", oldpath, passpath);
@@ -308,6 +338,8 @@ void initialize_functions()
   libc_unlink = dlsym(libc, "unlink");
   libc_unlinkat = dlsym(libc, "unlinkat");
   libc_rmdir = dlsym(libc, "rmdir");
+  libc_link = dlsym(libc, "link");
+  libc_linkat = dlsym(libc, "linkat");
 
   libc_access = dlsym(libc, "access");
   libc_faccessat = dlsym(libc, "faccessat");
@@ -383,6 +415,11 @@ void initialize_functions()
   libc_chroot = dlsym(libc, "chroot");
   libc_openat2 = dlsym(libc, "openat2");
   libc_execve = dlsym(libc, "execve");
+  libc_pathconf = dlsym(libc, "pathconf");
+  libc_tempnam = dlsym(libc, "tempnam");
+  libc_mkfifo = dlsym(libc, "mkfifo");
+  libc_realpath = dlsym(libc, "realpath");
+  //libc_mknod = dlsym(libc, "mknod");
   //libc_execveat = dlsym(libc, "execveat"); -- function not defined
   //libc_fanotify_mark = dlsym(libc, "fanotify_mark");
 
