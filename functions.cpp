@@ -7,10 +7,16 @@
 extern "C" {
 
     int open(__const char* pathname, int flags, ...){
-        initialize_passthrough_if_necessary();
-        log_msg(INFO, "opening file %s", pathname);
         char passpath[PATH_MAX];
-        pass_getpath(pathname, passpath, 0);
+
+        if (get_sea_config().parsed == true) {
+            initialize_sea_if_necessary();
+            sea_getpath(pathname, passpath, 0);
+        }
+        else {
+            initialize_sea_if_necessary();
+            pass_getpath(pathname, passpath, 0);
+        }
 
         mode_t mode;
         if (flags & O_CREAT) {
@@ -20,14 +26,21 @@ extern "C" {
             va_end(ap);
         }
 
+        log_msg(INFO, "opening file %s", pathname);
         return ((funcptr_open)libc_open)(passpath, flags, mode);
     }
 
     int __open(__const char* pathname, int flags, ...){
-        initialize_passthrough_if_necessary();
-        log_msg(INFO, "opening file %s", pathname);
         char passpath[PATH_MAX];
-        pass_getpath(pathname, passpath, 0);
+
+        if (get_sea_config().parsed == true) {
+            initialize_sea_if_necessary();
+            sea_getpath(pathname, passpath, 0);
+        }
+        else {
+            initialize_passthrough_if_necessary();
+            pass_getpath(pathname, passpath, 0);
+        }
 
         mode_t mode;
         if (flags & O_CREAT) {
@@ -37,23 +50,38 @@ extern "C" {
             va_end(ap);
         }
 
+        log_msg(INFO, "opening file %s", pathname);
         return ((funcptr___open)libc___open)(passpath, flags, mode);
     }
 
     int __open_2 (const char *file, int oflag){
-        initialize_passthrough_if_necessary();
-        log_msg(INFO, "opening file %s", file);
         char passpath[PATH_MAX];
-        pass_getpath(file, passpath, 0);
+
+        if (get_sea_config().parsed == true) {
+            initialize_passthrough_if_necessary();
+            sea_getpath(file, passpath, 0);
+        }
+        else {
+            initialize_passthrough_if_necessary();
+            pass_getpath(file, passpath, 0);
+        }
+
+        log_msg(INFO, "opening file %s", file);
         return ((funcptr___open_2)libc___open_2)(passpath, oflag);
 
     }
 
     int open64(const char* pathname, int flags, ...){
-        initialize_passthrough_if_necessary();
-        log_msg(INFO, "open64 %s", pathname);
         char passpath[PATH_MAX];
-        pass_getpath(pathname, passpath, 0);
+
+        if (get_sea_config().parsed == true) {
+            initialize_sea_if_necessary();
+            sea_getpath(pathname, passpath, 0);
+        }
+        else {
+            initialize_passthrough_if_necessary();
+            pass_getpath(pathname, passpath, 0);
+        }
 
         mode_t mode;
         if (flags & O_CREAT) {
@@ -63,14 +91,21 @@ extern "C" {
             va_end(ap);
         }
 
+        log_msg(INFO, "open64 %s", pathname);
         return ((funcptr_open64)libc_open64)(passpath, flags, mode);
     }
 
     int __open64(__const char* pathname, int flags, ...){
-        initialize_passthrough_if_necessary();
-        log_msg(INFO, "open64 %s", pathname);
         char passpath[PATH_MAX];
-        pass_getpath(pathname, passpath, 0);
+
+        if (get_sea_config().parsed == true) {
+            initialize_sea_if_necessary();
+            sea_getpath(pathname, passpath, 0);
+        }
+        else {
+            initialize_passthrough_if_necessary();
+            pass_getpath(pathname, passpath, 0);
+        }
 
         mode_t mode;
         if (flags & O_CREAT) {
@@ -80,54 +115,103 @@ extern "C" {
             va_end(ap);
         }
 
+        log_msg(INFO, "open64 %s", pathname);
         return ((funcptr___open64)libc___open64)(passpath, flags, mode);
     }
 
     int openat(int dirfd, const char* pathname, int flags, ...){
-        initialize_passthrough_if_necessary();
         char passpath[PATH_MAX];
-        pass_getpath(pathname, passpath, 0);
+
+        if (get_sea_config().parsed == true) {
+            initialize_sea_if_necessary();
+            sea_getpath(pathname, passpath, 0);
+        }
+        else {
+            initialize_passthrough_if_necessary();
+            pass_getpath(pathname, passpath, 0);
+        }
+
         log_msg(INFO, "openat file %s", passpath);
         return ((funcptr_openat)libc_openat)(dirfd, passpath, flags);
     }
 
     int openat64(int dirfd, const char* pathname, int flags, ...){
-        initialize_passthrough_if_necessary();
         char passpath[PATH_MAX];
-        pass_getpath(pathname, passpath, 0);
+
+        if (get_sea_config().parsed == true) {
+            initialize_sea_if_necessary();
+            sea_getpath(pathname, passpath, 0);
+        }
+        else {
+            initialize_passthrough_if_necessary();
+            pass_getpath(pathname, passpath, 0);
+        }
+
         log_msg(INFO, "openat64 file %s", passpath);
         return ((funcptr_openat)libc_openat)(dirfd, passpath, flags);
     }
 
     int __openat64_2(int dirfd, const char* pathname, int flags){
-        initialize_passthrough_if_necessary();
         char passpath[PATH_MAX];
-        pass_getpath(pathname, passpath, 0);
+
+        if (get_sea_config().parsed == true) {
+            initialize_sea_if_necessary();
+            sea_getpath(pathname, passpath, 0);
+        }
+        else {
+            initialize_passthrough_if_necessary();
+            pass_getpath(pathname, passpath, 0);
+        }
+
         log_msg(INFO, "openat64_2 file %s", passpath);
         return ((funcptr_openat)libc_openat)(dirfd, passpath, flags);
     }
 
     extern int __openat_2(int dirfd, const char* pathname, int flags){
-        initialize_passthrough_if_necessary();
         char passpath[PATH_MAX];
-        pass_getpath(pathname, passpath, 0);
+
+        if (get_sea_config().parsed == true) {
+            initialize_passthrough_if_necessary();
+            sea_getpath(pathname, passpath, 0);
+        }
+        else {
+            initialize_passthrough_if_necessary();
+            pass_getpath(pathname, passpath, 0);
+        }
+
         log_msg(INFO, "openat_2 file %s", passpath);
         return ((funcptr_openat)libc_openat)(dirfd, passpath, flags);
     }
 
     int openat2(int dirfd, const char *pathname,
                    struct open_how *how, size_t size){
-        initialize_passthrough_if_necessary();
         char passpath[PATH_MAX];
-        pass_getpath(pathname, passpath, 0);
+
+        if (get_sea_config().parsed == true) {
+            initialize_sea_if_necessary();
+            sea_getpath(pathname, passpath, 0);
+        }
+        else {
+            initialize_passthrough_if_necessary();
+            pass_getpath(pathname, passpath, 0);
+        }
+
         log_msg(INFO, "openat2 file %s", passpath);
         return ((funcptr_openat2)libc_openat2)(dirfd, passpath, how, size);
     }
 
     DIR* opendir(const char* pathname){
-        initialize_passthrough_if_necessary();
         char passpath[PATH_MAX];
-        pass_getpath(pathname, passpath, 0);
+
+        if (get_sea_config().parsed == true) {
+            initialize_sea_if_necessary();
+            sea_getpath(pathname, passpath, 0);
+        }
+        else {
+            initialize_passthrough_if_necessary();
+            pass_getpath(pathname, passpath, 0);
+        }
+
         log_msg(INFO, "opening directory %s", passpath);
         return ((funcptr_opendir)libc_opendir)(passpath);
     }
@@ -183,9 +267,17 @@ extern "C" {
     int scandir(const char *dirp, struct dirent ***namelist,
                   int (*filter)(const struct dirent *),
                   int (*compar)(const struct dirent **, const struct dirent **)){
-        initialize_passthrough_if_necessary();
         char passpath[PATH_MAX];
-        pass_getpath(dirp, passpath, 0);
+
+        if (get_sea_config().parsed == true) {
+            initialize_sea_if_necessary();
+            sea_getpath(dirp, passpath, 0);
+        }
+        else {
+            initialize_passthrough_if_necessary();
+            pass_getpath(dirp, passpath, 0);
+        }
+
         log_msg(INFO, "scandir %s", passpath);
         return ((funcptr_scandir)libc_scandir)(passpath, namelist, filter, compar);
     }
@@ -193,9 +285,17 @@ extern "C" {
     int scandir64(const char *dirp, struct dirent64 ***namelist,
                   int (*select)(const struct dirent64 *),
                   int (*cmp)(const struct dirent64 **, const struct dirent64 **)){
-        initialize_passthrough_if_necessary();
         char passpath[PATH_MAX];
-        pass_getpath(dirp, passpath, 0);
+
+        if (get_sea_config().parsed == true) {
+            initialize_sea_if_necessary();
+            sea_getpath(dirp, passpath, 0);
+        }
+        else {
+            initialize_passthrough_if_necessary();
+            pass_getpath(dirp, passpath, 0);
+        }
+
         log_msg(INFO, "scandir64 %s", passpath);
         return ((funcptr_scandir64)libc_scandir64)(passpath, namelist, select, cmp);
     }
@@ -304,141 +404,275 @@ extern "C" {
     }
 
     int mkdir(const char *pathname, mode_t mode){
-        initialize_passthrough_if_necessary();
         char passpath[PATH_MAX];
-        pass_getpath(pathname, passpath, 0);
+
+        if (get_sea_config().parsed == true) {
+            initialize_sea_if_necessary();
+            sea_getpath(pathname, passpath, 0);
+        }
+        else {
+            initialize_passthrough_if_necessary();
+            pass_getpath(pathname, passpath, 0);
+        }
+
         log_msg(INFO, "mkdir path %s", passpath);
         return ((funcptr_mkdir)libc_mkdir)(passpath, mode);
     }
 
     int chdir(const char *pathname){
-        initialize_passthrough_if_necessary();
         char passpath[PATH_MAX];
-        pass_getpath(pathname, passpath, 0);
+
+        if (get_sea_config().parsed == true) {
+            initialize_sea_if_necessary();
+            sea_getpath(pathname, passpath, 0);
+        }
+        else {
+            initialize_passthrough_if_necessary();
+            pass_getpath(pathname, passpath, 0);
+        }
+
         log_msg(INFO, "chdir path %s", passpath);
         return ((funcptr_chdir)libc_chdir)(passpath);
     }
 
     int rename(const char *oldpath, const char *newpath){
-        initialize_passthrough_if_necessary();
         char oldpasspath[PATH_MAX];
         char newpasspath[PATH_MAX];
-        pass_getpath(oldpath, oldpasspath, 0);
-        pass_getpath(newpath, newpasspath, 0);
+
+        if (get_sea_config().parsed == true) {
+            initialize_sea_if_necessary();
+            sea_getpath(oldpath, oldpasspath, 0);
+            sea_getpath(newpath, newpasspath, 0);
+        }
+        else {
+            initialize_passthrough_if_necessary();
+            pass_getpath(oldpath, oldpasspath, 0);
+            pass_getpath(newpath, newpasspath, 0);
+        }
+
         log_msg(INFO, "rename file %s to %s", oldpasspath, newpasspath);
         return ((funcptr_rename)libc_rename)(oldpasspath, newpasspath);
     }
 
     int renameat(int olddirfd, const char *oldpath, int newdirfd, const char *newpath){
-        initialize_passthrough_if_necessary();
         char oldpasspath[PATH_MAX];
         char newpasspath[PATH_MAX];
-        pass_getpath(oldpath, oldpasspath, 0);
-        pass_getpath(newpath, newpasspath, 0);
+
+        if (get_sea_config().parsed == true) {
+            initialize_sea_if_necessary();
+            sea_getpath(oldpath, oldpasspath, 0);
+            sea_getpath(newpath, newpasspath, 0);
+        }
+        else {
+            initialize_passthrough_if_necessary();
+            pass_getpath(oldpath, oldpasspath, 0);
+            pass_getpath(newpath, newpasspath, 0);
+        }
+
         log_msg(INFO, "renameat file %s to %s", oldpasspath, newpasspath);
         return ((funcptr_renameat)libc_renameat)(olddirfd, oldpasspath, newdirfd, newpasspath);
     }
 
     int renameat2(int olddirfd, const char *oldpath, int newdirfd, const char *newpath, unsigned int flags){
-        initialize_passthrough_if_necessary();
         char oldpasspath[PATH_MAX];
         char newpasspath[PATH_MAX];
-        pass_getpath(oldpath, oldpasspath, 0);
-        pass_getpath(newpath, newpasspath, 0);
+
+        if (get_sea_config().parsed == true) {
+            initialize_sea_if_necessary();
+            sea_getpath(oldpath, oldpasspath, 0);
+            sea_getpath(newpath, newpasspath, 0);
+        }
+        else {
+            initialize_passthrough_if_necessary();
+            pass_getpath(oldpath, oldpasspath, 0);
+            pass_getpath(newpath, newpasspath, 0);
+        }
+
         log_msg(INFO, "renameat2 file %s to %s", oldpasspath, newpasspath);
         return ((funcptr_renameat2)libc_renameat2)(olddirfd, oldpasspath, newdirfd, newpasspath, flags);
     }
 
     int remove(const char *pathname){
-        initialize_passthrough_if_necessary();
         char passpath[PATH_MAX];
-        pass_getpath(pathname, passpath, 0);
+
+        if (get_sea_config().parsed == true) {
+            initialize_sea_if_necessary();
+            sea_getpath(pathname, passpath, 0);
+        }
+        else {
+            initialize_passthrough_if_necessary();
+            pass_getpath(pathname, passpath, 0);
+        }
+
         log_msg(INFO, "remove file %s", passpath);
         return ((funcptr_remove)libc_remove)(passpath);
     }
 
     int link (const char *oldname, const char *newname){
-        initialize_passthrough_if_necessary();
         char old_passpath[PATH_MAX];
         char new_passpath[PATH_MAX];
-        pass_getpath(oldname, old_passpath, 0);
-        pass_getpath(newname, new_passpath, 0);
+
+        if (get_sea_config().parsed == true) {
+            initialize_sea_if_necessary();
+            sea_getpath(oldname, old_passpath, 0);
+            sea_getpath(newname, new_passpath, 0);
+        }
+        else {
+            initialize_passthrough_if_necessary();
+            pass_getpath(oldname, old_passpath, 0);
+            pass_getpath(newname, new_passpath, 0);
+
+        }
+
         log_msg(INFO, "link file %s %s", old_passpath, new_passpath);
         return ((funcptr_link)libc_link)(old_passpath, new_passpath);
     }
 
     int linkat (int oldfd, const char *oldname, int newfd, const char *newname, int flags){
-        initialize_passthrough_if_necessary();
         char old_passpath[PATH_MAX];
         char new_passpath[PATH_MAX];
-        pass_getpath(oldname, old_passpath, 0);
-        pass_getpath(newname, new_passpath, 0);
+
+        if (get_sea_config().parsed == true) {
+            initialize_sea_if_necessary();
+            sea_getpath(oldname, old_passpath, 0);
+            sea_getpath(newname, new_passpath, 0);
+        }
+        else {
+            initialize_passthrough_if_necessary();
+            pass_getpath(oldname, old_passpath, 0);
+            pass_getpath(newname, new_passpath, 0);
+
+        }
+
         log_msg(INFO, "linkat file %s %s", old_passpath, new_passpath);
         return ((funcptr_linkat)libc_linkat)(oldfd, old_passpath, newfd, new_passpath, flags);
 
     }
 
     int unlink(const char *pathname){
-        initialize_passthrough_if_necessary();
         char passpath[PATH_MAX];
-        pass_getpath(pathname, passpath, 0);
+
+        if (get_sea_config().parsed == true) {
+            initialize_sea_if_necessary();
+            sea_getpath(pathname, passpath, 0);
+        }
+        else {
+            initialize_passthrough_if_necessary();
+            pass_getpath(pathname, passpath, 0);
+        }
+
         log_msg(INFO, "unlink file %s", passpath);
         return ((funcptr_unlink)libc_unlink)(passpath);
     }
 
     int unlinkat(int dirfd, const char *pathname, int flags){
-        initialize_passthrough_if_necessary();
         char passpath[PATH_MAX];
-        pass_getpath(pathname, passpath, 0);
+
+        if (get_sea_config().parsed == true) {
+            initialize_sea_if_necessary();
+            sea_getpath(pathname, passpath, 0);
+        }
+        else {
+            initialize_passthrough_if_necessary();
+            pass_getpath(pathname, passpath, 0);
+        }
+
         log_msg(INFO, "unlinkat file %s", passpath);
         return ((funcptr_unlinkat)libc_unlinkat)(dirfd, passpath, flags);
     }
 
     int rmdir(const char *pathname){
-        initialize_passthrough_if_necessary();
         char passpath[PATH_MAX];
-        pass_getpath(pathname, passpath, 0);
+
+        if (get_sea_config().parsed == true) {
+            initialize_sea_if_necessary();
+            sea_getpath(pathname, passpath, 0);
+        }
+        else {
+            initialize_passthrough_if_necessary();
+            pass_getpath(pathname, passpath, 0);
+        }
+
         log_msg(INFO, "rmdir %s", passpath);
         return ((funcptr_rmdir)libc_rmdir)(passpath);
     }
 
     int access(const char *pathname, int mode){
-        initialize_passthrough_if_necessary();
-        log_msg(INFO, "access path %s", pathname);
         char passpath[PATH_MAX];
-        pass_getpath(pathname, passpath, 0);
+
+        if (get_sea_config().parsed == true) {
+            initialize_sea_if_necessary();
+            sea_getpath(pathname, passpath, 0);
+        }
+        else {
+            initialize_passthrough_if_necessary();
+            pass_getpath(pathname, passpath, 0);
+        }
+
+        log_msg(INFO, "access path %s", pathname);
         return ((funcptr_access)libc_access)(passpath, mode);
     }
 
     int faccessat(int dirfd, const char *pathname, int mode, int flags){
-        initialize_passthrough_if_necessary();
         char passpath[PATH_MAX];
-        pass_getpath(pathname, passpath, 0);
+
+        if (get_sea_config().parsed == true) {
+            initialize_sea_if_necessary();
+            sea_getpath(pathname, passpath, 0);
+        }
+        else {
+            initialize_passthrough_if_necessary();
+            pass_getpath(pathname, passpath, 0);
+        }
+
         log_msg(INFO, "faccessat path %s", passpath);
         return ((funcptr_faccessat)libc_faccessat)(dirfd, passpath, mode, flags);
     }
 
     int stat(const char *pathname, struct stat *statbuf){
-        log_msg(INFO, "stat");
-        initialize_passthrough_if_necessary();
         char passpath[PATH_MAX];
-        pass_getpath(pathname, passpath, 0);
+
+        if (get_sea_config().parsed == true) {
+            initialize_sea_if_necessary();
+            sea_getpath(pathname, passpath, 0);
+        }
+        else {
+            initialize_passthrough_if_necessary();
+            pass_getpath(pathname, passpath, 0);
+        }
+
         log_msg(INFO, "stat %s", passpath);
         return ((funcptr_stat)libc_stat)(passpath, statbuf);
     }
 
     int lstat(const char *pathname, struct stat *statbuf){
-        initialize_passthrough_if_necessary();
         char passpath[PATH_MAX];
-        pass_getpath(pathname, passpath, 0);
+
+        if (get_sea_config().parsed == true) {
+            initialize_sea_if_necessary();
+            sea_getpath(pathname, passpath, 0);
+        }
+        else {
+            initialize_passthrough_if_necessary();
+            pass_getpath(pathname, passpath, 0);
+        }
+
         log_msg(INFO, "lstat %s", passpath);
         return ((funcptr_lstat)libc_lstat)(passpath, statbuf);
     }
 
     int lstat64(const char *pathname, struct stat64 *statbuf){
-        initialize_passthrough_if_necessary();
         char passpath[PATH_MAX];
-        pass_getpath(pathname, passpath, 0);
+
+        if (get_sea_config().parsed == true) {
+            initialize_sea_if_necessary();
+            sea_getpath(pathname, passpath, 0);
+        }
+        else {
+            initialize_passthrough_if_necessary();
+            pass_getpath(pathname, passpath, 0);
+        }
+
         log_msg(INFO, "lstat64 %s", passpath);
         return ((funcptr_lstat64)libc_lstat64)(passpath, statbuf);
     }
@@ -450,41 +684,81 @@ extern "C" {
     }
 
     int fstatat(int dirfd, char const *path, struct stat *statbuf, int flags){
-        initialize_passthrough_if_necessary();
         char passpath[PATH_MAX];
-        pass_getpath(path, passpath, 0);
+
+        if (get_sea_config().parsed == true) {
+            initialize_sea_if_necessary();
+            sea_getpath(path, passpath, 0);
+        }
+        else {
+            initialize_passthrough_if_necessary();
+            pass_getpath(path, passpath, 0);
+        }
+
         log_msg(INFO, "fstatat %s", passpath);
         return ((funcptr_fstatat)libc_fstatat)(dirfd, passpath, statbuf, flags);
     }
 
     int statvfs(const char *path, struct statvfs *buf){
-        initialize_passthrough_if_necessary();
         log_msg(INFO, "statvfs %s", path);
         char passpath[PATH_MAX];
-        pass_getpath(path, passpath, 0);
+
+        if (get_sea_config().parsed == true) {
+            initialize_sea_if_necessary();
+            sea_getpath(path, passpath, 0);
+        }
+        else {
+            initialize_passthrough_if_necessary();
+            pass_getpath(path, passpath, 0);
+        }
+
         return ((funcptr_statvfs)libc_statvfs)(passpath, buf);
     }
 
     int __xstat(int ver, const char *path, struct stat *statbuf){
-        initialize_passthrough_if_necessary();
         char passpath[PATH_MAX];
-        pass_getpath(path, passpath, 0);
+
+        if (get_sea_config().parsed == true) {
+            initialize_sea_if_necessary();
+            sea_getpath(path, passpath, 0);
+        }
+        else {
+            initialize_passthrough_if_necessary();
+            pass_getpath(path, passpath, 0);
+        }
+
         log_msg(INFO, "xstat %s", passpath);
         return ((funcptr___xstat)libc___xstat)(ver, passpath, statbuf);
     }
 
     int _xstat(int ver, const char *path, struct stat *statbuf){
-        initialize_passthrough_if_necessary();
         char passpath[PATH_MAX];
-        pass_getpath(path, passpath, 0);
+
+        if (get_sea_config().parsed == true) {
+            initialize_sea_if_necessary();
+            sea_getpath(path, passpath, 0);
+        }
+        else {
+            initialize_passthrough_if_necessary();
+            pass_getpath(path, passpath, 0);
+        }
+
         log_msg(INFO, "xstat %s", passpath);
         return ((funcptr__xstat)libc__xstat)(ver, passpath, statbuf);
     }
 
     int __xstat64(int ver, const char *path, struct stat64 *statbuf){
-        initialize_passthrough_if_necessary();
         char passpath[PATH_MAX];
-        pass_getpath(path, passpath, 0);
+
+        if (get_sea_config().parsed == true) {
+            initialize_sea_if_necessary();
+            sea_getpath(path, passpath, 0);
+        }
+        else {
+            initialize_passthrough_if_necessary();
+            pass_getpath(path, passpath, 0);
+        }
+
         log_msg(INFO, "xstat64 %s", passpath);
         return ((funcptr___xstat64)libc___xstat64)(ver, passpath, statbuf);
     }
@@ -496,9 +770,17 @@ extern "C" {
     }
 
     int __fxstatat(int ver, int fd, const char *path, struct stat *statbuf, int flag){
-        initialize_passthrough_if_necessary();
         char passpath[PATH_MAX];
-        pass_getpath(path, passpath, 0);
+
+        if (get_sea_config().parsed == true) {
+            initialize_sea_if_necessary();
+            sea_getpath(path, passpath, 0);
+        }
+        else {
+            initialize_passthrough_if_necessary();
+            pass_getpath(path, passpath, 0);
+        }
+
         log_msg(INFO, "fxstatat %s", passpath);
         return ((funcptr___fxstatat)libc___fxstatat)(ver, fd, passpath, statbuf, flag);
     }
@@ -510,33 +792,65 @@ extern "C" {
     }
 
     int __fxstatat64(int ver, int fd, const char *path, struct stat64 *statbuf, int flag){
-        initialize_passthrough_if_necessary();
         char passpath[PATH_MAX];
-        pass_getpath(path, passpath, 0);
+
+        if (get_sea_config().parsed == true) {
+            initialize_sea_if_necessary();
+            sea_getpath(path, passpath, 0);
+        }
+        else {
+            initialize_passthrough_if_necessary();
+            pass_getpath(path, passpath, 0);
+        }
+
         log_msg(INFO, "fxstatat64 %s", passpath);
         return ((funcptr___fxstatat64)libc___fxstatat64)(ver, fd, passpath, statbuf, flag);
     }
 
     int __lxstat(int ver, const char *path, struct stat *statbuf){
-        initialize_passthrough_if_necessary();
         char passpath[PATH_MAX];
-        pass_getpath(path, passpath, 0);
+
+        if (get_sea_config().parsed == true) {
+            initialize_sea_if_necessary();
+            sea_getpath(path, passpath, 0);
+        }
+        else {
+            initialize_passthrough_if_necessary();
+            pass_getpath(path, passpath, 0);
+        }
+
         log_msg(INFO, "lxstat %s", passpath);
         return ((funcptr___lxstat)libc___lxstat)(ver, passpath, statbuf);
     }
 
     int __lxstat64(int ver, const char *path, struct stat64 *statbuf){
-        initialize_passthrough_if_necessary();
-        log_msg(INFO, "lxstat64 %s", path);
         char passpath[PATH_MAX];
-        pass_getpath(path, passpath, 0);
+
+        if (get_sea_config().parsed == true) {
+            initialize_passthrough_if_necessary();
+            sea_getpath(path, passpath, 0);
+        }
+        else {
+            initialize_passthrough_if_necessary();
+            pass_getpath(path, passpath, 0);
+        }
+
+        log_msg(INFO, "lxstat64 %s", path);
         return ((funcptr___lxstat64)libc___lxstat64)(ver, passpath, statbuf);
     }
 
     int statfs(const char *path, struct statfs *buf){
-        initialize_passthrough_if_necessary();
         char passpath[PATH_MAX];
-        pass_getpath(path, passpath, 0);
+
+        if (get_sea_config().parsed == true) {
+            initialize_sea_if_necessary();
+            sea_getpath(path, passpath, 0);
+        }
+        else {
+            initialize_passthrough_if_necessary();
+            pass_getpath(path, passpath, 0);
+        }
+
         log_msg(INFO, "statfs %s", passpath);
         return ((funcptr_statfs)libc_statfs)(passpath, buf);
     }
@@ -549,42 +863,82 @@ extern "C" {
             FILE * f = ((funcptr_fopen)libc_fopen)(path, mode);
             return f;
         }
-        initialize_passthrough_if_necessary();
-        log_msg(INFO, "fopen %s %s", path, mode);
         char passpath[PATH_MAX];
-        pass_getpath(path, passpath, 0);
+
+        if (get_sea_config().parsed == true) {
+            initialize_sea_if_necessary();
+            sea_getpath(path, passpath, 0);
+        }
+        else {
+            initialize_passthrough_if_necessary();
+            pass_getpath(path, passpath, 0);
+        }
+
+        log_msg(INFO, "fopen %s %s", path, mode);
         return ((funcptr_fopen)libc_fopen)(passpath, mode);
     }
 
     FILE* fopen64(const char *path, const char *mode){
-        initialize_passthrough_if_necessary();
         char passpath[PATH_MAX];
-        pass_getpath(path, passpath, 0);
+
+        if (get_sea_config().parsed == true) {
+            initialize_sea_if_necessary();
+            sea_getpath(path, passpath, 0);
+        }
+        else {
+            initialize_passthrough_if_necessary();
+            pass_getpath(path, passpath, 0);
+        }
+
         log_msg(INFO, "fopen %s %s", passpath, mode);
         return ((funcptr_fopen64)libc_fopen64)(passpath, mode);
     }
 
     FILE* freopen(const char *path, const char *mode, FILE *stream){
-        initialize_passthrough_if_necessary();
         char passpath[PATH_MAX];
-        pass_getpath(path, passpath, 0);
+
+        if (get_sea_config().parsed == true) {
+            initialize_sea_if_necessary();
+            sea_getpath(path, passpath, 0);
+        }
+        else {
+            initialize_passthrough_if_necessary();
+            pass_getpath(path, passpath, 0);
+        }
+
         log_msg(INFO, "freopen %s %s", passpath, mode);
         return ((funcptr_freopen)libc_freopen)(passpath, mode, stream);
     }
 
     FILE* freopen64(const char *path, const char *mode, FILE *stream){
-        initialize_passthrough_if_necessary();
         char passpath[PATH_MAX];
-        pass_getpath(path, passpath, 0);
+
+        if (get_sea_config().parsed == true) {
+            initialize_sea_if_necessary();
+            sea_getpath(path, passpath, 0);
+        }
+        else {
+            initialize_passthrough_if_necessary();
+            pass_getpath(path, passpath, 0);
+        }
+
         log_msg(INFO, "freopen64 %s %s", passpath, mode);
         return ((funcptr_freopen64)libc_freopen64)(passpath, mode, stream);
     }
 
 
     int truncate(const char *path, off_t offset){
-        initialize_passthrough_if_necessary();
         char passpath[PATH_MAX];
-        pass_getpath(path, passpath, 0);
+
+        if (get_sea_config().parsed == true) {
+            initialize_sea_if_necessary();
+            sea_getpath(path, passpath, 0);
+        }
+        else {
+            initialize_passthrough_if_necessary();
+            pass_getpath(path, passpath, 0);
+        }
+
         log_msg(INFO, "truncate %s", passpath);
         return ((funcptr_truncate)libc_truncate)(passpath, offset);
     }
@@ -604,100 +958,196 @@ extern "C" {
     }
 
     int chown(const char *pathname, uid_t owner, gid_t group){
-        initialize_passthrough_if_necessary();
         char passpath[PATH_MAX];
-        pass_getpath(pathname, passpath, 0);
+
+        if (get_sea_config().parsed == true) {
+            initialize_sea_if_necessary();
+            sea_getpath(pathname, passpath, 0);
+        }
+        else {
+            initialize_passthrough_if_necessary();
+            pass_getpath(pathname, passpath, 0);
+        }
+
         log_msg(INFO, "chown %s", passpath);
         return ((funcptr_chown)libc_chown)(passpath, owner, group);
     }
 
     int lchown(const char *pathname, uid_t owner, gid_t group){
-        initialize_passthrough_if_necessary();
         char passpath[PATH_MAX];
-        pass_getpath(pathname, passpath, 0);
+
+        if (get_sea_config().parsed == true) {
+            initialize_sea_if_necessary();
+            sea_getpath(pathname, passpath, 0);
+        }
+        else {
+            initialize_passthrough_if_necessary();
+            pass_getpath(pathname, passpath, 0);
+        }
+
         log_msg(INFO, "lchown %s", passpath);
         return ((funcptr_lchown)libc_lchown)(passpath, owner, group);
     }
 
     int fchownat(int dirfd, const char *pathname, uid_t owner, gid_t group, int flags){
-        initialize_passthrough_if_necessary();
         char passpath[PATH_MAX];
-        pass_getpath(pathname, passpath, 0);
+
+        if (get_sea_config().parsed == true) {
+            initialize_sea_if_necessary();
+            sea_getpath(pathname, passpath, 0);
+        }
+        else {
+            initialize_passthrough_if_necessary();
+            pass_getpath(pathname, passpath, 0);
+        }
+
         log_msg(INFO, "fchownat %s", passpath);
         return ((funcptr_fchownat)libc_fchownat)(dirfd, passpath, owner, group, flags);
     }
 
     int chmod(const char *pathname, mode_t mode){
-        initialize_passthrough_if_necessary();
         char passpath[PATH_MAX];
-        pass_getpath(pathname, passpath, 0);
+
+        if (get_sea_config().parsed == true) {
+            initialize_sea_if_necessary();
+            sea_getpath(pathname, passpath, 0);
+        }
+        else {
+            initialize_passthrough_if_necessary();
+            pass_getpath(pathname, passpath, 0);
+        }
+
         log_msg(INFO, "chmod %s", passpath);
         return ((funcptr_chmod)libc_chmod)(passpath, mode);
     }
 
     int fchmodat(int dirfd, const char *pathname, mode_t mode, int flags){
-        initialize_passthrough_if_necessary();
         char passpath[PATH_MAX];
-        pass_getpath(pathname, passpath, 0);
+
+        if (get_sea_config().parsed == true) {
+            initialize_sea_if_necessary();
+            sea_getpath(pathname, passpath, 0);
+        }
+        else {
+            initialize_passthrough_if_necessary();
+            pass_getpath(pathname, passpath, 0);
+        }
+
         log_msg(INFO, "fchmodat %s", passpath);
         return ((funcptr_fchmodat)libc_fchmodat)(dirfd, passpath, mode, flags);
     }
 
     int removexattr(const char *path, const char *name){
-        initialize_passthrough_if_necessary();
         char passpath[PATH_MAX];
-        pass_getpath(path, passpath, 0);
+
+        if (get_sea_config().parsed == true) {
+            initialize_sea_if_necessary();
+            sea_getpath(path, passpath, 0);
+        }
+        else {
+            initialize_passthrough_if_necessary();
+            pass_getpath(path, passpath, 0);
+        }
+
         log_msg(INFO, "removexattr %s", passpath);
         return ((funcptr_removexattr)libc_removexattr)(passpath, name);
     }
 
     int lremovexattr(const char *path, const char *name){
-        initialize_passthrough_if_necessary();
         char passpath[PATH_MAX];
-        pass_getpath(path, passpath, 0);
+
+        if (get_sea_config().parsed == true) {
+            initialize_sea_if_necessary();
+            sea_getpath(path, passpath, 0);
+        }
+        else {
+            initialize_passthrough_if_necessary();
+            pass_getpath(path, passpath, 0);
+        }
+
         log_msg(INFO, "lremovexattr %s", passpath);
         return ((funcptr_lremovexattr)libc_lremovexattr)(passpath, name);
     }
 
     ssize_t listxattr(const char *path, char *list, size_t size){
-        initialize_passthrough_if_necessary();
         char passpath[PATH_MAX];
-        pass_getpath(path, passpath, 0);
+
+        if (get_sea_config().parsed == true) {
+            initialize_sea_if_necessary();
+            sea_getpath(path, passpath, 0);
+        }
+        else {
+            initialize_passthrough_if_necessary();
+            pass_getpath(path, passpath, 0);
+        }
+
         log_msg(INFO, "listxattr %s", passpath);
         return ((funcptr_listxattr)libc_listxattr)(passpath, list, size);
     }
 
     ssize_t llistxattr(const char *path, char *list, size_t size){
-        initialize_passthrough_if_necessary();
         char passpath[PATH_MAX];
-        pass_getpath(path, passpath, 0);
+
+        if (get_sea_config().parsed == true) {
+            initialize_sea_if_necessary();
+            sea_getpath(path, passpath, 0);
+        }
+        else {
+            initialize_passthrough_if_necessary();
+            pass_getpath(path, passpath, 0);
+        }
+
         log_msg(INFO, "llistxattr %s", passpath);
         return ((funcptr_llistxattr)libc_llistxattr)(passpath, list, size);
     }
 
     ssize_t getxattr(const char *path, const char *name,
                         void *value, size_t size){
-        initialize_passthrough_if_necessary();
         char passpath[PATH_MAX];
-        pass_getpath(path, passpath, 0);
+
+        if (get_sea_config().parsed == true) {
+            initialize_sea_if_necessary();
+            sea_getpath(path, passpath, 0);
+        }
+        else {
+            initialize_passthrough_if_necessary();
+            pass_getpath(path, passpath, 0);
+        }
+
         log_msg(INFO, "getxattr %s", passpath);
         return ((funcptr_lgetxattr)libc_getxattr)(passpath, name, value, size);
     }
 
     ssize_t lgetxattr(const char *path, const char *name,
                         void *value, size_t size){
-        initialize_passthrough_if_necessary();
         char passpath[PATH_MAX];
-        pass_getpath(path, passpath, 0);
+
+        if (get_sea_config().parsed == true) {
+            initialize_sea_if_necessary();
+            sea_getpath(path, passpath, 0);
+        }
+        else {
+            initialize_passthrough_if_necessary();
+            pass_getpath(path, passpath, 0);
+        }
+
         log_msg(INFO, "lgetxattr %s", passpath);
         return ((funcptr_lgetxattr)libc_lgetxattr)(passpath, name, value, size);
     }
 
     int setxattr(const char* path, const char *name, const void *value, size_t size, int flags){
-        initialize_passthrough_if_necessary();
-        log_msg(INFO, "setxattr %s", path);
         char passpath[PATH_MAX];
-        pass_getpath(path, passpath, 0);
+
+        if (get_sea_config().parsed == true) {
+            initialize_sea_if_necessary();
+            sea_getpath(path, passpath, 0);
+        }
+        else {
+            initialize_passthrough_if_necessary();
+            pass_getpath(path, passpath, 0);
+        }
+
+        log_msg(INFO, "setxattr %s", path);
         return ((funcptr_setxattr)libattr_setxattr)(passpath, name, value, size, flags);
     }
 
@@ -708,25 +1158,49 @@ extern "C" {
     }
 
     const char* magic_file(magic_t cookie, const char *filename){
-        initialize_passthrough_if_necessary();
-        log_msg(INFO, "magic_file");
         char passpath[PATH_MAX];
-        pass_getpath(filename, passpath, 0);
+
+        if (get_sea_config().parsed == true) {
+            initialize_sea_if_necessary();
+            sea_getpath(filename, passpath, 0);
+        }
+        else {
+            initialize_passthrough_if_necessary();
+            pass_getpath(filename, passpath, 0);
+        }
+
+        log_msg(INFO, "magic_file");
         return ((funcptr_magic_file)libmagic_magic_file)(cookie, passpath);
     }
 
     int euidaccess(const char *pathname, int mode){
-        initialize_passthrough_if_necessary();
-        log_msg(INFO, "euidaccess");
         char passpath[PATH_MAX];
-        pass_getpath(pathname, passpath, 0);
+
+        if (get_sea_config().parsed == true) {
+            initialize_sea_if_necessary();
+            sea_getpath(pathname, passpath, 0);
+        }
+        else {
+            initialize_passthrough_if_necessary();
+            pass_getpath(pathname, passpath, 0);
+        }
+
+        log_msg(INFO, "euidaccess");
         return ((funcptr_euidaccess)libc_euidaccess)(passpath, mode);
     }
     int eaccess(const char *pathname, int mode){
-        initialize_passthrough_if_necessary();
         log_msg(INFO, "eaccess");
         char passpath[PATH_MAX];
-        pass_getpath(pathname, passpath, 0);
+
+        if (get_sea_config().parsed == true) {
+            initialize_sea_if_necessary();
+            sea_getpath(pathname, passpath, 0);
+        }
+        else {
+            initialize_passthrough_if_necessary();
+            pass_getpath(pathname, passpath, 0);
+        }
+
         return ((funcptr_eaccess)libc_eaccess)(passpath, mode);
     }
 
@@ -747,73 +1221,138 @@ extern "C" {
     }
 
     int mkstemp(char * templ){
-        initialize_passthrough_if_necessary();
-        log_msg(INFO, "mkstemp");
+
         char passpath[PATH_MAX];
-        pass_getpath(templ, passpath, 0);
+
+        if (get_sea_config().parsed == true) {
+            initialize_sea_if_necessary();
+            sea_getpath(templ, passpath, 0);
+        }
+        else {
+            initialize_passthrough_if_necessary();
+            pass_getpath(templ, passpath, 0);
+        }
+
+        log_msg(INFO, "mkstemp");
         int ret = ((funcptr_mkstemp)libc_mkstemp)(passpath);
         copy_last6(templ, passpath, 0);
         return ret;
     }
     int mkstemp64(char * templ){
-        initialize_passthrough_if_necessary();
-        log_msg(INFO, "mkstemp64");
         char passpath[PATH_MAX];
-        pass_getpath(templ, passpath, 0);
+
+        if (get_sea_config().parsed == true) {
+            initialize_sea_if_necessary();
+            sea_getpath(templ, passpath, 0);
+        }
+        else {
+            initialize_passthrough_if_necessary();
+            pass_getpath(templ, passpath, 0);
+        }
+
+        log_msg(INFO, "mkstemp64");
         int ret = ((funcptr_mkstemp64)libc_mkstemp64)(passpath);
         copy_last6(templ, passpath, 0);
         return ret;
     }
     int mkostemp(char * templ, int flags){
-        initialize_passthrough_if_necessary();
-        log_msg(INFO, "mkostemp");
         char passpath[PATH_MAX];
-        pass_getpath(templ, passpath, 0);
+
+        if (get_sea_config().parsed == true) {
+            initialize_sea_if_necessary();
+            sea_getpath(templ, passpath, 0);
+        }
+        else {
+            initialize_passthrough_if_necessary();
+            pass_getpath(templ, passpath, 0);
+        }
+
+        log_msg(INFO, "mkostemp");
         int ret = ((funcptr_mkostemp)libc_mkostemp)(passpath, flags);
         copy_last6(templ, passpath, 0);
         return ret;
     }
     int mkostemp64(char * templ, int flags){
-        initialize_passthrough_if_necessary();
-        log_msg(INFO, "mkostemp64");
         char passpath[PATH_MAX];
-        pass_getpath(templ, passpath, 0);
+
+        if (get_sea_config().parsed == true) {
+            initialize_sea_if_necessary();
+            sea_getpath(templ, passpath, 0);
+        }
+        else {
+            initialize_passthrough_if_necessary();
+            pass_getpath(templ, passpath, 0);
+        }
+
+        log_msg(INFO, "mkostemp64");
         templ = &passpath[0];
         int ret = ((funcptr_mkostemp64)libc_mkostemp64)(templ, flags);
         copy_last6(templ, passpath, 0);
         return ret;
     }
     int mkstemps(char * templ, int suffixlen){
-        initialize_passthrough_if_necessary();
-        log_msg(INFO, "mkstemps");
         char passpath[PATH_MAX];
-        pass_getpath(templ, passpath, 0);
+
+        if (get_sea_config().parsed == true) {
+            initialize_sea_if_necessary();
+            sea_getpath(templ, passpath, 0);
+        }
+        else {
+            initialize_passthrough_if_necessary();
+            pass_getpath(templ, passpath, 0);
+        }
+
+        log_msg(INFO, "mkstemps");
         int ret = ((funcptr_mkstemps)libc_mkstemps)(passpath, suffixlen);
         copy_last6(templ, passpath, suffixlen);
         return ret;
     }
     int mkstemps64(char * templ, int suffixlen){
-        initialize_passthrough_if_necessary();
-        log_msg(INFO, "mkstempts64");
         char passpath[PATH_MAX];
-        pass_getpath(templ, passpath, 0);
+
+        if (get_sea_config().parsed == true) {
+            initialize_sea_if_necessary();
+            sea_getpath(templ, passpath, 0);
+        }
+        else {
+            initialize_passthrough_if_necessary();
+            pass_getpath(templ, passpath, 0);
+        }
+
+        log_msg(INFO, "mkstempts64");
         int ret = ((funcptr_mkstemps64)libc_mkstemps64)(passpath, suffixlen);
         copy_last6(templ, passpath, suffixlen);
         return ret;
     }
     int mkostemps(char * templ, int suffixlen, int flags){
-        initialize_passthrough_if_necessary();
-        log_msg(INFO, "mkostemps");
         char passpath[PATH_MAX];
-        pass_getpath(templ, passpath, 0);
+
+        if (get_sea_config().parsed == true) {
+            initialize_sea_if_necessary();
+            sea_getpath(templ, passpath, 0);
+        }
+        else {
+            initialize_passthrough_if_necessary();
+            pass_getpath(templ, passpath, 0);
+        }
+
+        log_msg(INFO, "mkostemps");
         int ret = ((funcptr_mkostemps)libc_mkostemps)(passpath, suffixlen, flags);
         copy_last6(templ, passpath, suffixlen);
         return ret;
     }
     int mkostemps64(char * templ, int suffixlen, int flags){
-        initialize_passthrough_if_necessary();
         char passpath[PATH_MAX];
-        pass_getpath(templ, passpath, 0);
+
+        if (get_sea_config().parsed == true) {
+            initialize_sea_if_necessary();
+            sea_getpath(templ, passpath, 0);
+        }
+        else {
+            initialize_passthrough_if_necessary();
+            pass_getpath(templ, passpath, 0);
+        }
+
         log_msg(INFO, "mkostemps64 %s", passpath);
         int ret = ((funcptr_mkostemps64)libc_mkostemps64)(passpath, suffixlen, flags);
         copy_last6(templ, passpath, suffixlen);
@@ -821,36 +1360,69 @@ extern "C" {
     }
 
     FILE * setmntent (const char *file, const char *mode){
-        initialize_passthrough_if_necessary();
         char passpath[PATH_MAX];
-        pass_getpath(file, passpath, 0);
+
+        if (get_sea_config().parsed == true) {
+            initialize_sea_if_necessary();
+            sea_getpath(file, passpath, 0);
+        }
+        else {
+            initialize_passthrough_if_necessary();
+            pass_getpath(file, passpath, 0);
+        }
+
         log_msg(INFO, "stmntent %s", passpath);
         return ((funcptr_setmntent)libc_setmntent)(passpath, mode);
 
     }
 
     char * bindtextdomain (const char *domainname, const char *dirname){
-        initialize_passthrough_if_necessary();
         char passpath[PATH_MAX];
-        pass_getpath(dirname, passpath, 0);
+
+        if (get_sea_config().parsed == true) {
+            initialize_sea_if_necessary();
+            sea_getpath(dirname, passpath, 0);
+        }
+        else {
+            initialize_passthrough_if_necessary();
+            pass_getpath(dirname, passpath, 0);
+        }
+
         log_msg(INFO, "bindtextdomain %s", passpath);
         return ((funcptr_bindtextdomain)libc_bindtextdomain)(domainname, dirname);
     }
 
     int symlink (const char *oldname, const char *newname){
-        initialize_passthrough_if_necessary();
         char old_passpath[PATH_MAX];
         char new_passpath[PATH_MAX];
-        pass_getpath(oldname, old_passpath, 0);
-        pass_getpath(newname, new_passpath, 0);
+
+        if (get_sea_config().parsed == true) {
+            initialize_sea_if_necessary();
+            sea_getpath(oldname, old_passpath, 0);
+            sea_getpath(newname, new_passpath, 0);
+        }
+        else {
+            initialize_passthrough_if_necessary();
+            pass_getpath(oldname, old_passpath, 0);
+            pass_getpath(newname, new_passpath, 0);
+        }
+
         log_msg(INFO, "symlink: old: %s new: %s", old_passpath, new_passpath);
         return ((funcptr_symlink)libc_symlink)(old_passpath, new_passpath);
     }
 
     ssize_t readlink (const char *filename, char *buffer, size_t size){
-        initialize_passthrough_if_necessary();
         char passpath[PATH_MAX];
-        pass_getpath(filename, passpath, 0);
+
+        if (get_sea_config().parsed == true) {
+            initialize_sea_if_necessary();
+            sea_getpath(filename, passpath, 0);
+        }
+        else {
+            initialize_passthrough_if_necessary();
+            pass_getpath(filename, passpath, 0);
+        }
+
         log_msg(INFO, "readlink %s", passpath);
         return ((funcptr_readlink)libc_readlink)(passpath, buffer, size);
     }
@@ -859,9 +1431,17 @@ extern "C" {
              int (*fn) (const char *fpath, const struct stat *sb, int typeflag, struct FTW *ftwbuf),
              int nopenfd, int flags){
 
-        initialize_passthrough_if_necessary();
         char passpath[PATH_MAX];
-        pass_getpath(dirpath, passpath, 0);
+
+        if (get_sea_config().parsed == true) {
+            initialize_sea_if_necessary();
+            sea_getpath(dirpath, passpath, 0);
+        }
+        else {
+            initialize_passthrough_if_necessary();
+            pass_getpath(dirpath, passpath, 0);
+        }
+
         log_msg(INFO, "nftw %s", passpath);
         return ((funcptr_nftw)libc_nftw)(passpath, fn, nopenfd, flags);
     }
@@ -869,88 +1449,167 @@ extern "C" {
     int ftw(const char *dirpath,
             int (*fn) (const char *fpath, const struct stat *sb, int typeflag),
             int nopenfd){
-        initialize_passthrough_if_necessary();
         char passpath[PATH_MAX];
-        pass_getpath(dirpath, passpath, 0);
+
+        if (get_sea_config().parsed == true) {
+            initialize_sea_if_necessary();
+            sea_getpath(dirpath, passpath, 0);
+        }
+        else {
+            initialize_passthrough_if_necessary();
+            pass_getpath(dirpath, passpath, 0);
+        }
+
         log_msg(INFO, "ftw %s", passpath);
         return ((funcptr_ftw)libc_ftw)(passpath, fn, nopenfd);
     }
 
     int name_to_handle_at(int dirfd, const char *pathname, struct file_handle *handle, int *mount_id, int flags){
-        initialize_passthrough_if_necessary();
         char passpath[PATH_MAX];
-        pass_getpath(pathname, passpath, 0);
+
+        if (get_sea_config().parsed == true) {
+            initialize_sea_if_necessary();
+            sea_getpath(pathname, passpath, 0);
+        }
+        else {
+            initialize_passthrough_if_necessary();
+            pass_getpath(pathname, passpath, 0);
+        }
+
         log_msg(INFO, "name_to_handle_at %s", passpath);
         return ((funcptr_name_to_handle_at)libc_name_to_handle_at)(dirfd, passpath, handle, mount_id, flags);
     }
 
     int chroot(const char *path){
-        initialize_passthrough_if_necessary();
         char passpath[PATH_MAX];
-        pass_getpath(path, passpath, 0);
+
+        if (get_sea_config().parsed == true) {
+            initialize_sea_if_necessary();
+            sea_getpath(path, passpath, 0);
+        }
+        else {
+            initialize_passthrough_if_necessary();
+            pass_getpath(path, passpath, 0);
+        }
+
         log_msg(INFO, "chroot %s", passpath);
         return ((funcptr_chroot)libc_chroot)(passpath);
     }
 
     int execve(const char *pathname, char *const argv[], char *const envp[]){
-        initialize_passthrough_if_necessary();
         char passpath[PATH_MAX];
-        pass_getpath(pathname, passpath, 0);
+
+        if (get_sea_config().parsed == true) {
+            initialize_sea_if_necessary();
+            sea_getpath(pathname, passpath, 0);
+        }
+        else {
+            initialize_passthrough_if_necessary();
+            pass_getpath(pathname, passpath, 0);
+        }
+
         log_msg(INFO, "execve %s", passpath);
         return ((funcptr_execve)libc_execve)(passpath, argv, envp);
     }
 
     long int pathconf (const char *filename, int parameter){
-        initialize_passthrough_if_necessary();
         char passpath[PATH_MAX];
-        pass_getpath(filename, passpath, 0);
+
+        if (get_sea_config().parsed == true) {
+            initialize_sea_if_necessary();
+            sea_getpath(filename, passpath, 0);
+        }
+        else {
+            initialize_passthrough_if_necessary();
+            pass_getpath(filename, passpath, 0);
+        }
+
         log_msg(INFO, "pathconf %s", passpath);
         return ((funcptr_pathconf)libc_pathconf)(passpath, parameter);
     }
 
     char* tempnam(const char *dir, const char *prefix){
-        initialize_passthrough_if_necessary();
         char passpath[PATH_MAX];
-        pass_getpath(dir, passpath, 0);
+
+        if (get_sea_config().parsed == true) {
+            initialize_sea_if_necessary();
+            sea_getpath(dir, passpath, 0);
+        }
+        else {
+            initialize_passthrough_if_necessary();
+            pass_getpath(dir, passpath, 0);
+        }
+
         log_msg(INFO, "tempname %s", passpath);
         return ((funcptr_tempnam)libc_tempnam)(passpath, prefix);
 
     }
 
     int mkfifo(const char *path, mode_t mode){
-        initialize_passthrough_if_necessary();
         char passpath[PATH_MAX];
-        pass_getpath(path, passpath, 0);
+
+        if (get_sea_config().parsed == true) {
+            initialize_sea_if_necessary();
+            sea_getpath(path, passpath, 0);
+        }
+        else {
+            initialize_passthrough_if_necessary();
+            pass_getpath(path, passpath, 0);
+        }
+
         log_msg(INFO, "mkfifo %s", passpath);
         return ((funcptr_mkfifo)libc_mkfifo)(passpath, mode);
     }
 
     char* realpath(const char *path, char *resolved_path){
-        initialize_passthrough_if_necessary();
         char passpath[PATH_MAX];
         // get masked path rather than real path
-        pass_getpath(path, passpath, 1);
+
+        if (get_sea_config().parsed == true) {
+            initialize_sea_if_necessary();
+            sea_getpath(path, passpath, 1);
+        }
+        else {
+            initialize_passthrough_if_necessary();
+            pass_getpath(path, passpath, 1);
+        }
+
         log_msg(INFO, "realpath %s", passpath);
         return ((funcptr_realpath)libc_realpath)(passpath, resolved_path);
     }
 
     char* canonicalize_file_name (const char *name){
-        initialize_passthrough_if_necessary();
         char passpath[PATH_MAX];
         // get masked path rather than real path
-        pass_getpath(name, passpath, 1);
-        log_msg(INFO, "realpath %s", passpath);
+
+        if (get_sea_config().parsed == true) {
+            initialize_sea_if_necessary();
+            sea_getpath(name, passpath, 1);
+        }
+        else {
+            initialize_passthrough_if_necessary();
+            pass_getpath(name, passpath, 1);
+        }
+
+        log_msg(INFO, "canonicalize_file_name %s", passpath);
         return ((funcptr_canonicalize_file_name)libc_canonicalize_file_name)(passpath);
     }
 
     char* getcwd(char *buffer, size_t size){
-        initialize_passthrough_if_necessary();
        
         char* path;
         char passpath[PATH_MAX];
         path = ((funcptr_getwd)libc_getcwd)(buffer, size);
         // get masked path rather than real path
-        pass_getpath(path, passpath, 1);
+
+        if (get_sea_config().parsed == true) {
+            initialize_sea_if_necessary();
+            sea_getpath(path, passpath, 1);
+        }
+        else {
+            initialize_passthrough_if_necessary();
+            pass_getpath(path, passpath, 1);
+        }
 
         // make sure there are no trailing characters after memmove
         if (strlen(path) > strlen(passpath))

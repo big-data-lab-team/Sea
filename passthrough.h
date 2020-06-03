@@ -258,6 +258,7 @@ extern void* libc_getcwd;
 void initialize_passthrough_if_necessary();
 void initialize_functions();
 
+void make_file_name_canonical(char const *file_path, char actualpath[PATH_MAX]);
 int pass_getpath(const char*, char[PATH_MAX], int);
 
 #ifdef XTREEMFS_PRELOAD_QUIET

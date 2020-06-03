@@ -267,42 +267,31 @@ int pass_getpath(const char* oldpath, char passpath[PATH_MAX], int masked_path){
 
     int match_found = 0;
 
+
+    char path[PATH_MAX];
     //log_msg(DEBUG, "oldpath: %s, actualpath: %s, mount_dir: %s", oldpath, actualpath, mount_dir);
-    if (masked_path == 1){
 
-        int len = strlen(source_mounts[0]);
+    if (masked_path == 1) {
+        strcpy(path, source_mounts[0]);
         strcpy(passpath, mount_dir);
-
-        if(source_mounts[0][0] != '\0' && (match = strstr(actualpath, source_mounts[0]))){
-            if (match == NULL)
-                log_msg(DEBUG, "match null");
-            log_msg(DEBUG, "match");
-            *match = '\0';
-            strcat(passpath, match + len);
-            match_found = 1;
-        }
-        else{
-            log_msg(DEBUG, "no match");
-            strcpy(passpath, oldpath);
-        }
     }
     else {
-
-        int len = strlen(mount_dir);
+        strcpy(path, mount_dir);
         strcpy(passpath, source_mounts[0]);
+    }
+    int len = strlen(path);
 
-        if(mount_dir[0] != '\0' && (match = strstr(actualpath, mount_dir))){
-            if (match == NULL)
-                log_msg(DEBUG, "match null");
-            log_msg(DEBUG, "match");
-            *match = '\0';
-            strcat(passpath, match + len);
-            match_found = 1;
-        }
-        else{
-            log_msg(DEBUG, "no match");
-            strcpy(passpath, oldpath);
-        }
+    if(path[0] != '\0' && (match = strstr(actualpath, path))){
+        if (match == NULL)
+            log_msg(DEBUG, "match null");
+        log_msg(DEBUG, "match");
+        *match = '\0';
+        strcat(passpath, match + len);
+        match_found = 1;
+    }
+    else{
+        log_msg(DEBUG, "no match");
+        strcpy(passpath, oldpath);
     }
 
     log_msg(INFO, "old fn %s ---> new fn %s", oldpath, passpath);
