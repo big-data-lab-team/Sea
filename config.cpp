@@ -105,5 +105,6 @@ config get_sea_config()
     {
         parse_config();
     }
+
     return sea_config;
 }
