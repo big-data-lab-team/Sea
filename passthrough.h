@@ -33,6 +33,7 @@ typedef DIR* (*funcptr_opendir)(const char*);
 typedef int (*funcptr_scandir)(const char *dir, struct dirent ***namelist, int (*selector) (const struct dirent *), int (*cmp) (const struct dirent **, const struct dirent **));
 typedef int (*funcptr_scandir64)(const char *dir, struct dirent64 ***namelist, int (*selector) (const struct dirent64 *), int (*cmp) (const struct dirent64 **, const struct dirent64 **));
 typedef int (*funcptr_close)(int);
+typedef int (*funcptr_closedir)(DIR*);
 
 typedef ssize_t (*funcptr_read)(int, void*, size_t);
 typedef ssize_t (*funcptr_write)(int, const void*, size_t);
@@ -152,6 +153,7 @@ extern void* libc_scandir;
 extern void* libc_scandir64;
 extern void* libc_close;
 extern void* libc___close;
+extern void* libc_closedir;
 extern void* libc_pread;
 extern void* libc_pwrite;
 extern void* libc_read;
