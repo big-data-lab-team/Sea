@@ -12,6 +12,7 @@ int sea_getpath(const char* oldpath, char passpath[PATH_MAX], int masked_path){
 
     return sea_getpath(oldpath, passpath, masked_path, 0);
 }
+
 int sea_getpath(const char* oldpath, char passpath[PATH_MAX], int masked_path, int source_id){
 
     if(oldpath == NULL)
@@ -86,15 +87,24 @@ int sea_getpath(const char* oldpath, char passpath[PATH_MAX], int masked_path, i
                     for (char* curr_file: sea_files){
                         //printf("values %s %s\n", curr_file, match + len);
                         char match_str[PATH_MAX];
+                        int curr_len = strlen(curr_file);
                         strcpy(match_str, match + len);
+                        int match_len = strlen(match_str);
                         
                         //printf("curr_path %s, match_str %s, len %d\n", curr_file, match_str, len);
-                        if ( strstr(curr_file, match_str)) {
+                        if ( strcmp(curr_file + curr_len - match_len, match_str) == 0) {
                             match_found = 1;
                             strcpy(passpath, curr_file);
-                            //printf("match %s\n", passpath);
                             break;
                         }
+                    }
+
+                    if (match_found == 0){
+                        log_msg(DEBUG, "new file");
+                        match_found = 1;
+                        strcpy(passpath, sea_config.source_mounts[source_id]);
+                        strcat(passpath, match + len);
+
                     }
                }
             }
