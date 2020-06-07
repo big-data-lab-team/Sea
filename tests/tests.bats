@@ -4,6 +4,7 @@
 # cleaned up in setup
 SOURCE="$PWD/source"
 MOUNT="$PWD/mount"
+SOURCE_1="/dev/shm/source"
 
 @test "test" {
     load setup
@@ -22,6 +23,9 @@ MOUNT="$PWD/mount"
     a=$(ls ${MOUNT}) # ls dir content
     [[ $a == *"file_in_source.txt"* ]] # passthrough init message is in a
     load unset
+
+    # ls all mounts
+    echo $a
 }
 
 @test "mkdir" {
@@ -206,3 +210,4 @@ MOUNT="$PWD/mount"
     unlink ${MOUNT}/file_in_source.txt
     unlink ${MOUNT}/subdir/file_in_subdir.txt
 }
+

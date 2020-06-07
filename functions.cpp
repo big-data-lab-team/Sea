@@ -200,10 +200,15 @@ extern "C" {
 
         if (sea_conf.parsed == true) {
             initialize_sea_if_necessary();
+            sea_getpath(pathname, passpath, 0, 0);
+
+            // if not a directory within the mountpoint, don't need to create a SEA_DIR struct.
+            if ( strcmp(passpath, pathname) == 0 )
+                return ((funcptr_opendir)libc_opendir)(passpath);
+
             SEA_DIR *sd = new SEA_DIR;
             sd->other_dirp = (DIR**) malloc(sizeof(DIR*) * sea_conf.n_sources);
 
-            sea_getpath(pathname, passpath, 0, 0);
             sd->dirp = ((funcptr_opendir)libc_opendir)(passpath); 
 
             for (int i=1; i < sea_conf.n_sources; ++i) {
@@ -322,29 +327,36 @@ extern "C" {
 
     struct dirent *readdir(DIR *dirp){
 
-        printf("readdir\n");
         config sea_conf = get_sea_config();
         initialize_passthrough_if_necessary();
         struct dirent *d;
         log_msg(INFO, "readdir");
         errno = 0;
-
-        int i = 0;
         
         if (sea_conf.parsed){
             SEA_DIR* sd = (SEA_DIR*) dirp;
-            d = ((funcptr_readdir)libc_readdir)(sd->dirp);
+            if (strcmp(sd->type, "seadir") == 0) {
+                d = ((funcptr_readdir)libc_readdir)(sd->dirp);
 
-            if (d == NULL && sea_conf.n_sources > 1 ) {
-                errno = 0;
-                ((funcptr_readdir)libc_readdir)(sd->other_dirp[0]);
-                d = ((funcptr_readdir)libc_readdir)(sd->other_dirp[0]);
-                printf("readdir %s %d\n", d->d_name, i);
-                if (d != NULL) {
-                    //d = ((funcptr_readdir)libc_readdir)(sd->other_dirp[0]);
-                    printf("readdir %s %d\n", d->d_name, i);
+                if (d == NULL && sea_conf.n_sources > 1 ) {
+                    errno = 0;
+
+                    // skip display of "." and ".."
+                    ((funcptr_readdir)libc_readdir)(sd->other_dirp[0]);
+                    d = ((funcptr_readdir)libc_readdir)(sd->other_dirp[0]);
+
+                    //printf("readdir %s %d\n", d->d_name, i);
+                    
+                    //read next files
+                    if (d != NULL) {
+                        d = ((funcptr_readdir)libc_readdir)(sd->other_dirp[0]);
+                        //printf("readdir %s %d\n", d->d_name, i);
+                    }
                 }
-            }
+           }
+           else {
+                d = ((funcptr_readdir)libc_readdir)(dirp);
+           }
         }
         else {
             d = ((funcptr_readdir)libc_readdir)(dirp);
@@ -395,7 +407,6 @@ extern "C" {
 
             if (strcmp(sd->type, "seadir") == 0) {
                 for (int i=1 ; i < sea_conf.n_sources; ++i) {
-                    printf("%d", i);
                     ((funcptr_closedir)libc_closedir)(sd->other_dirp[i-1]);
                 }
 
@@ -465,6 +476,7 @@ extern "C" {
         if (get_sea_config().parsed == true) {
             initialize_sea_if_necessary();
             sea_getpath(pathname, passpath, 0);
+            printf("makedir sea %s\n", passpath);
         }
         else
             pass_getpath(pathname, passpath, 0);
