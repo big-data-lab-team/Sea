@@ -260,8 +260,11 @@ extern void* libc_getcwd;
 void initialize_passthrough_if_necessary();
 void initialize_functions();
 
-void make_file_name_canonical(char const *file_path, char actualpath[PATH_MAX]);
-int pass_getpath(const char*, char[PATH_MAX], int);
+char* make_file_name_canonical(char const *file_path);
+int pass_getpath(const char* oldpath, char passpath[PATH_MAX], int masked_path);
+int pass_getpath(const char* oldpath, char passpath[PATH_MAX], int masked_path, int sea_lvl);
+void get_pass_canonical(char path[PATH_MAX], char passpath[PATH_MAX], char* mount_dir, char* sea_source, int masked_path);
+int check_if_seapath(char path[PATH_MAX], char canonical[PATH_MAX], char passpath[PATH_MAX]);
 
 #ifdef XTREEMFS_PRELOAD_QUIET
   #define xprintf(...)
