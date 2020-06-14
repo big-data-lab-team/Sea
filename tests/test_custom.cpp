@@ -8,7 +8,7 @@ TEST(Passpath, GetCanonical) {
 
     initialize_passthrough_if_necessary();
 
-    const char paths[5][PATH_MAX] = { "mount", "./mount/subdir", "../mount/", "/dev/shm/tmp", NULL };
+    const char paths[6][PATH_MAX] = { "mount", "./mount/subdir", "../mount/", "/dev/shm/tmp", "/", NULL };
 
     for(auto path: paths){
         char* actualpath;
@@ -61,8 +61,8 @@ TEST(Passpath, GetPassCanonical) {
 
 TEST(Passpath, CheckIfSeaPath) {
 
-    char oldpaths[3][PATH_MAX] = { "mount/test.txt", "mount/subdir/test.txt", "/dev/shm/test.txt" };
-    char expaths[3][PATH_MAX] = { "source/test.txt", "source/subdir/test.txt", "/dev/shm/test.txt" };
+    char oldpaths[4][PATH_MAX] = { "mount/test.txt", "mount/subdir/test.txt", "/dev/shm/test.txt", "/" };
+    char expaths[4][PATH_MAX] = { "source/test.txt", "source/subdir/test.txt", "/dev/shm/test.txt", "/" };
     char path[PATH_MAX];
 
     realpath("mount", path);
