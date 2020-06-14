@@ -1,4 +1,4 @@
-gcc_opts=-Wall -fPIC -c
+gcc_opts=-Wall -fPIC -c -std=c++11
 debug_opts=-g -ggdb
 all: passthrough.so test
 config.o: config.cpp
