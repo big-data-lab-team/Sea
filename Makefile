@@ -1,6 +1,6 @@
 gcc_opts=-Wall -fPIC -c
 debug_opts=-g -ggdb
-all: passthrough.so
+all: passthrough.so test
 config.o: config.cpp
 	gcc ${gcc_opts} ${debug_opts} config.cpp
 passthrough.o: passthrough.cpp passthrough.h
@@ -13,5 +13,8 @@ logger.o: logger.cpp logger.h
 	gcc ${gcc_opts} ${debug_opts} logger.cpp
 passthrough.so: passthrough.o functions.o logger.o config.o sea.o
 	gcc -shared passthrough.o functions.o logger.o config.o sea.o ${debug_opts} -o passthrough.so -ldl -lpthread -lstdc++ -liniparser
+test_custom.o: tests/test_custom.cpp passthrough.o sea.o config.o logger.o
+	gcc ${debug_opts} -Wall -fPIC -lstdc++ -liniparser -ldl -lgtest -lpthread tests/test_custom.cpp passthrough.o sea.o config.o logger.o -o tests/test_custom
+test: test_custom.o
 clean:
-	\rm -f logger.o functions.o passthrough.o config.o sea.o passthrough.so *.gcda *.gcov *.gcno
+	\rm -f logger.o functions.o passthrough.o config.o sea.o passthrough.so *.gcda *.gcov *.gcno tests/test_custom

@@ -150,36 +150,33 @@ FILE* xtreemfs_stdout() {
 }
 
 // Taken from https://stackoverflow.com/questions/11034002/how-to-get-absolute-path-of-file-or-directory-that-does-not-exist
-////////////////////////////////////////////////////////////////////////////////
-// Return the input path in a canonical form. This is achieved by expanding all
-// symbolic links, resolving references to "." and "..", and removing duplicate
-// "/" characters.
-//
-// If the file exists, its path is canonicalized and returned. If the file,
-// or parts of the containing directory, do not exist, path components are
-// removed from the end until an existing path is found. The remainder of the
-// path is then appended to the canonical form of the existing path,
-// and returned. Consequently, the returned path may not exist. The portion
-// of the path which exists, however, is represented in canonical form.
-//
-// If successful, this function returns a C-string, which needs to be freed by
-// the caller using free().
-//
-// ARGUMENTS:
-//   file_path
-//   File path, whose canonical form to return.
-//
-// RETURNS:
-//   On success, returns the canonical path to the file, which needs to be freed
-//   by the caller.
-//
-//   On failure, returns NULL.
-////////////////////////////////////////////////////////////////////////////////
-void make_file_name_canonical(char const *file_path, char actualpath[PATH_MAX])
+/**
+ Return the input path in a canonical form. This is achieved by expanding all
+ symbolic links, resolving references to "." and "..", and removing duplicate
+ "/" characters.
+
+ If the file exists, its path is canonicalized and returned. If the file,
+ or parts of the containing directory, do not exist, path components are
+ removed from the end until an existing path is found. The remainder of the
+ path is then appended to the canonical form of the existing path,
+ and returned. Consequently, the returned path may not exist. The portion
+ of the path which exists, however, is represented in canonical form.
+
+ If successful, this function returns a C-string, which needs to be freed by
+ the caller using free().
+
+   @param file_path File path, whose canonical form to return.
+
+   @return On success, returns the canonical path to the file, which needs to be freed
+   by the caller.
+
+   On failure, returns NULL.
+*/
+char* make_file_name_canonical(char const *file_path)
 {
   if(!strcmp(file_path, "") || file_path == NULL || strstr(file_path, "\n"))
   {
-     return;
+     return (char*) file_path;
   }
 
   char *canonical_file_path  = NULL;
@@ -242,58 +239,108 @@ void make_file_name_canonical(char const *file_path, char actualpath[PATH_MAX])
       free(file_path_copy);
     }
   }
-  strcpy(actualpath, canonical_file_path);
+
+  // realpath removes trailing slashes
+  int len = strlen(canonical_file_path);
+  if ( canonical_file_path[len - 1] == '/' ) {
+      canonical_file_path[len -1] = '\0';
+  }
+
+  return canonical_file_path;
 }
+
+/**
+ * Assign the proper canonical paths to path and passpath given the masked_path value.
+ * If masked_path is 1, path will point to the real location of the file/directory whereas
+ * passpath will point to the "mounted" location, and vice-versa.
+ *
+ * @param path the path of the file that should be matched with the path provided by the user
+ * @param passpath the path returned to the user
+ * @param mount_dir the canonical path of the library's mountpoint
+ * @param sea_source the source directory for all the files created within the mountpoint
+ * @param masked_path whether to return the mounted path or the real path to the user.
+ *
+ */
+void get_pass_canonical(char path[PATH_MAX], char passpath[PATH_MAX], char* mount_dir, char* sea_source, int masked_path) {
+
+    if (masked_path == 1) {
+        strcpy(path, sea_source);
+        strcpy(passpath, mount_dir);
+    }
+    else {
+        strcpy(path, mount_dir);
+        strcpy(passpath, sea_source);
+    }
+
+}
+
+/**
+ * Determine whether the user provided path is located within the mountpoint or not. Store
+ * the absolute "real" path in passpath. Return 1 if it is a mounted path, otherwise 0.
+ *
+ * @param path the location of the mountpoint
+ * @param canonical the canonical version of the path provided by the user
+ * @param passpath the canonical version of the real path for which the remainder of the user path will be appended to.
+ *
+ */
+int check_if_seapath(char path[PATH_MAX], char canonical[PATH_MAX], char passpath[PATH_MAX]) {
+    int len = strlen(path);
+    char* match;
+    int match_found = 0;
+
+    if(path[0] != '\0' && (match = strstr(canonical, path))) {
+
+        if (match == NULL || match[0] == '\0')
+            log_msg(DEBUG, "match null");
+
+        log_msg(DEBUG, "match");
+        *match = '\0';
+        strcat(passpath, match + len);
+        match_found = 1;
+    }
+    else {
+        log_msg(DEBUG, "no match");
+        strcpy(passpath, canonical);
+    }
+
+    return match_found;
+
+}
+
 int pass_getpath(const char* oldpath, char passpath[PATH_MAX], int masked_path){
+    return pass_getpath(oldpath, passpath, masked_path, 0);
+}
+
+/**
+ * Return either the true absolute path or the masked mounted path to the user.
+ *
+ * @param oldpath user-provided path
+ * @param passpath path to be returned to the user
+ * @param masked_path 1 to return to the the masked mounted path or 0 to return the true path (in passpath)
+ * @sea_lvl the level within the hierarchy to use as the source path
+ */
+int pass_getpath(const char* oldpath, char passpath[PATH_MAX], int masked_path, int sea_lvl){
 
     if(oldpath == NULL)
         return 0;
     
-    char* match;
-    char actualpath[PATH_MAX];
+    char* canonical;
+    char path[PATH_MAX];
 
     // Get config
     struct config sea_config = get_sea_config();
     char * mount_dir = sea_config.mount_dir;
     char ** source_mounts = sea_config.source_mounts;
 
-    if(oldpath[0]=='/')
-    {
-       strcpy(actualpath, oldpath);
-    }
-    else
-    {
-      make_file_name_canonical(oldpath, actualpath);
-    }
+    canonical = make_file_name_canonical(oldpath);
 
     int match_found = 0;
 
-
-    char path[PATH_MAX];
     //log_msg(DEBUG, "oldpath: %s, actualpath: %s, mount_dir: %s", oldpath, actualpath, mount_dir);
 
-    if (masked_path == 1) {
-        strcpy(path, source_mounts[0]);
-        strcpy(passpath, mount_dir);
-    }
-    else {
-        strcpy(path, mount_dir);
-        strcpy(passpath, source_mounts[0]);
-    }
-    int len = strlen(path);
+    get_pass_canonical(path, passpath, mount_dir, source_mounts[sea_lvl], masked_path);
 
-    if(path[0] != '\0' && (match = strstr(actualpath, path))){
-        if (match == NULL)
-            log_msg(DEBUG, "match null");
-        log_msg(DEBUG, "match");
-        *match = '\0';
-        strcat(passpath, match + len);
-        match_found = 1;
-    }
-    else{
-        log_msg(DEBUG, "no match");
-        strcpy(passpath, oldpath);
-    }
+    match_found = check_if_seapath(path, canonical, passpath);
 
     log_msg(INFO, "old fn %s ---> new fn %s", oldpath, passpath);
     return match_found;

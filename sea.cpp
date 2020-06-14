@@ -13,7 +13,7 @@ int sea_getpath(const char* oldpath, char passpath[PATH_MAX], int masked_path){
     return sea_getpath(oldpath, passpath, masked_path, 0);
 }
 
-int sea_getpath(const char* oldpath, char passpath[PATH_MAX], int masked_path, int source_id){
+int sea_getpath(const char* oldpath, char passpath[PATH_MAX], int masked_path, int sea_lvl){
 
     if(oldpath == NULL)
         return 0;
@@ -25,18 +25,11 @@ int sea_getpath(const char* oldpath, char passpath[PATH_MAX], int masked_path, i
     char * mount_dir = sea_config.mount_dir;
     char ** source_mounts = sea_config.source_mounts;
 
-    if(oldpath[0]=='/')
-    {
-       strcpy(actualpath, oldpath);
-    }
-    else
-    {
-      make_file_name_canonical(oldpath, actualpath);
-    }
+    char path[PATH_MAX];
+    get_pass_canonical(path, passpath, mount_dir, source_mounts[sea_lvl], masked_path);
 
     int match_found = 0;
 
-    char path[PATH_MAX];
 
     if (masked_path == 1){
         for (int i=0; i < sea_config.n_sources ; i++){
@@ -79,7 +72,7 @@ int sea_getpath(const char* oldpath, char passpath[PATH_MAX], int masked_path, i
 
                 if (strcmp(match + len, "") == 0){
                     match_found = 1;
-                    strcpy(passpath, sea_config.source_mounts[source_id]);
+                    strcpy(passpath, sea_config.source_mounts[sea_lvl]);
                     //printf("passpath %s\n", passpath);
                 }
                 else{
@@ -102,7 +95,7 @@ int sea_getpath(const char* oldpath, char passpath[PATH_MAX], int masked_path, i
                     if (match_found == 0){
                         log_msg(DEBUG, "new file");
                         match_found = 1;
-                        strcpy(passpath, sea_config.source_mounts[source_id]);
+                        strcpy(passpath, sea_config.source_mounts[sea_lvl]);
                         strcat(passpath, match + len);
 
                     }
