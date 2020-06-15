@@ -3,6 +3,6 @@ from ubuntu:xenial
 RUN useradd --no-log-init -r tmpu
 
 RUN apt update -y && apt install -y make gcc g++ git file libmagic-dev python python3 software-properties-common &&\
-    add-apt-repository -y ppa:nnstreamer/ppa && apt update -y && apt install -y libiniparser libiniparser-dev libgtest-dev cmake
+    add-apt-repository -y ppa:nnstreamer/ppa && apt update -y && apt install -y libiniparser libiniparser-dev googletest cmake
 RUN git clone https://github.com/bats-core/bats-core.git && cd bats-core && ./install.sh /usr/local
 RUN cd /usr/src/gtest/ && cmake -DBUILD_SHARED_LIBS=ON && sudo make && sudo cp *.so /usr/lib
