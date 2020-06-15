@@ -12,7 +12,7 @@ RUN yum install -y automake gettext-devel bison patch rsync wget gperf texinfo
 
 # google test installation
 RUN yum install -y epel-release
-RUN YUM install -y gtest gtest-devel
+RUN yum install -y gtest gtest-devel
 
 RUN git clone https://github.com/coreutils/coreutils.git && cd coreutils \
     && git checkout tags/v8.25 && ./bootstrap && FORCE_UNSAFE_CONFIGURE=1 ./configure && make && make install
