@@ -5,4 +5,3 @@ RUN useradd --no-log-init -r tmpu
 RUN apt update -y && apt install -y make gcc g++ git file libmagic-dev python python3 libiniparser1 libiniparser-dev cmake googletest &&\
     cp /usr/include/iniparser/*.h /usr/include/
 RUN git clone https://github.com/bats-core/bats-core.git && cd bats-core && ./install.sh /usr/local
-RUN cd /usr/src/gtest/ && cmake -DBUILD_SHARED_LIBS=ON && sudo make && sudo cp *.so /usr/lib
