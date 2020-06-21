@@ -9,7 +9,7 @@
 
 int sea_internal;
 
-std::vector<char*> sea_files;
+std::vector<char *> sea_files;
 
 int get_internal() {
     return sea_internal;
@@ -212,7 +212,7 @@ void populateFileVec(char *basePath, int sea_lvl, struct config sea_config)
         strcat(path, dp->d_name);
         char* fp = new char[PATH_MAX];
         memcpy(fp, path, PATH_MAX);
-        sea_files.push_back(fp);
+        sea_files.push_back(strdup(fp));
 
         if (strcmp(dp->d_name, ".") != 0 && strcmp(dp->d_name, "..") != 0)
         {
@@ -238,6 +238,8 @@ void populateFileVec(char *basePath, int sea_lvl, struct config sea_config)
             }
             populateFileVec(path, sea_lvl, sea_config);
         }
+
+        free(fp);
     }
     closedir(dir);
 }
