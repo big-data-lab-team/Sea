@@ -18,7 +18,7 @@ SOURCE_1="/dev/shm/source"
     load setup
     for x in "${MOUNT} ${MOUNT}/file_in_source.txt ${MOUNT}/subdir ${MOUNT}/subdir/file_in_subdir.txt"
     do
-      ls $x
+      valgrind ls $x
     done
     a=$(ls ${MOUNT}) # ls dir content
     [[ $a == *"file_in_source.txt"* ]] # passthrough init message is in a
