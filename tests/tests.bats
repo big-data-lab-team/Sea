@@ -4,7 +4,7 @@
 # cleaned up in setup
 SOURCE="$PWD/source"
 MOUNT="$PWD/mount"
-SOURCE_1="/dev/shm/source"
+SOURCE_1="$PWD/source_1"
 
 @test "test" {
     load setup
