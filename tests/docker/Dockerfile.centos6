@@ -2,7 +2,7 @@ from centos:6
 
 RUN useradd --no-log-init -r tmpu
 
-RUN yum update -y && yum install -y make gcc gcc-c++ git file file-devel python which &&\
+RUN yum update -y && yum install -y make gcc gcc-c++ git file file-devel python which valgrind &&\
     rpm -hiv http://repo.iotti.biz/CentOS/6/x86_64/iniparser-3.1-2.el6.lux.1.x86_64.rpm &&\
     rpm -hiv http://repo.iotti.biz/CentOS/6/x86_64/iniparser-devel-3.1-2.el6.lux.1.x86_64.rpm
 
