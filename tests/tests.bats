@@ -9,9 +9,9 @@ SOURCE_1="$PWD/source_1"
 @test "test" {
     load setup
     # careful, test is a bash internal
-    bash -c "test -d ${MOUNT}/subdir"
-    bash -c "test -f ${MOUNT}/file_in_source.txt"
-    bash -c "test -f ${MOUNT}/subdir/file_in_subdir.txt"
+    valgrind bash -c "test -d ${MOUNT}/subdir"
+    valgrind bash -c "test -f ${MOUNT}/file_in_source.txt"
+    valgrind bash -c "test -f ${MOUNT}/subdir/file_in_subdir.txt"
 }
 
 @test "ls" {
