@@ -28,7 +28,6 @@ DOC
 
 }
 
-echo ${SOURCE}
 unset LD_PRELOAD # Clean up from previous tests
 \rm -Rf ${SOURCE} ${MOUNT} ${SOURCE_1} # Clean up from previous tests
 mkdir -p ${SOURCE} ${MOUNT} ${SOURCE_1} # Create source and mount (defined in tests.bats)
@@ -43,5 +42,5 @@ echo "#!/bin/bash" > ${SOURCE}/bin/hello.sh
 echo "echo \"hello\"" > ${SOURCE}/bin/hello.sh
 chmod +x ${SOURCE}/bin/hello.sh
 export SEA_HOME=$PWD
-gen_conf 2
+gen_conf 1
 export LD_PRELOAD=${PWD}/passthrough.so
