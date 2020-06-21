@@ -26,7 +26,7 @@ extern "C" {
             va_end(ap);
         }
 
-        log_msg(INFO, "opening file %s", pathname);
+        log_msg(INFO, "open %s", pathname);
         return ((funcptr_open)libc_open)(passpath, flags, mode);
     }
 
@@ -50,7 +50,7 @@ extern "C" {
             va_end(ap);
         }
 
-        log_msg(INFO, "opening file %s", pathname);
+        log_msg(INFO, "__open %s", pathname);
         return ((funcptr___open)libc___open)(passpath, flags, mode);
     }
 
@@ -67,7 +67,7 @@ extern "C" {
             pass_getpath(file, passpath, 0);
 
 
-        log_msg(INFO, "opening file %s", file);
+        log_msg(INFO, "__open_2 %s", file);
         return ((funcptr___open_2)libc___open_2)(passpath, oflag);
 
     }
@@ -123,6 +123,7 @@ extern "C" {
     int openat(int dirfd, const char* pathname, int flags, ...){
         initialize_passthrough_if_necessary();
         char passpath[PATH_MAX];
+        //printf("openat %s\n", pathname);
         int match;
         struct config sea_conf = get_sea_config();
 
@@ -144,6 +145,7 @@ extern "C" {
     int openat64(int dirfd, const char* pathname, int flags, ...){
         initialize_passthrough_if_necessary();
         char passpath[PATH_MAX];
+        //printf("openat64 %s\n", pathname);
         int match;
         struct config sea_conf = get_sea_config();
 
@@ -165,6 +167,7 @@ extern "C" {
     int __openat64_2(int dirfd, const char* pathname, int flags){
         initialize_passthrough_if_necessary();
         char passpath[PATH_MAX];
+        //printf("openat64_2 %s\n", pathname);
         int match;
         struct config sea_conf = get_sea_config();
         if (sea_conf.parsed == true && sea_conf.n_sources > 1) {
@@ -185,6 +188,7 @@ extern "C" {
     extern int __openat_2(int dirfd, const char* pathname, int flags){
         initialize_passthrough_if_necessary();
         char passpath[PATH_MAX];
+        //printf("openat_2 %s\n", pathname);
         int match;
         struct config sea_conf = get_sea_config();
 
@@ -207,6 +211,7 @@ extern "C" {
                    struct open_how *how, size_t size){
         initialize_passthrough_if_necessary();
         char passpath[PATH_MAX];
+        //printf("openat2 %s\n", pathname);
         int match;
         struct config sea_conf = get_sea_config();
         if (sea_conf.parsed == true && sea_conf.n_sources > 1) {
@@ -240,13 +245,17 @@ extern "C" {
                 return ((funcptr_opendir)libc_opendir)(passpath);
 
             SEA_DIR *sd = new SEA_DIR;
-            sd->other_dirp = (DIR**) malloc(sizeof(DIR*) * sea_conf.n_sources);
+            sd->dirnames = (char**) malloc(sizeof(char*) * sea_conf.n_sources * PATH_MAX);
+            sd->other_dirp = (DIR**) malloc(sizeof(DIR*) * sea_conf.n_sources - 1);
 
             sd->dirp = ((funcptr_opendir)libc_opendir)(passpath); 
+
+            sd->dirnames[0] = passpath;
 
             for (int i=1; i < sea_conf.n_sources; ++i) {
                 sea_getpath(pathname, passpath, 0, i);
                 sd->other_dirp[i-1] = ((funcptr_opendir)libc_opendir)(passpath); 
+                sd->dirnames[i] = passpath;
                 log_msg(INFO, "opening directory %s", passpath);
             }
             return (DIR*)sd;
@@ -360,6 +369,38 @@ extern "C" {
         return 0;
     }
 
+    struct dirent *sea_readnext(struct dirent* d, config sea_conf, SEA_DIR* sd) { 
+        int found = 0;
+        if (d != NULL && d->d_name[0] != '\0') {
+            for (int i = 0 ; i < sea_conf.n_sources; ++i) {
+                if (i != sd->curr_index + 1) {
+                    char tmppath[PATH_MAX];
+                    strcpy(tmppath, sea_conf.source_mounts[i]);
+                    strcat(tmppath, "/");
+                    strcat(tmppath, d->d_name);
+                   
+                    // no way around using the vector here 
+                    for (auto file: sea_files) {
+                        if (strcmp(file, tmppath) == 0) {
+                            found = 1;
+                            break;
+                        }
+                    }
+
+                    if (found)
+                        break;
+                }
+            }
+            if (found) {
+                d = ((funcptr_readdir)libc_readdir)(sd->other_dirp[sd->curr_index]);
+                d = sea_readnext(d, sea_conf, sd);
+            
+            }
+        }
+        //printf("found %d\n", found);
+        return d;
+    }
+
     struct dirent *readdir(DIR *dirp){
 
         config sea_conf = get_sea_config();
@@ -374,19 +415,31 @@ extern "C" {
                 d = ((funcptr_readdir)libc_readdir)(sd->dirp);
 
                 if (d == NULL && sea_conf.n_sources > 1 ) {
-                    errno = 0;
 
                     // skip display of "." and ".."
-                    ((funcptr_readdir)libc_readdir)(sd->other_dirp[0]);
-                    d = ((funcptr_readdir)libc_readdir)(sd->other_dirp[0]);
+                    //((funcptr_readdir)libc_readdir)(sd->other_dirp[0]);
+
+                    //printf("current index %d %d\n", sd->curr_index, sd->other_dirp[sd->curr_index]);
+                    d = ((funcptr_readdir)libc_readdir)(sd->other_dirp[sd->curr_index]);
+
+                    if (d == NULL && sd->curr_index + 1 < sea_conf.n_sources) {
+                        sd->curr_index += 1;
+                    }
+                    //printf("curr_index %d\n", sd->curr_index);
+                    d = sea_readnext(d, sea_conf, sd);
+
 
                     //printf("readdir %s %d\n", d->d_name, i);
                     
                     //read next files
-                    if (d != NULL) {
-                        d = ((funcptr_readdir)libc_readdir)(sd->other_dirp[0]);
-                        //printf("readdir %s %d\n", d->d_name, i);
-                    }
+                    //if (d != NULL && d->d_name[0] != '\0') {
+                    //   printf("file %s\n", d->d_name); 
+                    //}
+                    //if (d != NULL) {
+                    //    d = ((funcptr_readdir)libc_readdir)(sd->other_dirp[0]);
+
+                    //    //printf("readdir %s\n", d->d_name);
+                    //}
                 }
            }
            else {
@@ -675,6 +728,7 @@ extern "C" {
     int unlinkat(int dirfd, const char *pathname, int flags){
         initialize_passthrough_if_necessary();
         char passpath[PATH_MAX];
+        log_msg(INFO, "entering unlinkat %s", pathname);
         struct config sea_conf = get_sea_config();
         int match;
 
@@ -689,7 +743,7 @@ extern "C" {
             strcpy(passpath, pathname);
         }
 
-        log_msg(INFO, "unlinkat file %s", passpath);
+        log_msg(INFO, "completing unlinkat %s", passpath);
         return ((funcptr_unlinkat)libc_unlinkat)(dirfd, passpath, flags);
     }
 
@@ -749,51 +803,72 @@ extern "C" {
     int stat(const char *pathname, struct stat *statbuf){
         initialize_passthrough_if_necessary();
         char passpath[PATH_MAX];
-        log_msg(INFO, "entering stat %s", pathname);
+        //printf("stat %s\n", pathname);
+        
+        if (!get_internal()) {
+            log_msg(INFO, "entering stat %s", pathname);
 
-        struct config sea_conf = get_sea_config();
-        if (sea_conf.parsed == true && sea_conf.n_sources > 1) {
-            initialize_sea_if_necessary();
-            sea_getpath(pathname, passpath, 0);
+            struct config sea_conf = get_sea_config();
+            if (sea_conf.parsed == true && sea_conf.n_sources > 1) {
+                initialize_sea_if_necessary();
+                sea_getpath(pathname, passpath, 0);
+            }
+            else
+                pass_getpath(pathname, passpath, 0);
+
+            log_msg(INFO, "completed stat %s", passpath);
         }
-        else
-            pass_getpath(pathname, passpath, 0);
-
-        log_msg(INFO, "completed stat %s", passpath);
+        else {
+            strcpy(passpath, pathname);
+        }
         return ((funcptr_stat)libc_stat)(passpath, statbuf);
     }
 
     int lstat(const char *pathname, struct stat *statbuf){
         initialize_passthrough_if_necessary();
         char passpath[PATH_MAX];
-        log_msg(INFO, "entering lstat %s", pathname);
+        //printf("lstat %s\n", pathname);
+        if (!get_internal()) {
+            log_msg(INFO, "entering lstat %s", pathname);
 
-        struct config sea_conf = get_sea_config();
-        if (sea_conf.parsed == true && sea_conf.n_sources > 1) {
-            initialize_sea_if_necessary();
-            sea_getpath(pathname, passpath, 0);
+            struct config sea_conf = get_sea_config();
+            if (sea_conf.parsed == true && sea_conf.n_sources > 1) {
+                initialize_sea_if_necessary();
+                sea_getpath(pathname, passpath, 0);
+            }
+            else
+                pass_getpath(pathname, passpath, 0);
+
+            log_msg(INFO, "completed lstat %s", passpath);
         }
-        else
-            pass_getpath(pathname, passpath, 0);
-
-        log_msg(INFO, "completed lstat %s", passpath);
+        else {
+            strcpy(passpath, pathname);
+        }
+        //printf("return lstat %d\n", get_internal());
         return ((funcptr_lstat)libc_lstat)(passpath, statbuf);
     }
 
     int lstat64(const char *pathname, struct stat64 *statbuf){
         initialize_passthrough_if_necessary();
         char passpath[PATH_MAX];
-        log_msg(INFO, "entering lstat64 %s", pathname);
+        //printf("lstat64 %s\n", pathname);
+        
+        if (!get_internal()) {
+            log_msg(INFO, "entering lstat64 %s", pathname);
 
-        struct config sea_conf = get_sea_config();
-        if (sea_conf.parsed == true && sea_conf.n_sources > 1) {
-            initialize_sea_if_necessary();
-            sea_getpath(pathname, passpath, 0);
+            struct config sea_conf = get_sea_config();
+            if (sea_conf.parsed == true && sea_conf.n_sources > 1) {
+                initialize_sea_if_necessary();
+                sea_getpath(pathname, passpath, 0);
+            }
+            else
+                pass_getpath(pathname, passpath, 0);
+
+            log_msg(INFO, "completed lstat64 %s", passpath);
         }
-        else
-            pass_getpath(pathname, passpath, 0);
-
-        log_msg(INFO, "completed lstat64 %s", passpath);
+        else {
+            strcpy(passpath, pathname);
+        }
         return ((funcptr_lstat64)libc_lstat64)(passpath, statbuf);
     }
 
@@ -806,20 +881,28 @@ extern "C" {
     int fstatat(int dirfd, char const *path, struct stat *statbuf, int flags){
         initialize_passthrough_if_necessary();
         char passpath[PATH_MAX];
-        int match;
-        log_msg(INFO, "entering fstatat %s", path);
+        //printf("fstatat %s\n", path);
+        
+        if (!get_internal()) {
+            int match;
+            log_msg(INFO, "entering fstatat %s", path);
 
-        struct config sea_conf = get_sea_config();
-    
-        if (sea_conf.parsed == true && sea_conf.n_sources > 1) {
-            initialize_sea_if_necessary();
-            match = sea_getpath(path, passpath, 0);
+            struct config sea_conf = get_sea_config();
+        
+            if (sea_conf.parsed == true && sea_conf.n_sources > 1) {
+                initialize_sea_if_necessary();
+                match = sea_getpath(path, passpath, 0);
+            }
+            else
+                match = pass_getpath(path, passpath, 0);
+
+
+            if (match == 0) {
+                strcpy(passpath, path);
+            }
         }
-        else
-            match = pass_getpath(path, passpath, 0);
 
-
-        if (match == 0) {
+        else { 
             strcpy(passpath, path);
         }
 
@@ -829,17 +912,24 @@ extern "C" {
 
     int statvfs(const char *path, struct statvfs *buf){
         initialize_passthrough_if_necessary();
-        log_msg(INFO, "entering statvfs %s", path);
         char passpath[PATH_MAX];
+        //printf("statvfs %s\n", path);
 
-        struct config sea_conf = get_sea_config();
-        if (sea_conf.parsed == true && sea_conf.n_sources > 1) {
-            initialize_sea_if_necessary();
-            sea_getpath(path, passpath, 0);
+        if (!get_internal()) {
+            log_msg(INFO, "entering statvfs %s", path);
+
+            struct config sea_conf = get_sea_config();
+            if (sea_conf.parsed == true && sea_conf.n_sources > 1) {
+                initialize_sea_if_necessary();
+                sea_getpath(path, passpath, 0);
+            }
+            else
+                pass_getpath(path, passpath, 0);
+            log_msg(INFO, "completed statvfs %s", passpath);
         }
-        else
-            pass_getpath(path, passpath, 0);
-        log_msg(INFO, "completed statvfs %s", passpath);
+        else {
+            strcpy(passpath, path);
+        }
 
         return ((funcptr_statvfs)libc_statvfs)(passpath, buf);
     }
@@ -847,52 +937,71 @@ extern "C" {
     int __xstat(int ver, const char *path, struct stat *statbuf){
         initialize_passthrough_if_necessary();
         char passpath[PATH_MAX];
-        log_msg(INFO, "entering xstat %s", path);
+        //printf("__xstat %s\n", path);
+        if (!get_internal()) {
+            log_msg(INFO, "entering xstat %s", path);
 
-        struct config sea_conf = get_sea_config();
+            struct config sea_conf = get_sea_config();
 
-        if (sea_conf.parsed == true && sea_conf.n_sources > 1) {
-            initialize_sea_if_necessary();
-            sea_getpath(path, passpath, 0);
+            if (sea_conf.parsed == true && sea_conf.n_sources > 1) {
+                initialize_sea_if_necessary();
+                sea_getpath(path, passpath, 0);
+            }
+            else
+                pass_getpath(path, passpath, 0);
+
+            log_msg(INFO, "completed xstat %s", passpath);
         }
-        else
-            pass_getpath(path, passpath, 0);
-
-        log_msg(INFO, "completed xstat %s", passpath);
+        else {
+            strcpy(passpath, path);
+        }
         return ((funcptr___xstat)libc___xstat)(ver, passpath, statbuf);
     }
 
     int _xstat(int ver, const char *path, struct stat *statbuf){
-        log_msg(INFO, "entering xstat %s", path);
         initialize_passthrough_if_necessary();
         char passpath[PATH_MAX];
+        //printf("_xstat %s\n", path);
 
-        struct config sea_conf = get_sea_config();
-        if (sea_conf.parsed == true && sea_conf.n_sources > 1) {
-            initialize_sea_if_necessary();
-            sea_getpath(path, passpath, 0);
+        if (!get_internal()) {
+            log_msg(INFO, "entering xstat %s", path);
+            struct config sea_conf = get_sea_config();
+            if (sea_conf.parsed == true && sea_conf.n_sources > 1) {
+                initialize_sea_if_necessary();
+                sea_getpath(path, passpath, 0);
+            }
+            else
+                pass_getpath(path, passpath, 0);
+
+            log_msg(INFO, "completed xstat %s", passpath);
         }
-        else
-            pass_getpath(path, passpath, 0);
-
-        log_msg(INFO, "completed xstat %s", passpath);
+        else {
+            strcpy(passpath, path);
+        }
+        //printf("__xstat %s", passpath);
         return ((funcptr__xstat)libc__xstat)(ver, passpath, statbuf);
     }
 
     int __xstat64(int ver, const char *path, struct stat64 *statbuf){
         initialize_passthrough_if_necessary();
         char passpath[PATH_MAX];
+        //printf("__xstat64 %s\n", path);
 
-        struct config sea_conf = get_sea_config();
-        log_msg(INFO, "entering xstat64 %s", path);
-        if (sea_conf.parsed == true && sea_conf.n_sources > 1) {
-            initialize_sea_if_necessary();
-            sea_getpath(path, passpath, 0);
+        if (!get_internal()) {
+            struct config sea_conf = get_sea_config();
+            log_msg(INFO, "entering xstat64 %s", path);
+            if (sea_conf.parsed == true && sea_conf.n_sources > 1) {
+                initialize_sea_if_necessary();
+                sea_getpath(path, passpath, 0);
+            }
+            else
+                pass_getpath(path, passpath, 0);
+
+            log_msg(INFO, "completed xstat64 %s", passpath);
         }
-        else
-            pass_getpath(path, passpath, 0);
-
-        log_msg(INFO, "completed xstat64 %s", passpath);
+        else {
+            strcpy(passpath, path);
+        }
         return ((funcptr___xstat64)libc___xstat64)(ver, passpath, statbuf);
     }
 
@@ -905,22 +1014,28 @@ extern "C" {
     int __fxstatat(int ver, int fd, const char *path, struct stat *statbuf, int flag){
         initialize_passthrough_if_necessary();
         char passpath[PATH_MAX];
-        int match;
 
-        struct config sea_conf = get_sea_config();
-        log_msg(INFO, "entering fxstatat %s", path);
-        if (sea_conf.parsed == true && sea_conf.n_sources > 1) {
-            initialize_sea_if_necessary();
-            match = sea_getpath(path, passpath, 0);
+        if (!get_internal()) {
+            int match;
+
+            struct config sea_conf = get_sea_config();
+            log_msg(INFO, "entering fxstatat %s", path);
+            if (sea_conf.parsed == true && sea_conf.n_sources > 1) {
+                initialize_sea_if_necessary();
+                match = sea_getpath(path, passpath, 0);
+            }
+            else
+                match = pass_getpath(path, passpath, 0);
+
+            if (match == 0) {
+                strcpy(passpath, path);
+            }
+
+            log_msg(INFO, "completed fxstatat %s", passpath);
         }
-        else
-            match = pass_getpath(path, passpath, 0);
-
-        if (match == 0) {
+        else {
             strcpy(passpath, path);
         }
-
-        log_msg(INFO, "completed fxstatat %s", passpath);
         return ((funcptr___fxstatat)libc___fxstatat)(ver, fd, passpath, statbuf, flag);
     }
 
@@ -930,26 +1045,32 @@ extern "C" {
         return ((funcptr___fxstat64)libc___fxstat64)(ver, fd, statbuf);
     }
 
-    int __fxstatat64(int ver, int fd, const char *path, struct stat64 *statbuf, int flag){
+    int __fxstatat64(int ver, int fd, const char *path, struct stat64 *statbuf, int flag) {
+        initialize_passthrough_if_necessary();
         char passpath[PATH_MAX];
-        int match;
-        struct config sea_conf = get_sea_config();
 
-        log_msg(INFO, "entering fxstatat64 %s", path);
-        if (sea_conf.parsed == true && sea_conf.n_sources > 1) {
-            initialize_sea_if_necessary();
-            match = sea_getpath(path, passpath, 0);
+        if (!get_internal()) { 
+            int match;
+            struct config sea_conf = get_sea_config();
+
+            log_msg(INFO, "entering fxstatat64 %s", path);
+            if (sea_conf.parsed == true && sea_conf.n_sources > 1) {
+                initialize_sea_if_necessary();
+                match = sea_getpath(path, passpath, 0);
+            }
+            else {
+                match = pass_getpath(path, passpath, 0);
+            }
+
+            if (match == 0) {
+                strcpy(passpath, path);
+            }
+
+            log_msg(INFO, "completed fxstatat64 %s", passpath);
         }
         else {
-            initialize_passthrough_if_necessary();
-            match = pass_getpath(path, passpath, 0);
-        }
-
-        if (match == 0) {
             strcpy(passpath, path);
         }
-
-        log_msg(INFO, "completed fxstatat64 %s", passpath);
         return ((funcptr___fxstatat64)libc___fxstatat64)(ver, fd, passpath, statbuf, flag);
     }
 
@@ -957,16 +1078,23 @@ extern "C" {
         initialize_passthrough_if_necessary();
         char passpath[PATH_MAX];
 
-        log_msg(INFO, "entering lxstat %s", path);
-        struct config sea_conf = get_sea_config();
-        if (sea_conf.parsed == true && sea_conf.n_sources > 1) {
-            initialize_sea_if_necessary();
-            sea_getpath(path, passpath, 0);
-        }
-        else
-            pass_getpath(path, passpath, 0);
+        //printf("lxstat %s %d\n", path, get_internal());
+        if (!get_internal()) {
+            log_msg(INFO, "entering lxstat %s", path);
+            struct config sea_conf = get_sea_config();
+            if (sea_conf.parsed == true && sea_conf.n_sources > 1) {
+                initialize_sea_if_necessary();
+                sea_getpath(path, passpath, 0);
+            }
+            else
+                pass_getpath(path, passpath, 0);
 
-        log_msg(INFO, "completed lxstat %s", passpath);
+            log_msg(INFO, "completed lxstat %s", passpath);
+        }
+        else {
+            strcpy(passpath, path);
+        }
+        //printf("lxstat %s\n", passpath);
         return ((funcptr___lxstat)libc___lxstat)(ver, passpath, statbuf);
     }
 
@@ -974,16 +1102,21 @@ extern "C" {
         initialize_passthrough_if_necessary();
         char passpath[PATH_MAX];
 
-        log_msg(INFO, "entering lxstat64");
-        struct config sea_conf = get_sea_config();
-        if (sea_conf.parsed == true && sea_conf.n_sources > 1) {
-            initialize_sea_if_necessary();
-            sea_getpath(path, passpath, 0);
-        }
-        else
-            pass_getpath(path, passpath, 0);
+        if (!get_internal()) {
+            log_msg(INFO, "entering lxstat64");
+            struct config sea_conf = get_sea_config();
+            if (sea_conf.parsed == true && sea_conf.n_sources > 1) {
+                initialize_sea_if_necessary();
+                sea_getpath(path, passpath, 0);
+            }
+            else
+                pass_getpath(path, passpath, 0);
 
-        log_msg(INFO, "completed lxstat64 %s", path);
+            log_msg(INFO, "completed lxstat64 %s", path);
+        }
+        else {
+            strcpy(passpath, path);
+        }
         return ((funcptr___lxstat64)libc___lxstat64)(ver, passpath, statbuf);
     }
 
@@ -991,15 +1124,21 @@ extern "C" {
         initialize_passthrough_if_necessary();
         char passpath[PATH_MAX];
 
-        struct config sea_conf = get_sea_config();
-        if (sea_conf.parsed == true && sea_conf.n_sources > 1) {
-            initialize_sea_if_necessary();
-            sea_getpath(path, passpath, 0);
-        }
-        else
-            pass_getpath(path, passpath, 0);
+        if (!get_internal()) {
+            struct config sea_conf = get_sea_config();
+            if (sea_conf.parsed == true && sea_conf.n_sources > 1) {
+                initialize_sea_if_necessary();
+                sea_getpath(path, passpath, 0);
+            }
+            else
+                pass_getpath(path, passpath, 0);
 
-        log_msg(INFO, "statfs %s", passpath);
+            log_msg(INFO, "statfs %s", passpath);
+        }
+        else {
+            strcpy(passpath, path);
+        }
+
         return ((funcptr_statfs)libc_statfs)(passpath, buf);
     }
 
@@ -1022,7 +1161,7 @@ extern "C" {
         else
             pass_getpath(path, passpath, 0);
 
-        log_msg(INFO, "fopen %s %s", path, mode);
+        log_msg(INFO, "fopen %s mode %s", path, mode);
         return ((funcptr_fopen)libc_fopen)(passpath, mode);
     }
 
@@ -1570,16 +1709,17 @@ extern "C" {
     ssize_t readlink (const char *filename, char *buffer, size_t size){
         initialize_passthrough_if_necessary();
         char passpath[PATH_MAX];
-
+        log_msg(INFO, "entering readlink %s", filename);
         struct config sea_conf = get_sea_config();
         if (sea_conf.parsed == true && sea_conf.n_sources > 1) {
             initialize_sea_if_necessary();
             sea_getpath(filename, passpath, 0);
+            //printf("readlink %s\n", passpath);
         }
         else
             pass_getpath(filename, passpath, 0);
 
-        log_msg(INFO, "readlink %s", passpath);
+        log_msg(INFO, "completing readlink %s", passpath);
         return ((funcptr_readlink)libc_readlink)(passpath, buffer, size);
     }
 
