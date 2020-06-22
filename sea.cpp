@@ -210,9 +210,9 @@ void populateFileVec(char *basePath, int sea_lvl, struct config sea_config)
         strcpy(path, basePath);
         strcat(path, "/");
         strcat(path, dp->d_name);
-        char* fp = new char[PATH_MAX];
-        memcpy(fp, path, PATH_MAX);
-        sea_files.push_back(strdup(fp));
+        //char* fp = new char[PATH_MAX];
+        //memcpy(fp, path, PATH_MAX);
+        sea_files.push_back(path);
         //free(fp);
 
         if (strcmp(dp->d_name, ".") != 0 && strcmp(dp->d_name, "..") != 0)
