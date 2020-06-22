@@ -212,7 +212,9 @@ void populateFileVec(char *basePath, int sea_lvl, struct config sea_config)
         //printf("adding file %s\n", path);
         //char* fp = new char[PATH_MAX];
         //memcpy(fp, path, PATH_MAX);
-        sea_files.push_back(path);
+
+        if (path[0] != '\0' && strlen(path) < PATH_MAX)
+            sea_files.push_back(path);
         //free(fp);
 
         if (strcmp(dp->d_name, ".") != 0 && strcmp(dp->d_name, "..") != 0)
