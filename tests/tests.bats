@@ -66,7 +66,7 @@ SOURCE_1="$PWD/source_1"
 
 @test "dd" {
     load setup
-    dd if=/dev/random of=${MOUNT}/file count=3
+    valgrind dd if=/dev/random of=${MOUNT}/file count=3
     load unset
     test -f ${SOURCE}/file
 }
@@ -104,6 +104,7 @@ SOURCE_1="$PWD/source_1"
 
 @test "file" {
     load setup
+    valgrind file mount/file_in_source.txt
     f=$(file mount/file_in_source.txt)
     [[ "$f" == "mount/file_in_source.txt: ASCII text" ]]
     f=$(file mount/subdir/file_in_subdir.txt)
