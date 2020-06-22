@@ -204,12 +204,12 @@ void populateFileVec(char *basePath, int sea_lvl, struct config sea_config)
 
     while ((dp = ((funcptr_readdir)libc_readdir)(dir)) != NULL)
     {
-        printf("adding file %s\n", dp->d_name);
 
         // Construct new path from our base path
         strcpy(path, basePath);
         strcat(path, "/");
         strcat(path, dp->d_name);
+        printf("adding file %s\n", path);
         //char* fp = new char[PATH_MAX];
         //memcpy(fp, path, PATH_MAX);
         sea_files.push_back(path);
