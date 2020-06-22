@@ -39,8 +39,8 @@ SOURCE_1="$PWD/source_1"
 
 @test "rm" {
     load setup
-    rm ${MOUNT}/file_in_source.txt
-    rm ${MOUNT}/subdir/file_in_subdir.txt
+    valgrind rm ${MOUNT}/file_in_source.txt
+    valgrind rm ${MOUNT}/subdir/file_in_subdir.txt
     load unset
     [ ! -f ${SOURCE}/file_in_source.txt ]
     [ ! -f ${SOURCE}/subdir/file_in_subdir.txt ]
