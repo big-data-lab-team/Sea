@@ -191,7 +191,7 @@ int sea_getpath(const char* oldpath, char passpath[PATH_MAX], int masked_path, i
 
 // obtained from : https://codeforwin.org/2018/03/c-program-to-list-all-files-in-a-directory-recursively.html
 // modified to populate vector
-void populateFileVec(char *basePath, int sea_lvl, struct config sea_config)
+void populateFileVec(char *basePath, int sea_lvl, struct config sea_config, std::vector<char*> path_vec)
 {
     //printf("base %s \n", basePath);
     char path[PATH_MAX];
@@ -213,8 +213,7 @@ void populateFileVec(char *basePath, int sea_lvl, struct config sea_config)
         //char* fp = new char[PATH_MAX];
         //memcpy(fp, path, PATH_MAX);
 
-        if (path[0] != '\0' && strlen(path) < PATH_MAX)
-            sea_files.push_back(path);
+        path_vec.push_back(path);
         //free(fp);
 
         if (strcmp(dp->d_name, ".") != 0 && strcmp(dp->d_name, "..") != 0)
@@ -239,7 +238,7 @@ void populateFileVec(char *basePath, int sea_lvl, struct config sea_config)
                     } 
                 }
             }
-            populateFileVec(path, sea_lvl, sea_config);
+            populateFileVec(path, sea_lvl, sea_config, path_vec);
         }
     }
     closedir(dir);
@@ -253,7 +252,7 @@ void initialize_sea(){
 
     for (int i=0; i < sea_config.n_sources; i++){
         //printf("source_mounts %s\n", source_mounts[i]);
-        populateFileVec(source_mounts[i], i, sea_config);
+        populateFileVec(source_mounts[i], i, sea_config, sea_files);
     }
 
 }
