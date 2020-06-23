@@ -108,8 +108,8 @@ void populateFileVec(char *basePath, int sea_lvl, struct config sea_config, std:
         // Construct new path from our base path
         strcpy(path, basePath);
 
-        if (path[strlen(path) - 1] != '/')
-            strcat(path, "/");
+        //if (path[strlen(path) - 1] != '/')
+        strcat(path, "/");
         strcat(path, dp->d_name);
         //printf("adding file %s\n", path);
         char* fp = new char[PATH_MAX];
@@ -130,8 +130,8 @@ void populateFileVec(char *basePath, int sea_lvl, struct config sea_config, std:
                     for (int i=0; i < sea_config.n_sources; ++i) {
                         if (i != sea_lvl) {
                             strcpy(dir_to_create, sea_config.source_mounts[i]);
-                            if (dir_to_create[strlen(dir_to_create) - 1] != '/')
-                                strcat(dir_to_create, "/");
+                            //if (dir_to_create[strlen(dir_to_create) - 1] != '/')
+                            strcat(dir_to_create, "/");
                             strcat(dir_to_create, dp->d_name);
 
                             //TODO: add error handling here
