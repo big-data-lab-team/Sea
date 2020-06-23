@@ -6,10 +6,11 @@
 #include <string.h>
 #include <errno.h>
 #include <cstdlib>
+#include <algorithm>
 
 int sea_internal;
 
-std::vector<char *> sea_files;
+std::set<std::string> sea_files;
 
 /**
  * Getter for the sea_internal global variable
@@ -139,16 +140,16 @@ int sea_getpath(const char* oldpath, char passpath[PATH_MAX], int masked_path, i
 // obtained from : https://codeforwin.org/2018/03/c-program-to-list-all-files-in-a-directory-recursively.html
 // modified to populate vector
 /**
- * Populate a vector with all files and directories located within a given source mount.
+ * Populate a set with all files and directories located within a given source mount.
  * Directories which do not exist in all source mounts are created in all the mounts.
  *
  * @param basePath the root directory to start adding paths from
  * @param sea_lvl the index of the basePath's parent source mount
  * @param sea_config the sea configuration struct
- * @param path_vec the reference to a vector where paths will be appended to
+ * @param sea_paths the reference to a set where paths will be appended to
  *
  */
-void populateFileVec(char *basePath, int sea_lvl, struct config sea_config, std::vector<char *> &path_vec)
+void populateFileSet(char *basePath, int sea_lvl, struct config sea_config, std::set<std::string> &sea_paths)
 {
     //printf("base %s \n", basePath);
     char path[PATH_MAX];
@@ -165,31 +166,31 @@ void populateFileVec(char *basePath, int sea_lvl, struct config sea_config, std:
         // Construct new path from our base path
         strcpy(path, basePath);
 
-        //if (path[strlen(path) - 1] != '/')
         strcat(path, "/");
         strcat(path, dp->d_name);
-        //printf("adding file %s\n", path);
-        char* fp = new char[PATH_MAX];
-        memcpy(fp, path, PATH_MAX);
+        std::string fp(path, 0, PATH_MAX);
 
-        path_vec.push_back(fp);
+        sea_paths.insert(fp);
 
         if (strcmp(dp->d_name, ".") != 0 && strcmp(dp->d_name, "..") != 0)
         {
-            
             if (dp->d_type == DT_DIR) {
-                char dir_to_create[PATH_MAX];
-
                 struct stat buf;
-                if( ((funcptr___xstat)libc___xstat)(_STAT_VER_LINUX, fp, &buf) == 0) {
-                    //printf("adding file %s\n", dp->d_name);
+                if( ((funcptr___xstat)libc___xstat)(_STAT_VER_LINUX, path, &buf) == 0) {
 
                     for (int i=0; i < sea_config.n_sources; ++i) {
                         if (i != sea_lvl) {
+                            char dir_to_create[PATH_MAX];
+
                             strcpy(dir_to_create, sea_config.source_mounts[i]);
-                            //if (dir_to_create[strlen(dir_to_create) - 1] != '/')
                             strcat(dir_to_create, "/");
                             strcat(dir_to_create, dp->d_name);
+
+                            std::string dirp(dir_to_create, 0, PATH_MAX);
+
+                            sea_paths.insert(dirp);
+                            sea_paths.insert(dirp + "/..");
+                            sea_paths.insert(dirp + "/.");
 
                             //TODO: add error handling here
                             ((funcptr_mkdir)libc_mkdir)(dir_to_create, buf.st_mode);
@@ -197,34 +198,33 @@ void populateFileVec(char *basePath, int sea_lvl, struct config sea_config, std:
                     } 
                 }
             }
-            populateFileVec(fp, sea_lvl, sea_config, path_vec);
+            populateFileSet(path, sea_lvl, sea_config, sea_paths);
         }
     }
     closedir(dir);
 }
 
 /**
- * Populate the sea_files vector with all the directories and paths located within the
+ * Populate the sea_files set with all the directories and paths located within the
  * source mounts
  *
  */
 void initialize_sea() {
+    sea_files.clear();
     sea_internal = 0;
     struct config sea_config = get_sea_config();
     char ** source_mounts = sea_config.source_mounts;
 
     for (int i=0; i < sea_config.n_sources; i++){
-        populateFileVec(source_mounts[i], i, sea_config, sea_files);
+        populateFileSet(source_mounts[i], i, sea_config, sea_files);
     }
-    //for (auto file : sea_files)
-    //    printf("sea file %s\n", file);
 }
 
 static pthread_once_t sea_initialized = PTHREAD_ONCE_INIT;
 
 /**
- * Create a pthread to intialize the sea_files vector. Doesn't really work, so also
- * check if there are no files in the sea_files vector and if so, call initialize_sea 
+ * Create a pthread to intialize the sea_files set. Doesn't really work, so also
+ * check if there are no files in the sea_files set and if so, call initialize_sea 
  *
  */
 void initialize_sea_if_necessary() {

@@ -9,14 +9,15 @@
 #endif
 
 #include <limits.h>
-#include <vector>
+#include <set>
+#include <string>
 #include <dirent.h>
 
 extern int sea_internal;
 int set_internal();
 int get_internal();
 int unset_internal();
-extern std::vector<char *> sea_files;
+extern std::set<std::string> sea_files;
 int sea_checkpath(const char* path); 
 int sea_getpath(const char* oldpath, char passpath[PATH_MAX], int masked_path);
 int sea_getpath(const char* oldpath, char passpath[PATH_MAX], int masked_path, int source_id);
