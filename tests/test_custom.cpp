@@ -1,10 +1,11 @@
 #include <gtest/gtest.h>
 #include "../passthrough.h"
+#include "../sea.h"
 #include "../config.h"
 #include <stdlib.h>
 
 // need to add symlink tests here
-TEST(Passpath, GetCanonical) {
+TEST(Passthrough, GetCanonical) {
 
     initialize_passthrough_if_necessary();
 
@@ -30,9 +31,7 @@ TEST(Passpath, GetCanonical) {
 
 }
 
-
-
-TEST(Passpath, GetPassCanonical) {
+TEST(Passthrough, GetPassCanonical) {
     char path[PATH_MAX];
     char passpath[PATH_MAX];
 
@@ -59,7 +58,7 @@ TEST(Passpath, GetPassCanonical) {
     ASSERT_STREQ(path, source_0);    
 }
 
-TEST(Passpath, CheckIfSeaPath) {
+TEST(Passthrough, CheckIfSeaPath) {
 
     char oldpaths[4][PATH_MAX] = { "mount/test.txt", "mount/subdir/test.txt", "/dev/shm/test.txt", "/" };
     char expaths[4][PATH_MAX] = { "source/test.txt", "source/subdir/test.txt", "/dev/shm/test.txt", "/" };
@@ -89,9 +88,8 @@ TEST(Passpath, CheckIfSeaPath) {
     }
 }
 
-TEST(Passpath, GetRealPath) {
+TEST(Passthrough, GetRealPath) {
     initialize_passthrough_if_necessary();
-
 
     // test relative mount path
     const char* oldpath = (const char*) "mount/file.txt"; 
@@ -117,6 +115,29 @@ TEST(Passpath, GetRealPath) {
     pass_getpath(oldpath_2, passpath, 1);
     strcpy(rp, oldpath_2);
     ASSERT_STREQ(passpath, rp);
+
+}
+
+
+TEST(Sea, InitializeSea) {
+
+    initialize_sea();
+    // 2 mounts * 2 ('.' & '..') + 2 subdirs * 2 mounts * 3 (dirname & '.' & '..') + 3 files
+    ASSERT_EQ(sea_files.size(), 19);
+
+    initialize_passthrough_if_necessary();
+    config sea_config = get_sea_config();
+
+    char *added_dir = new char[PATH_MAX];
+    strcpy(added_dir, sea_config.source_mounts[1]);
+    strcat(added_dir, "/newdir");
+
+    ((funcptr_mkdir)libc_mkdir)(added_dir, 0666);
+    sea_files.clear();
+    initialize_sea();
+    // 19 from before + 6 ((dirname, ., ..)*2)
+    ASSERT_EQ(sea_files.size(), 25);
+
 
 }
 

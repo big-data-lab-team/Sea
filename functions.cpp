@@ -382,17 +382,11 @@ extern "C" {
 
                     strcat(tmppath, d->d_name);
 
-                    // no way around using the vector here 
-                    for (auto file: sea_files) {
-                        //printf("file %s tmppath %s\n", file, tmppath);
-                        if (strcmp(file, tmppath) == 0) {
+                    // no way around using the set here 
+                    if (sea_files.find((std::string)tmppath) != sea_files.end()) {
                             found = 1;
                             break;
-                        }
                     }
-
-                    if (found)
-                        break;
                 }
             }
             if (found) {
