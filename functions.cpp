@@ -376,11 +376,15 @@ extern "C" {
                 if (i != sd->curr_index + 1) {
                     char tmppath[PATH_MAX];
                     strcpy(tmppath, sea_conf.source_mounts[i]);
-                    strcat(tmppath, "/");
+
+                    if (sea_conf.source_mounts[i][strlen(sea_conf.source_mounts[i]) - 1] != '/')
+                        strcat(tmppath, "/");
+
                     strcat(tmppath, d->d_name);
-                   
+
                     // no way around using the vector here 
                     for (auto file: sea_files) {
+                        //printf("file %s tmppath %s\n", file, tmppath);
                         if (strcmp(file, tmppath) == 0) {
                             found = 1;
                             break;
@@ -410,6 +414,7 @@ extern "C" {
         errno = 0;
         
         if (sea_conf.parsed && sea_conf.n_sources > 1){
+
             SEA_DIR* sd = (SEA_DIR*) dirp;
             if (strcmp(sd->type, "seadir") == 0) {
                 d = ((funcptr_readdir)libc_readdir)(sd->dirp);

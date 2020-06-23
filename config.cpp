@@ -79,11 +79,15 @@ void parse_config()
     {
         char source_name[15];
         sprintf(source_name, "sea:source_%d", i);
-        if((sea_config.source_mounts[i] = (char *) iniparser_getstring(config_dict, source_name, NULL))==0)
+        sea_config.source_mounts[i] = new char[PATH_MAX];
+        if(strcpy(sea_config.source_mounts[i], (char *) iniparser_getstring(config_dict, source_name, NULL))==0)
         {
             printf("Missing %s in config file %s\n", source_name, config_file);
             exit(1);
         }
+        // add '/' to the end of source mount path if missing
+        if (sea_config.source_mounts[i][strlen(sea_config.source_mounts[i])-1] != '/')
+            strcat(sea_config.source_mounts[i], "/");
     }
     if((sea_config.mount_dir = (char *) iniparser_getstring(config_dict, "sea:mount_dir", NULL))==0)
     {
@@ -95,6 +99,10 @@ void parse_config()
         printf("Missing log_file in config file %s\n", config_file);
         exit(1);
     }
+
+    // add '/' to the end of mount path
+    //if (sea_config.mount_dir[strlen(sea_config.mount_dir)-1] != '/')
+    //    strcat(sea_config.mount_dir, "/");
     sea_config.log_level = iniparser_getint(config_dict, "sea:log_level", 1);
     sea_config.parsed = true;
 }
