@@ -22,8 +22,6 @@
 #include <sys/stat.h>
 #include <errno.h>
 
-#define MAX_MOUNTS 6
-
 void* libc;
 void* libc_creat;
 void* libc_creat64;
@@ -297,7 +295,6 @@ int check_if_seapath(char path[PATH_MAX], char canonical[PATH_MAX], char passpat
 
     if(canonical != NULL && path != NULL) {  
         if ((match = strstr(canonical, path))) {
-            //printf("match %s %s\n", canonical, path);
 
             if (match == NULL || match[0] == '\0')
                 log_msg(DEBUG, "match null");

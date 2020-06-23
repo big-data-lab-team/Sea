@@ -377,8 +377,8 @@ extern "C" {
                     char tmppath[PATH_MAX];
                     strcpy(tmppath, sea_conf.source_mounts[i]);
 
-                    if (sea_conf.source_mounts[i][strlen(sea_conf.source_mounts[i]) - 1] != '/')
-                        strcat(tmppath, "/");
+                    //if (sea_conf.source_mounts[i][strlen(sea_conf.source_mounts[i]) - 1] != '/')
+                    strcat(tmppath, "/");
 
                     strcat(tmppath, d->d_name);
 
