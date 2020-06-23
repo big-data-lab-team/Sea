@@ -89,109 +89,9 @@ int sea_getpath(const char* oldpath, char passpath[PATH_MAX], int masked_path, i
 
 }
 
-//int sea_getpath(const char* oldpath, char passpath[PATH_MAX], int masked_path, int sea_lvl){
-//
-//    if(oldpath == NULL)
-//        return 0;
-//    
-//    char actualpath[PATH_MAX];
-//
-//    // Get config
-//    struct config sea_config = get_sea_config();
-//    char * mount_dir = sea_config.mount_dir;
-//    char ** source_mounts = sea_config.source_mounts;
-//
-//    char path[PATH_MAX];
-//    get_pass_canonical(path, passpath, mount_dir, source_mounts[sea_lvl], masked_path);
-//
-//    int match_found = 0;
-//
-//
-//    if (masked_path == 1){
-//        for (int i=0; i < sea_config.n_sources ; i++){
-//            char* match;
-//            strcpy(path, source_mounts[i]);
-//            strcpy(passpath, mount_dir);
-//
-//            int len = strlen(path);
-//            if(path[0] != '\0' && (match = strstr(actualpath, path))){
-//                if (match == NULL)
-//                    log_msg(DEBUG, "match null");
-//                log_msg(DEBUG, "match");
-//                *match = '\0';
-//                strcat(passpath, match + len);
-//                match_found = 1;
-//            }
-//        }
-//        if (match_found == 0) {
-//            log_msg(DEBUG, "no match");
-//            strcpy(passpath, oldpath);
-//        }
-//    }
-//    else { 
-//        strcpy(path, mount_dir);
-//
-//        //printf("x %s\n", curr_file);
-//
-//        char fpath_dup[PATH_MAX];
-//        strcpy(fpath_dup, actualpath);
-//        char* match;
-//        int len = strlen(path);
-//
-//        //printf("ap %s, %s ,  %s\n", oldpath ,actualpath, path);
-//        if(path[0] != '\0'  && (match = strstr(fpath_dup, path))){
-//            if (match == NULL)
-//                log_msg(DEBUG, "match null");
-//            else {
-//                log_msg(DEBUG, "match");
-//                *match = '\0';
-//
-//                if (strcmp(match + len, "") == 0){
-//                    match_found = 1;
-//                    strcpy(passpath, sea_config.source_mounts[sea_lvl]);
-//                    //printf("passpath %s\n", passpath);
-//                }
-//                else{
-//
-//                    for (char* curr_file: sea_files){
-//                        //printf("values %s %s\n", curr_file, match + len);
-//                        char match_str[PATH_MAX];
-//                        int curr_len = strlen(curr_file);
-//                        strcpy(match_str, match + len);
-//                        int match_len = strlen(match_str);
-//                        
-//                        //printf("curr_path %s, match_str %s, len %d\n", curr_file, match_str, len);
-//                        if ( strcmp(curr_file + curr_len - match_len, match_str) == 0) {
-//                            match_found = 1;
-//                            strcpy(passpath, curr_file);
-//                            break;
-//                        }
-//                    }
-//
-//                    if (match_found == 0){
-//                        log_msg(DEBUG, "new file");
-//                        match_found = 1;
-//                        strcpy(passpath, sea_config.source_mounts[sea_lvl]);
-//                        strcat(passpath, match + len);
-//
-//                    }
-//               }
-//            }
-//        }
-//
-//        if (match_found == 0) {
-//            log_msg(DEBUG, "no match");
-//            strcpy(passpath, oldpath);
-//        }
-//    }
-//
-//    log_msg(INFO, "old fn %s ---> new fn %s", oldpath, passpath);
-//    return match_found;
-//}
-
 // obtained from : https://codeforwin.org/2018/03/c-program-to-list-all-files-in-a-directory-recursively.html
 // modified to populate vector
-void populateFileVec(char *basePath, int sea_lvl, struct config sea_config, std::vector<char*> path_vec)
+void populateFileVec(char *basePath, int sea_lvl, struct config sea_config, std::vector<char *> &path_vec)
 {
     //printf("base %s \n", basePath);
     char path[PATH_MAX];
@@ -206,15 +106,16 @@ void populateFileVec(char *basePath, int sea_lvl, struct config sea_config, std:
     {
 
         // Construct new path from our base path
-        strncpy(path, basePath, strlen(basePath) + 1);
-        strncat(path, "/", 2);
-        strncat(path, dp->d_name, strlen(dp->d_name) + 1);
-        //printf("adding file %s\n", path);
-        //char* fp = new char[PATH_MAX];
-        //memcpy(fp, path, PATH_MAX);
+        strcpy(path, basePath);
 
-        path_vec.push_back(path);
-        //free(fp);
+        if (path[strlen(path) - 1] != '/')
+            strcat(path, "/");
+        strcat(path, dp->d_name);
+        //printf("adding file %s\n", path);
+        char* fp = new char[PATH_MAX];
+        memcpy(fp, path, PATH_MAX);
+
+        path_vec.push_back(fp);
 
         if (strcmp(dp->d_name, ".") != 0 && strcmp(dp->d_name, "..") != 0)
         {
@@ -223,13 +124,14 @@ void populateFileVec(char *basePath, int sea_lvl, struct config sea_config, std:
                 char dir_to_create[PATH_MAX];
 
                 struct stat buf;
-                if( ((funcptr___xstat)libc___xstat)(_STAT_VER_LINUX, path, &buf) == 0) {
+                if( ((funcptr___xstat)libc___xstat)(_STAT_VER_LINUX, fp, &buf) == 0) {
                     //printf("adding file %s\n", dp->d_name);
 
                     for (int i=0; i < sea_config.n_sources; ++i) {
                         if (i != sea_lvl) {
                             strcpy(dir_to_create, sea_config.source_mounts[i]);
-                            strcat(dir_to_create, "/");
+                            if (dir_to_create[strlen(dir_to_create) - 1] != '/')
+                                strcat(dir_to_create, "/");
                             strcat(dir_to_create, dp->d_name);
 
                             //TODO: add error handling here
@@ -238,28 +140,29 @@ void populateFileVec(char *basePath, int sea_lvl, struct config sea_config, std:
                     } 
                 }
             }
-            populateFileVec(path, sea_lvl, sea_config, path_vec);
+            populateFileVec(fp, sea_lvl, sea_config, path_vec);
         }
     }
     closedir(dir);
 }
 
-void initialize_sea(){
-
+void initialize_sea() {
     sea_internal = 0;
     struct config sea_config = get_sea_config();
     char ** source_mounts = sea_config.source_mounts;
 
     for (int i=0; i < sea_config.n_sources; i++){
-        //printf("source_mounts %s\n", source_mounts[i]);
         populateFileVec(source_mounts[i], i, sea_config, sea_files);
     }
-
+    //for (auto file : sea_files)
+    //    printf("sea file %s\n", file);
 }
 
 static pthread_once_t sea_initialized = PTHREAD_ONCE_INIT;
 
 void initialize_sea_if_necessary() {
-  initialize_sea();
   pthread_once(&sea_initialized, initialize_sea);
+
+  if (sea_files.size() == 0)
+        initialize_sea();
 }
