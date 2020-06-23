@@ -9,16 +9,16 @@ SOURCE_1="$PWD/source_1"
 @test "test" {
     load setup
     # careful, test is a bash internal
-    valgrind bash -c "test -d ${MOUNT}/subdir"
-    valgrind bash -c "test -f ${MOUNT}/file_in_source.txt"
-    valgrind bash -c "test -f ${MOUNT}/subdir/file_in_subdir.txt"
+    bash -c "test -d ${MOUNT}/subdir"
+    bash -c "test -f ${MOUNT}/file_in_source.txt"
+    bash -c "test -f ${MOUNT}/subdir/file_in_subdir.txt"
 }
 
 @test "ls" {
     load setup
     for x in "${MOUNT} ${MOUNT}/file_in_source.txt ${MOUNT}/subdir ${MOUNT}/subdir/file_in_subdir.txt"
     do
-      valgrind ls $x
+      ls $x
     done
     a=$(ls ${MOUNT}) # ls dir content
     [[ $a == *"file_in_source.txt"* ]] # passthrough init message is in a
@@ -39,8 +39,8 @@ SOURCE_1="$PWD/source_1"
 
 @test "rm" {
     load setup
-    valgrind rm ${MOUNT}/file_in_source.txt
-    valgrind rm ${MOUNT}/subdir/file_in_subdir.txt
+    rm ${MOUNT}/file_in_source.txt
+    rm ${MOUNT}/subdir/file_in_subdir.txt
     load unset
     [ ! -f ${SOURCE}/file_in_source.txt ]
     [ ! -f ${SOURCE}/subdir/file_in_subdir.txt ]
@@ -66,7 +66,7 @@ SOURCE_1="$PWD/source_1"
 
 @test "dd" {
     load setup
-    valgrind dd if=/dev/random of=${MOUNT}/file count=3
+    dd if=/dev/random of=${MOUNT}/file count=3
     load unset
     test -f ${SOURCE}/file
 }
@@ -104,7 +104,6 @@ SOURCE_1="$PWD/source_1"
 
 @test "file" {
     load setup
-    valgrind file mount/file_in_source.txt
     f=$(file mount/file_in_source.txt)
     [[ "$f" == "mount/file_in_source.txt: ASCII text" ]]
     f=$(file mount/subdir/file_in_subdir.txt)
