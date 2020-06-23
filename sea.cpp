@@ -11,19 +11,42 @@ int sea_internal;
 
 std::vector<char *> sea_files;
 
+/**
+ * Getter for the sea_internal global variable
+ *
+ * @return the value of sea_internal
+ */
 int get_internal() {
     return sea_internal;
 }
+
+/**
+ * Setter for the sea_internal global variable. Always sets it to 1.
+ *
+ * @return the value of sea_internal
+ */
 int set_internal() {
     sea_internal = 1;
     return sea_internal;
 }
 
+
+/**
+ * Unsets the sea_internal global variable (i.e. sets it to 0).
+ *
+ * @return the value of sea_internal
+ */
 int unset_internal() {
     sea_internal = 0;
     return sea_internal;
 }
 
+/**
+ * Checks if path exists by performing an __xstat
+ *
+ * @param path the path to verify
+ * @return 1 if path exists or 0 if it does not
+ */
 int sea_checkpath(const char* path) {
     struct stat buf;
 
@@ -39,11 +62,35 @@ int sea_checkpath(const char* path) {
     return 1;
 }
 
+/**
+ *
+ * Overloaded function of sea_getpath. Returns the true path of the file if located within the mountpoint.
+ * Can also return the "masked" (path relative to mountpoint).
+ *
+ * @param oldpath the original function path
+ * @param passpath the true path of the file (if located in a sea mountpoint)
+ * @param masked_path whether to populate passpath with the real source mount location or with the "masked" mountpoint path
+ * @return whether oldpath was located in a sea mountpoint or not.
+ *
+ */
 int sea_getpath(const char* oldpath, char passpath[PATH_MAX], int masked_path) {
 
     return sea_getpath(oldpath, passpath, masked_path, -1);
 }
 
+/**
+ *
+ * "Main" overloaded function that calls passthrough_getpath to get real path.
+ * Returns the true path of the file if located within the mountpoint.
+ * Can also return the "masked" (path relative to mountpoint).
+ *
+ * @param oldpath the original function path
+ * @param passpath the true path of the file (if located in a sea mountpoint)
+ * @param masked_path whether to populate passpath with the real source mount location or with the "masked" mountpoint path
+ * @param sea_lvl specifies the index of the source mount to use. If -1, will go through all possible source_mounts to look for existing path
+ * @return whether oldpath was located in a sea mountpoint or not.
+ *
+ */
 int sea_getpath(const char* oldpath, char passpath[PATH_MAX], int masked_path, int sea_lvl) {
     struct config sea_config = get_sea_config();
 
@@ -91,6 +138,16 @@ int sea_getpath(const char* oldpath, char passpath[PATH_MAX], int masked_path, i
 
 // obtained from : https://codeforwin.org/2018/03/c-program-to-list-all-files-in-a-directory-recursively.html
 // modified to populate vector
+/**
+ * Populate a vector with all files and directories located within a given source mount.
+ * Directories which do not exist in all source mounts are created in all the mounts.
+ *
+ * @param basePath the root directory to start adding paths from
+ * @param sea_lvl the index of the basePath's parent source mount
+ * @param sea_config the sea configuration struct
+ * @param path_vec the reference to a vector where paths will be appended to
+ *
+ */
 void populateFileVec(char *basePath, int sea_lvl, struct config sea_config, std::vector<char *> &path_vec)
 {
     //printf("base %s \n", basePath);
@@ -146,6 +203,11 @@ void populateFileVec(char *basePath, int sea_lvl, struct config sea_config, std:
     closedir(dir);
 }
 
+/**
+ * Populate the sea_files vector with all the directories and paths located within the
+ * source mounts
+ *
+ */
 void initialize_sea() {
     sea_internal = 0;
     struct config sea_config = get_sea_config();
@@ -160,6 +222,11 @@ void initialize_sea() {
 
 static pthread_once_t sea_initialized = PTHREAD_ONCE_INIT;
 
+/**
+ * Create a pthread to intialize the sea_files vector. Doesn't really work, so also
+ * check if there are no files in the sea_files vector and if so, call initialize_sea 
+ *
+ */
 void initialize_sea_if_necessary() {
   pthread_once(&sea_initialized, initialize_sea);
 
