@@ -3,6 +3,7 @@
 base_source=""
 sources_arr=()
 n_sources=0
+conf_file=${SEA_HOME}/sea.ini
 flush_file=${SEA_HOME}/.sea_flushlist
 
 flush () {
@@ -53,11 +54,12 @@ get_sources () {
 
     for ((i=0;i<${n_sources};i++))
     do
-        # grep and cut
-        sources_arr+=($(awk -v sc="source_$i" -F "=" '$0~sc{print $2}' ${SEA_HOME}/sea.ini | tr -d ' ;'))
+        sources_arr+=($(cat ${conf_file} | grep "source_$i" | cut -d "=" -f 2 | tr -d ' ;'))
+        echo source_$i ${sources_arr[$i]}
     done
 
-    base_source="$(awk -v sc="source_$n_sources" -F "=" '$0~sc{print $2}' ${SEA_HOME}/sea.ini | tr -d ' ;')"
+    base_source="$(cat ${conf_file} | grep "source_$i" | cut -d "=" -f 2 | tr -d ' ;')"
+    echo base dir ${base_source}
 
 }
 
