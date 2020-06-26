@@ -92,7 +92,7 @@ extern "C" {
             va_end(ap);
         }
 
-        log_msg(INFO, "open64 %s", pathname);
+        log_msg(INFO, "open64 %s", passpath);
         return ((funcptr_open64)libc_open64)(passpath, flags, mode);
     }
 
@@ -116,7 +116,7 @@ extern "C" {
             va_end(ap);
         }
 
-        log_msg(INFO, "open64 %s", pathname);
+        log_msg(INFO, "__open64 %s", passpath);
         return ((funcptr___open64)libc___open64)(passpath, flags, mode);
     }
 
@@ -936,7 +936,6 @@ extern "C" {
     int __xstat(int ver, const char *path, struct stat *statbuf){
         initialize_passthrough_if_necessary();
         char passpath[PATH_MAX];
-        //printf("__xstat %s\n", path);
         if (!get_internal()) {
             log_msg(INFO, "entering xstat %s", path);
 
@@ -954,6 +953,7 @@ extern "C" {
         else {
             strcpy(passpath, path);
         }
+        log_msg(INFO, "__xstat %s %d\n", passpath, get_internal());
         return ((funcptr___xstat)libc___xstat)(ver, passpath, statbuf);
     }
 
@@ -1001,12 +1001,13 @@ extern "C" {
         else {
             strcpy(passpath, path);
         }
+        log_msg(INFO, "__xstat64 %s %d\n", passpath, get_internal());
         return ((funcptr___xstat64)libc___xstat64)(ver, passpath, statbuf);
     }
 
     int __fxstat(int ver, int fd, struct stat *statbuf){
         initialize_passthrough_if_necessary();
-        log_msg(INFO, "fxstat");
+        log_msg(INFO, "fxstat %d", fd);
         return ((funcptr___fxstat)libc___fxstat)(ver, fd, statbuf);
     }
 
@@ -1035,12 +1036,13 @@ extern "C" {
         else {
             strcpy(passpath, path);
         }
+        log_msg(INFO, "__fxstatat %s %d\n", passpath, get_internal());
         return ((funcptr___fxstatat)libc___fxstatat)(ver, fd, passpath, statbuf, flag);
     }
 
     int __fxstat64(int ver, int fd, struct stat64 *statbuf){
         initialize_passthrough_if_necessary();
-        log_msg(INFO, "fxstat64");
+        log_msg(INFO, "fxstat64 %d", fd);
         return ((funcptr___fxstat64)libc___fxstat64)(ver, fd, statbuf);
     }
 
@@ -1070,6 +1072,7 @@ extern "C" {
         else {
             strcpy(passpath, path);
         }
+        log_msg(INFO, "__fxstatat64 %s %d\n", passpath, get_internal());
         return ((funcptr___fxstatat64)libc___fxstatat64)(ver, fd, passpath, statbuf, flag);
     }
 
@@ -1093,6 +1096,7 @@ extern "C" {
         else {
             strcpy(passpath, path);
         }
+        log_msg(INFO, "__lxstat %s %d\n", passpath, get_internal());
         //printf("lxstat %s\n", passpath);
         return ((funcptr___lxstat)libc___lxstat)(ver, passpath, statbuf);
     }
@@ -1116,6 +1120,7 @@ extern "C" {
         else {
             strcpy(passpath, path);
         }
+        log_msg(INFO, "__lxstatat64 %s %d\n", passpath, get_internal());
         return ((funcptr___lxstat64)libc___lxstat64)(ver, passpath, statbuf);
     }
 
@@ -1138,6 +1143,7 @@ extern "C" {
             strcpy(passpath, path);
         }
 
+        log_msg(INFO, "statfs %s %d\n", passpath, get_internal());
         return ((funcptr_statfs)libc_statfs)(passpath, buf);
     }
 
