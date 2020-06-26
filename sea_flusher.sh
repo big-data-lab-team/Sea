@@ -1,5 +1,8 @@
 #!/bin/bash
 
+
+set -e
+
 base_source=""
 sources_arr=()
 n_sources=0
@@ -25,22 +28,25 @@ flush () {
             done < $flush_file
         done
 
-        tobe_flushed=$(ls -tu $(find ${re_flush} -type f -follow -print))
+        if [[ $re_flush != "" ]]
+        then
+            tobe_flushed=$(ls -tu $(find ${re_flush} -type f -follow -print))
 
 
-        for f in $tobe_flushed
-        do
-            for s in $sources_arr
+            for f in $tobe_flushed
             do
-                if [[ "$f" == "${s}/"* ]]
-                then
-                    file_out=$(echo "${f/$s/$base_source}")
-                    echo "flushing and evicting $f to $file_out"
-                    mv $f ${file_out}
-                    break
-                fi
+                for s in $sources_arr
+                do
+                    if [[ "$f" == "${s}/"* ]]
+                    then
+                        file_out=$(echo "${f/$s/$base_source}")
+                        echo "flushing and evicting $f to $file_out"
+                        mv $f ${file_out}
+                        break
+                    fi
+                done
             done
-        done
+        fi
 
         sleep 5
     done

@@ -57,6 +57,7 @@ int sea_checkpath(const char* path) {
     int ret = 0;
     if((ret = __xstat(_STAT_VER_LINUX, path, &buf)) != 0) {
         //printf("errno %d\n", errno);
+        unset_internal();
         return 0;
     }
     unset_internal();
@@ -124,8 +125,10 @@ int sea_getpath(const char* oldpath, char passpath[PATH_MAX], int masked_path, i
         }
     }
 
-    if (match == 1 && tmp_passpath[0] != '\0')
+    if (match == 1 && tmp_passpath[0] != '\0') {
+        //printf("tmppath %s\n", tmp_passpath);
         strcpy(passpath, tmp_passpath);
+    }
     
     if (match == 0) {
         strcpy(passpath, oldpath);
