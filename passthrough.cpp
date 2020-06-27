@@ -56,6 +56,7 @@ void* libc_rmdir;
 void* libc_readdir;
 void* libc_mkdir;
 void* libc_chdir;
+void* libc_dirfd;
 void* libc_access;
 void* libc_faccessat;
 void* libc_stat;
@@ -381,6 +382,7 @@ void initialize_functions()
   libc_readdir = dlsym(libc, "readdir");
   libc_mkdir = dlsym(libc, "mkdir");
   libc_chdir = dlsym(libc, "chdir");
+  libc_dirfd = dlsym(libc, "dirfd");
   libc_rename = dlsym(libc, "rename");
   libc_renameat = dlsym(libc, "renameat");
   libc_renameat2 = dlsym(libc, "renameat2");

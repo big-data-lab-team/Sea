@@ -47,6 +47,7 @@ typedef off_t (*funcptr_lseek)(int, off_t, int);
 typedef struct dirent* (*funcptr_readdir)(DIR*);
 typedef int (*funcptr_mkdir)(const char*, mode_t mode);
 typedef int (*funcptr_chdir)(const char*);
+typedef int (*funcptr_dirfd)(DIR *dirp);
 typedef int (*funcptr_rename)(const char*, const char*);
 typedef int (*funcptr_renameat)(int, const char*, int, const char*);
 typedef int (*funcptr_renameat2)(int, const char*, int, const char*, unsigned int);
@@ -174,6 +175,7 @@ extern void* libc_unlinkat;
 extern void* libc_rmdir;
 extern void* libc_mkdir;
 extern void* libc_chdir;
+extern void* libc_dirfd;
 extern void* libc_readdir;
 
 extern void* libc_access;
