@@ -45,6 +45,7 @@ typedef int (*funcptr_dup2)(int, int);
 typedef off_t (*funcptr_lseek)(int, off_t, int);
 
 typedef struct dirent* (*funcptr_readdir)(DIR*);
+typedef struct dirent64* (*funcptr_readdir64)(DIR *dirp);
 typedef int (*funcptr_mkdir)(const char*, mode_t mode);
 typedef int (*funcptr_chdir)(const char*);
 typedef int (*funcptr_dirfd)(DIR *dirp);
@@ -177,6 +178,7 @@ extern void* libc_mkdir;
 extern void* libc_chdir;
 extern void* libc_dirfd;
 extern void* libc_readdir;
+extern void* libc_readdir64;
 
 extern void* libc_access;
 extern void* libc_faccessat;

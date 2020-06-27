@@ -356,19 +356,45 @@ extern "C" {
             
             }
         }
-        //printf("found %d\n", found);
         return d;
     }
+
+    //TODO:refactor
+    struct dirent64 *sea_readnext64(struct dirent64* d, config sea_conf, SEA_DIR* sd) { 
+        int found = 0;
+        if (d != NULL && d->d_name[0] != '\0') {
+            for (int i = 0 ; i < sea_conf.n_sources; ++i) {
+                if (i != sd->curr_index + 1) {
+                    char tmppath[PATH_MAX];
+                    strcpy(tmppath, sea_conf.source_mounts[i]);
+                    strcat(tmppath, "/");
+                    strcat(tmppath, d->d_name);
+
+                    if (sea_files.find((std::string)tmppath) != sea_files.end()) {
+                            found = 1;
+                            break;
+                    }
+                }
+            }
+            if (found) {
+                d = ((funcptr_readdir64)libc_readdir64)(sd->other_dirp[sd->curr_index]);
+                d = sea_readnext64(d, sea_conf, sd);
+            
+            }
+        }
+        return d;
+    }
+
 
     //TODO: works (for now) but perhaps needs some cleaning up
     struct dirent *readdir(DIR *dirp){
 
-        config sea_conf = get_sea_config();
-        initialize_passthrough_if_necessary();
         struct dirent *d;
+        
         log_msg(INFO, "readdir");
         errno = 0;
-        
+        config sea_conf = get_sea_config();
+        initialize_passthrough_if_necessary();
         if (sea_conf.parsed && sea_conf.n_sources > 1){
 
             SEA_DIR* sd = (SEA_DIR*) dirp;
@@ -416,7 +442,41 @@ extern "C" {
         log_msg(INFO, "end readdir");
         return d;
     }
+    
+    //TODO:refactor
+    struct dirent64 *readdir64(DIR *dirp){
+        struct dirent64 *d;
+        
+        log_msg(INFO, "readdir64");
+        errno = 0;
+        config sea_conf = get_sea_config();
+        initialize_passthrough_if_necessary();
+        if (sea_conf.parsed && sea_conf.n_sources > 1){
 
+            SEA_DIR* sd = (SEA_DIR*) dirp;
+            if (strcmp(sd->type, "seadir") == 0) {
+                d = ((funcptr_readdir64)libc_readdir64)(sd->dirp);
+
+                if (d == NULL && sea_conf.n_sources > 1 ) {
+                    d = ((funcptr_readdir64)libc_readdir64)(sd->other_dirp[sd->curr_index]);
+
+                    if (d == NULL && sd->curr_index + 1 < sea_conf.n_sources) {
+                        sd->curr_index += 1;
+                    }
+                    d = sea_readnext64(d, sea_conf, sd);
+                }
+           }
+           else
+                d = ((funcptr_readdir64)libc_readdir64)(dirp);
+        }
+        else
+            d = ((funcptr_readdir64)libc_readdir64)(dirp);
+
+        if (d == NULL && errno)
+            log_msg(ERROR, "reading dir %s %s", d->d_name);
+        log_msg(INFO, "end readdir64");
+        return d;
+    }
 
 #undef creat
     int creat(__const char *name, mode_t mode) {

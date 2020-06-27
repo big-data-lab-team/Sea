@@ -54,6 +54,7 @@ void* libc_unlink;
 void* libc_unlinkat;
 void* libc_rmdir;
 void* libc_readdir;
+void* libc_readdir64;
 void* libc_mkdir;
 void* libc_chdir;
 void* libc_dirfd;
@@ -380,6 +381,7 @@ void initialize_functions()
   libc_lseek = dlsym(libc, "lseek");
 
   libc_readdir = dlsym(libc, "readdir");
+  libc_readdir64 = dlsym(libc, "readdir64");
   libc_mkdir = dlsym(libc, "mkdir");
   libc_chdir = dlsym(libc, "chdir");
   libc_dirfd = dlsym(libc, "dirfd");
