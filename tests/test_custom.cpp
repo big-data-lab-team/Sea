@@ -11,7 +11,8 @@ TEST(Passthrough, GetCanonical) {
 
     const char paths[6][PATH_MAX] = { "mount", "./mount/subdir", "../mount/", "/dev/shm/tmp", "/", NULL };
 
-    for(auto path: paths){
+    for(int i = 0 ; i < 6 ; i++){
+        const char * path = paths[i];
         char* actualpath;
         char* expected = (char*) malloc(sizeof(char*) * PATH_MAX);
     
@@ -66,8 +67,8 @@ TEST(Passthrough, CheckIfSeaPath) {
 
     realpath("mount", path);
 
-    int i = 0;
-    for (auto op: oldpaths) {
+    for (int i = 0 ; i < 4 ; i++) {
+        char * op = oldpaths[i];
         // need to reinitialize each time otherwise may retain tail of previous value
         char passpath[PATH_MAX];
         realpath("source", passpath);
@@ -84,7 +85,6 @@ TEST(Passthrough, CheckIfSeaPath) {
             ASSERT_EQ(res, 0);
 
         ASSERT_STREQ(passpath, expected);
-        ++i;
     }
 }
 
