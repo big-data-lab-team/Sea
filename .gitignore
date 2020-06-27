@@ -2,5 +2,6 @@
 *.so
 *.gcda
 *.gcno
+**/*.swp
 sea.ini
 sea.log
