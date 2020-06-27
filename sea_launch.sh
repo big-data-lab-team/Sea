@@ -1,6 +1,7 @@
 #!/bin/bash
 
 set -e
+set -u
 
 conf_file=${SEA_HOME}/sea.ini
 
