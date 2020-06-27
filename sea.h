@@ -27,9 +27,9 @@ void initialize_sea_if_necessary();
 struct SEA_DIR {
     DIR* dirp;
     DIR** other_dirp;
-    char type[7] = "seadir"; // mostly useless. only used in closedir to ensure struct type is right
+    char type[7]; // mostly useless. only used in closedir to ensure struct type is right
     char** dirnames;
-    int curr_index = 0;
+    int curr_index;
 };
 
 #endif
