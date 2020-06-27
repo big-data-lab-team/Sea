@@ -245,6 +245,8 @@ extern "C" {
                 return ((funcptr_opendir)libc_opendir)(passpath);
 
             SEA_DIR *sd = new SEA_DIR;
+            strcpy(sd->type, "seadir");
+            sd->curr_index = 0;
             sd->dirnames = (char**) malloc(sizeof(char*) * sea_conf.n_sources * PATH_MAX);
             sd->other_dirp = (DIR**) malloc(sizeof(DIR*) * sea_conf.n_sources - 1);
 
