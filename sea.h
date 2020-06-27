@@ -11,7 +11,6 @@
 #include <limits.h>
 #include <set>
 #include <string>
-#include <string.h>
 #include <dirent.h>
 
 extern int sea_internal;
