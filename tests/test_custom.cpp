@@ -9,7 +9,7 @@ TEST(Passthrough, GetCanonical) {
 
     initialize_passthrough_if_necessary();
 
-    const char paths[6][PATH_MAX] = { "mount", "./mount/subdir", "../mount/", "/dev/shm/tmp", "/", NULL };
+    const char paths[6][PATH_MAX] = { {"mount"}, {"./mount/subdir"}, {"../mount/"}, {"/dev/shm/tmp"}, {"/"}, {NULL} };
 
     for(int i = 0 ; i < 6 ; i++){
         const char * path = paths[i];

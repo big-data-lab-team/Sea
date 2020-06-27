@@ -110,7 +110,7 @@ int sea_getpath(const char* oldpath, char passpath[PATH_MAX], int masked_path, i
 
             if ( masked_path == 0 && match == 1) {
                 int exists = sea_checkpath(passpath);
-                //printf("exists %d\n", exists);
+                //printf("exists %d %s\n", exists, passpath);
 
                 if (exists)
                     return match; 
@@ -129,12 +129,8 @@ int sea_getpath(const char* oldpath, char passpath[PATH_MAX], int masked_path, i
         //printf("tmppath %s\n", tmp_passpath);
         strcpy(passpath, tmp_passpath);
     }
-    
-    if (match == 0) {
-        strcpy(passpath, oldpath);
-    }
 
-    //printf("returned passpath %s\n", passpath);
+    //printf("returned passpath %d %s\n", match, passpath);
     
     return match;
 
