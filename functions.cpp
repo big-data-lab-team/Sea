@@ -209,17 +209,22 @@ extern "C" {
     DIR* opendir(const char* pathname){
         initialize_passthrough_if_necessary();
         char passpath[PATH_MAX];
+        char mountpath[PATH_MAX];
 
         struct config sea_conf;
         sea_conf = get_sea_config();
 
         if (sea_conf.parsed == true && sea_conf.n_sources > 1) {
             initialize_sea_if_necessary();
-            sea_getpath(pathname, passpath, 0, 0);
+            int mount_match = sea_getpath(pathname, passpath, 0, 0);
+            int source_match = sea_getpath(pathname, mountpath, 1);
 
-            // if not a directory within the mountpoint, don't need to create a SEA_DIR struct.
-            if ( strcmp(passpath, pathname) == 0 )
+            // if not a directory within the mountpoint or the source directories, don't need to create a SEA_DIR struct.
+            if ( mount_match == 0  && source_match == 0)
                 return ((funcptr_opendir)libc_opendir)(passpath);
+
+            if (mount_match)
+                strcpy(mountpath, pathname);
 
             SEA_DIR *sd = new SEA_DIR;
             strcpy(sd->type, "seadir");
@@ -232,7 +237,7 @@ extern "C" {
             sd->dirnames[0] = passpath;
 
             for (int i=1; i < sea_conf.n_sources; ++i) {
-                sea_getpath(pathname, passpath, 0, i);
+                sea_getpath(mountpath, passpath, 0, i);
                 sd->other_dirp[i-1] = ((funcptr_opendir)libc_opendir)(passpath); 
                 sd->dirnames[i] = passpath;
                 log_msg(INFO, "opening directory %s", passpath);
@@ -749,13 +754,13 @@ extern "C" {
 
     int __fxstatat64(int ver, int fd, const char *path, struct stat64 *statbuf, int flag) {
         char passpath[PATH_MAX];
-        init_path("__fxstatat64", path, passpath, 0);
+        init_path("__fxstatat64", path, passpath, 0, 1);
         return ((funcptr___fxstatat64)libc___fxstatat64)(ver, fd, passpath, statbuf, flag);
     }
 
     int __lxstat(int ver, const char *path, struct stat *statbuf){
         char passpath[PATH_MAX];
-        init_path("__lxstat", path, passpath, 0, 1);
+        init_path("__lxstat", path, passpath, 0);
         return ((funcptr___lxstat)libc___lxstat)(ver, passpath, statbuf);
     }
 
