@@ -13,13 +13,14 @@ do
     mkdir ${source} 
 done
 
-#bash ${SEA_HOME}/sea_flusher.sh &
-#pid=$!
-#echo "flusher pid" ${pid}
+bash ${SEA_HOME}/sea_flusher.sh &
+pid=$!
+echo "flusher pid" ${pid}
 
 echo "Launching script"
 "$@"
 
-#echo "killing flush"
-#kill $pid
+trap "exit" INT TERM
+trap "kill 0" EXIT
+#echo "killing flush" && kill $pid
 #trap 'trap - SIGTERM && kill 0' SIGINT SIGTERM EXIT

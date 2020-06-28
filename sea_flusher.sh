@@ -2,6 +2,7 @@
 
 
 set -e
+set -u
 
 base_source=""
 sources_arr=()
@@ -9,10 +10,9 @@ n_sources=0
 conf_file=${SEA_HOME}/sea.ini
 flush_file=${SEA_HOME}/.sea_flushlist
 
+
 flush () {
-    while :
-    do
-        
+        echo $1
         re_flush=""
         for s in $sources_arr
         do
@@ -30,24 +30,34 @@ flush () {
 
         if [[ $re_flush != "" ]]
         then
-            tobe_flushed=$(ls -tu $(find ${re_flush} -type f -follow -print))
+            found_files=$(find ${re_flush} -type f -follow -print || echo "")
+            
+            if [[ $found_files != "" ]]
+            then
+                tobe_flushed=$(ls -tur ${found_files})
 
-
-            for f in $tobe_flushed
-            do
-                for s in $sources_arr
+                for f in $tobe_flushed
                 do
-                    if [[ "$f" == "${s}/"* ]]
-                    then
-                        file_out=$(echo "${f/$s/$base_source}")
-                        echo "flushing and evicting $f to $file_out"
-                        mv $f ${file_out}
-                        break
-                    fi
+                    for s in $sources_arr
+                    do
+                        if [[ "$f" == "${s}/"* ]]
+                        then
+                            file_out=$(echo "${f/$s/$base_source}")
+                            echo "flushing and evicting $f to $file_out"
+                            rsync -a --no-owner --no-group --remove-source-files "$f" "$file_out" || ( sleep 5 && rsync -a --no-owner --no-group --remove-source-files "$f" "$file_out" )
+                            break
+                        fi
+                    done
                 done
-            done
+            fi
         fi
+}
 
+
+flush_process () {
+    while :
+    do
+        flush process 
         sleep 5
     done
 }
@@ -69,6 +79,7 @@ get_sources () {
 
 }
 
-trap 'trap - SIGTERM && kill 0' SIGINT SIGTERM EXIT
+trap 'flush end' SIGINT SIGTERM EXIT
 get_sources
-flush
+flush_process
+
