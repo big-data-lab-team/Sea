@@ -197,7 +197,6 @@ char* make_file_name_canonical(char const *file_path)
       {
         // Absolute path, or path starts with "./" or "../"
         file_path_copy = strdup(file_path);
-        
       }
       else
       {

@@ -59,8 +59,9 @@ SOURCE_1="$PWD/source_1"
 @test "mv" {
     load setup
     mv a.txt ${MOUNT}
+    mv ${MOUNT}/a.txt ${MOUNT}/subdir/a.txt
     load unset
-    test -f ${SOURCE}/a.txt
+    test -f ${SOURCE}/subdir/a.txt
     [ ! -f a.txt ]
 }
 
@@ -100,6 +101,7 @@ SOURCE_1="$PWD/source_1"
     load setup
     grep b ${MOUNT}/file_in_source.txt
     grep a ${MOUNT}/subdir/file_in_subdir.txt
+    grep "seafile" ${MOUNT}/file_in_mem.txt
 }
 
 @test "file" {
@@ -108,21 +110,26 @@ SOURCE_1="$PWD/source_1"
     [[ "$f" == "mount/file_in_source.txt: ASCII text" ]]
     f=$(file mount/subdir/file_in_subdir.txt)
     [[ "$f" == "mount/subdir/file_in_subdir.txt: ASCII text" ]]
+    f=$(file mount/file_in_mem.txt)
+    [[ "$f" == "mount/file_in_mem.txt: ASCII text" ]]
 }
 
 @test "tar" {
     load setup
     tar cvzf ${MOUNT}/foo.tar ${MOUNT}/file_in_source.txt
     tar cvzf ${MOUNT}/bar.tar ${MOUNT}/subdir/file_in_subdir.txt
+    tar cvzf ${MOUNT}/helloworld.tar ${MOUNT}/file_in_mem.txt
     load unset
     test -f ${SOURCE}/foo.tar
     test -f ${SOURCE}/bar.tar
+    test -f ${SOURCE}/helloworld.tar
 }
 
 @test "read python2" {
     load setup
     python2 tests/read.py ${MOUNT}/file_in_source.txt
     python2 tests/read.py ${MOUNT}/subdir/file_in_subdir.txt
+    python2 tests/read.py ${MOUNT}/file_in_mem.txt
 }
 
 @test "read python3" {
@@ -130,6 +137,7 @@ SOURCE_1="$PWD/source_1"
     load setup
     python3 tests/read.py ${MOUNT}/file_in_source.txt
     python3 tests/read.py ${MOUNT}/subdir/file_in_subdir.txt
+    python3 tests/read.py ${MOUNT}/file_in_mem.txt
 }
 
 @test "write python2" {
@@ -165,7 +173,8 @@ SOURCE_1="$PWD/source_1"
 
 @test "cd" {
     load setup
-    bash -c "cd ${MOUNT}/subdir"
+    out=$(bash -c "cd ${MOUNT};ls")
+    [[ $out == bin[[:space:]]complex_file.txt[[:space:]]file_in_mem.txt[[:space:]]file_in_source.txt[[:space:]]subdir ]]
 }
 
 @test "which" {
