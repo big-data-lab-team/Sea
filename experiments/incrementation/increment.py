@@ -10,14 +10,12 @@ in_file=sys.argv[1]
 out_folder=sys.argv[2]
 it=int(sys.argv[3])
 
-in_file = None
 for i in range(it):
     if i == 0:
-        in_file = op.join(in_folder, f)
         out_f = op.join(out_folder, '{0}-inc-{1}'.format(i, op.basename(in_file)))
     else:
         out_f = op.join(out_folder, '{0}-{1}'.format(i, '-'.join(op.basename(in_file).split('-')[1:])))
-    print("iteration", i, "saving to", out_f)
+    #print("iteration", i, "saving to", out_f)
 
     im = nib.load(in_file)
     inc = np.asanyarray(im.get_fdata()) + 1

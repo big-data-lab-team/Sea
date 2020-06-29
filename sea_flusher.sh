@@ -12,7 +12,6 @@ flush_file=${SEA_HOME}/.sea_flushlist
 
 
 flush () {
-        echo $1
         re_flush=""
         for s in $sources_arr
         do
@@ -57,8 +56,9 @@ flush () {
 flush_process () {
     while :
     do
-        flush process 
-        sleep 5
+        flush 
+        sleep 5 &
+        wait $!
     done
 }
 
@@ -79,7 +79,7 @@ get_sources () {
 
 }
 
-trap 'flush end' SIGINT SIGTERM EXIT
+trap 'flush' SIGINT SIGTERM EXIT
 get_sources
 flush_process
 
