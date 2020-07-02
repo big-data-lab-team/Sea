@@ -7,6 +7,7 @@
 #include <errno.h>
 #include <cstdlib>
 #include <algorithm>
+#include <sys/statvfs.h>
 
 int sea_internal;
 
@@ -115,8 +116,14 @@ int sea_getpath(const char* oldpath, char passpath[PATH_MAX], int masked_path, i
                 if (exists)
                     return match; 
                 else if (tmp_passpath[0] == '\0') {
-                    // if doesn't exist, create at top of hierarchy
-                    strcpy(tmp_passpath, passpath);
+                    set_internal();
+                    struct statvfs buf;
+                    int ret;
+                    if((ret = statvfs(sea_config.source_mounts[i], &buf) == 0) && (buf.f_bavail * buf.f_bsize > sea_config.max_fs * sea_config.n_threads)) {
+                        // if doesn't exist, create at top of hierarchy
+                        strcpy(tmp_passpath, passpath);
+                    }
+                    unset_internal();
                 }
             }
             else if ( masked_path == 1 ) {

@@ -47,7 +47,7 @@ int log_msg(int lvl, const char* msg, ...){
         // write complete log string to file
         if (logs == NULL)
         {
-            xprintf("WARNING: Cannot write to log file: %s (%s)\n", msg, get_lvlname(lvl));
+            xprintf("WARNING: Cannot write to log file: %s (%s)\n", fmsg, get_lvlname(lvl));
             return 1;
         }
             fprintf(logs, "%ld: %s: %s\n", t, get_lvlname(lvl), fmsg);

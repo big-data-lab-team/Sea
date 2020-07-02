@@ -99,11 +99,17 @@ void parse_config()
         printf("Missing log_file in config file %s\n", config_file);
         exit(1);
     }
+    if((sea_config.max_fs = (unsigned long) iniparser_getlongint(config_dict, "sea:max_fs", 0))==0)
+    {
+        printf("Missing max_fs in config file %s\n", config_file);
+        exit(1);
+    }
 
     // add '/' to the end of mount path
     //if (sea_config.mount_dir[strlen(sea_config.mount_dir)-1] != '/')
     //    strcat(sea_config.mount_dir, "/");
     sea_config.log_level = iniparser_getint(config_dict, "sea:log_level", 1);
+    sea_config.n_threads = iniparser_getint(config_dict, "sea:n_threads", 1);
     sea_config.parsed = true;
 }
 

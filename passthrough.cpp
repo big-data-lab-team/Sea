@@ -350,7 +350,7 @@ int pass_getpath(const char* oldpath, char passpath[PATH_MAX], int masked_path, 
 
     match_found = check_if_seapath(path, canonical, passpath);
 
-    log_msg(INFO, "old fn1 %s ---> new fn %s", oldpath, passpath);
+    log_msg(INFO, "old fn %s ---> new fn %s", oldpath, passpath);
     return match_found;
 }
 

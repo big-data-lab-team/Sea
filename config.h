@@ -9,6 +9,8 @@ typedef struct config
     char * mount_dir;
     char * log_file;
     int log_level;
+    unsigned long max_fs;
+    int n_threads;
 } config;
 
 char * get_config_file();
