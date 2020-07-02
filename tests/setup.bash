@@ -13,6 +13,7 @@ gen_conf() {
         source_1 = ${SOURCE_1}
         log_level = 3 ; # 4 crashes tests
         log_file = ${SEA_HOME}/sea.log ;
+        max_fs = 1048576 ;
 DOC
     else
         cat > ${SEA_HOME}/sea.ini << DOC
@@ -23,6 +24,7 @@ DOC
         source_0 = ${SOURCE} ;
         log_level = 3 ; # 4 crashes tests
         log_file = ${SEA_HOME}/sea.log ;
+        max_fs = 1048576 ;
 DOC
     fi
 

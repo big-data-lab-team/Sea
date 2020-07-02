@@ -18,7 +18,7 @@ for i in range(it):
     #print("iteration", i, "saving to", out_f)
 
     im = nib.load(in_file)
-    inc = np.asanyarray(im.get_fdata()) + 1
+    inc = np.asanyarray(im.dataobj) + 1
     inc_im = nib.Nifti1Image(inc, im.affine, header=im.header)
 
     nib.save(inc_im, out_f)
