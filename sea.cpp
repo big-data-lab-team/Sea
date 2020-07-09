@@ -98,7 +98,7 @@ int sea_getpath(const char* oldpath, char passpath[PATH_MAX], int masked_path, i
     struct config sea_config = get_sea_config();
 
     int match = 0;
-    char tmp_passpath[PATH_MAX] = { '\0' };
+    int exists = 0;
 
     if (sea_lvl != -1) {
         match = pass_getpath(oldpath, passpath, masked_path, sea_lvl);
@@ -110,21 +110,11 @@ int sea_getpath(const char* oldpath, char passpath[PATH_MAX], int masked_path, i
             //printf("passpath %s\n", passpath);
 
             if ( masked_path == 0 && match == 1) {
-                int exists = sea_checkpath(passpath);
+                exists = sea_checkpath(passpath);
                 //printf("exists %d %s\n", exists, passpath);
 
                 if (exists)
                     return match; 
-                else if (tmp_passpath[0] == '\0') {
-                    set_internal();
-                    struct statvfs buf;
-                    int ret;
-                    if((ret = statvfs(sea_config.source_mounts[i], &buf) == 0) && (buf.f_bavail * buf.f_bsize > sea_config.max_fs * sea_config.n_threads)) {
-                        // if doesn't exist, create at top of hierarchy
-                        strcpy(tmp_passpath, passpath);
-                    }
-                    unset_internal();
-                }
             }
             else if ( masked_path == 1 ) {
                 return match;
@@ -132,9 +122,17 @@ int sea_getpath(const char* oldpath, char passpath[PATH_MAX], int masked_path, i
         }
     }
 
-    if (match == 1 && tmp_passpath[0] != '\0') {
-        // printf("tmppath %s\n", tmp_passpath);
-        strcpy(passpath, tmp_passpath);
+    if (match == 1 && exists == 0) {
+        for ( int i=0 ; i < sea_config.n_sources; ++i ) {
+            set_internal();
+            struct statvfs buf;
+            int ret;
+            if((ret = statvfs(sea_config.source_mounts[i], &buf) == 0) && (buf.f_bavail * buf.f_bsize > sea_config.max_fs * sea_config.n_threads)) {
+                match = pass_getpath(oldpath, passpath, masked_path, i);
+                unset_internal();
+                return match;
+            }
+        }
     }
 
     return match;
