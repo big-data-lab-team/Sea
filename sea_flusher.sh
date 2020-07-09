@@ -13,7 +13,7 @@ flush_file=${SEA_HOME}/.sea_flushlist
 
 flush () {
         re_flush=""
-        for s in $sources_arr
+        for s in "${sources_arr[@]}"
         do
             while IFS="" read -r re || [ -n "$re" ]
             do
@@ -22,14 +22,14 @@ flush () {
                     re_flush+=" "
                 fi
 
-                re_flush+=$sources_arr/$re
+                re_flush+=$s/$re
 
             done < $flush_file
         done
 
         if [[ $re_flush != "" ]]
         then
-            found_files=$(find ${re_flush} -type f -follow -print || echo "")
+            found_files=$(find ${re_flush} -type f -follow || echo "")
             
             if [[ $found_files != "" ]]
             then
@@ -42,7 +42,7 @@ flush () {
                         if [[ "$f" == "${s}/"* ]]
                         then
                             file_out=$(echo "${f/$s/$base_source}")
-                            echo "flushing and evicting $f to $file_out"
+                            #echo "flushing and evicting $f to $file_out"
                             rsync -a --no-owner --no-group --remove-source-files "$f" "$file_out" || ( sleep 5 && rsync -a --no-owner --no-group --remove-source-files "$f" "$file_out" )
                             break
                         fi
@@ -56,7 +56,7 @@ flush () {
 flush_process () {
     while :
     do
-        flush 
+        flush
         sleep 5 &
         wait $!
     done
