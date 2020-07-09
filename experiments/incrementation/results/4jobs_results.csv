@@ -1,0 +1,13 @@
+experiment,repetition,runtime,max_mem
+mem_final,0,179.23,1965164
+lustre,0,74.35,1940796
+mem_all,0,157.98,1963976
+lustre,0,109.82,1940900
+mem_final,1,204.33,1965712
+lustre,1,73.39,1943124
+mem_all,1,155.44,1961176
+lustre,1,107.79,1942988
+lustre,2,104.10,1943784
+mem_final,2,204.93,1965448
+lustre,2,75.81,1941172
+mem_all,2,155.70,1960500
