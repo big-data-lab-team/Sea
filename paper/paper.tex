@@ -1,14 +1,135 @@
-Notes for paper:
-- list requirements and assumptions (e.g. Files are RO)
-- make sure it's clearly explained why Sea over writing your own script to manage filesystems
-    - Sea will manage disk and memory for you (abstraction of the script to be written)
-    - Difficulties of intercepting libc calls. Describe and explain custom code that has been added
-- Spark vs Burst Buffer vs Lustre caching vs Sea. Need to benchmark Sea vs burst buffer to measure
-  applicability when Burst Buffer options are available
-- Sea vs Neuroimaging workflow engines
-- Splitting data into chunks to maximize storage space or defined constant with max file size
-- Intercepting system calls vs libc calls.
-- Making Sea flushing pipeline-aware through scheduler hooks
-- Flushing: Pros and cons of single flusher/node vs multiple flushers/node (maximize network bandwidth usage)
-- Distributed Sea? Sea will function in a distributed manner with Sub. Not for this paper
+\documentclass[10pt,journal,compsoc]{IEEEtran}
+
+\begin{document}
+\title{Sea: A hierarchical filesystem for processing Big Neuroimaging Data on HPC}
+
+\author{Val\'erie Hayot-Sasson and Tristan Glatard}
+
+% The paper headers
+\markboth{Journal of \LaTeX\ Class Files,~Vol.~14, No.~8, August~2015}%
+{Hayot-Sasson\MakeLowercase{\textit{et al.}}: Bare Demo of IEEEtran.cls for Computer Society Journals}
+\IEEEtitleabstractindextext{%
+\begin{abstract}
+\end{abstract}
+}
+
+
+% make the title area
+\maketitle
+
+
+\IEEEdisplaynontitleabstractindextext
+\IEEEpeerreviewmaketitle
+
+
+
+\IEEEraisesectionheading{\section{Introduction}\label{sec:introduction}}
+\IEEEPARstart{N}{euroimaging} datasets have significantly grown in size in the past decade,
+resulting in Petabytes of data. As a result, processing pipelines have now shifted from compute to 
+data intensive. Some efforts have been made to reduce the data transfer costs in neuroimaging by
+introducing new methods to generate pipelines, such as through the adoption of Big Data frameworks
+like Apache Spark \cite{Spark} for the pipeline definition \cite{thunder} \cite{other papers}. 
+However, such pipelines would have to be entirely rewritten for the framework of choice and Big Data
+frameworks like Spark and Dask were found to be difficult to use in describing neuroimaging pipelines \cite{mehta}.
+Furthermore, the neuroimaging community relies heavily on the use of well-established command-line tools \cite{fsl, afni, freesurfer}, resulting in
+data transfers being inevitable, even with a Big Data framework. 
+
+High Performance Computing (HPC) clusters are often the infrastructure of choice for researchers looking to processing their data.
+While there are many benefits to using such clusters, such as large amounts of resources available at little to no cost to
+the researchers, the resources are shared amongst users concurrently. 
+
+Goal - leverage local storage to speed up computation/Sea
+
+\subsection{Lustre}
+\subsubsection{Burst Buffers}
+\subsubsection{Other Luster optimizations}
+\subsection{Big Data Frameworks and File systems}
+HDFS Alluxio Hadoop Spark Dask
+\subsubsection{What are they/how do they work}
+\subsubsection{Why are the suboptimal for neuroimaging/on HPC}
+\subsection{The linux page cache}
+\subsubsection{What is it/how does it work}
+\subsubsection{Why do we still need Sea}
+\subsection{File System implementations}
+\subsubsection{Kernel-space file systems}
+\subsubsection{FUSE}
+\subsubsection{System call interception with ptrace}
+\subsubsection{LD\_PRELOAD}
+
+\section{Materials and Methods}
+
+\subsection{Sea design and implementation}
+\subsubsection{Requirements and Assumptions}
+\subsubsection{Benefits}
+User does not need to create logic to determine what file systems to write to / implement flushing
+
+\subsubsection{libc interception}
+\subsubsection{Flushing}
+\subsubsection{Configuration File}
+\subsubsection{Program execution}
+\subsubsection{Limitations}
+
+\subsection{Experiments}
+\subsubsection{Infrastructure}
+\subsubsection{Pipelines}
+Big Brain incrementation
+fmri processing?
+
+\section{Results}
+
+
+\section{Conclusion}
+The conclusion goes here.
+
+
+
+
+
+% if have a single appendix:
+%\appendix[Proof of the Zonklar Equations]
+% or
+%\appendix  % for no appendix heading
+% do not use \section anymore after \appendix, only \section*
+% is possibly needed
+
+% use appendices with more than one appendix
+% then use \section to start each appendix
+% you must declare a \section before using any
+% \subsection or using \label (\appendices by itself
+% starts a section numbered zero.)
+%
+
+
+\appendices
+% you can choose not to have a title for an appendix
+% if you want by leaving the argument blank
+\section{}
+Appendix two text goes here.
+
+
+% use section* for acknowledgment
+\ifCLASSOPTIONcompsoc
+  % The Computer Society usually uses the plural form
+  \section*{Acknowledgments}
+\else
+  % regular IEEE prefers the singular form
+  \section*{Acknowledgment}
+\fi
+
+% Can use something like this to put references on a page
+% by themselves when using endfloat and the captionsoff option.
+\ifCLASSOPTIONcaptionsoff
+  \newpage
+\fi
+
+
+
+% biography section
+
+\begin{IEEEbiography}{Val\'erie Hayot-Sasson}
+\end{IEEEbiography}
+\begin{IEEEbiography}{Tristan Glatard}
+\end{IEEEbiography}
+\end{document}
+
 
