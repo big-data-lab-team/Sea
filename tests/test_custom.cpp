@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
-#include "../passthrough.h"
-#include "../sea.h"
-#include "../config.h"
+#include "../src/passthrough.h"
+#include "../src/sea.h"
+#include "../src/config.h"
 #include <stdlib.h>
 
 // need to add symlink tests here

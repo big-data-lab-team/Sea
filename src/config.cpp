@@ -49,6 +49,7 @@ void create_config_file(char * config_file)
             "log_level = 1 ; # DEBUG=4, INFO=3, WARNING=2, ERROR=1, NONE=0 (use <= 3 tests)\n"
             "n_sources = 1 ;\n"
             "source_0 = %s/source ; # use absolute paths\n"
+            "max_fs = 100"
             "\n", sea_home, sea_home, sea_home);
     fclose(ini);
 }
@@ -99,7 +100,7 @@ void parse_config()
         printf("Missing log_file in config file %s\n", config_file);
         exit(1);
     }
-    if((sea_config.max_fs = (unsigned long) iniparser_getlongint(config_dict, "sea:max_fs", 0))==0)
+    if((sea_config.max_fs = atol((char *) iniparser_getstring(config_dict, "sea:max_fs", NULL)))==0)
     {
         printf("Missing max_fs in config file %s\n", config_file);
         exit(1);
