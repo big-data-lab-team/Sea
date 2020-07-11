@@ -8,7 +8,7 @@ gen_conf() {
         # Sea configuration
         [Sea]
         mount_dir = ${MOUNT} ;
-        n_sources = 2 ;
+        n_levels = 2 ;
         source_0 = ${SOURCE} ;
         source_1 = ${SOURCE_1}
         log_level = 3 ; # 4 crashes tests
@@ -20,7 +20,7 @@ DOC
         # Sea configuration
         [Sea]
         mount_dir = ${MOUNT} ;
-        n_sources = 1 ;
+        n_levels = 1 ;
         source_0 = ${SOURCE} ;
         log_level = 3 ; # 4 crashes tests
         log_file = ${SEA_HOME}/sea.log ;
