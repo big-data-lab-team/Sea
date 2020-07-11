@@ -337,9 +337,14 @@ extern "C" {
 
     struct dirent *sea_readnext(struct dirent* d, config sea_conf, SEA_DIR* sd) { 
         int found = 0;
+
+        while (d == NULL && sd->curr_index + 1 < sea_conf.n_sources - 1) {
+            sd->curr_index++;
+            d = ((funcptr_readdir)libc_readdir)(sd->other_dirp[sd->curr_index]);
+        }
         if (d != NULL && d->d_name[0] != '\0') {
             for (int i = 0 ; i < sea_conf.n_sources; ++i) {
-                if (i != sd->curr_index + 1) {
+                if (i != sd->curr_index + 1 && sd->curr_index + 1 < sea_conf.n_sources) {
                     char tmppath[PATH_MAX];
                     strcpy(tmppath, sea_conf.source_mounts[i]);
 
@@ -347,11 +352,14 @@ extern "C" {
                     strcat(tmppath, "/");
 
                     strcat(tmppath, d->d_name);
+                    
+                    //printf("reading %s\n", tmppath);
 
                     // no way around using the set here 
                     if (sea_files.find((std::string)tmppath) != sea_files.end()) {
-                            found = 1;
-                            break;
+                        found++;
+                        //printf("found %s %d %d %s %d %s\n", tmppath, found, i, sea_conf.source_mounts[i], sd->curr_index + 1, sea_conf.source_mounts[sd->curr_index + 1]);
+                        break;
                     }
                 }
             }
@@ -367,6 +375,12 @@ extern "C" {
     //TODO:refactor
     struct dirent64 *sea_readnext64(struct dirent64* d, config sea_conf, SEA_DIR* sd) { 
         int found = 0;
+
+        while (d == NULL && sd->curr_index + 1 < sea_conf.n_sources - 1) {
+            sd->curr_index++;
+            d = ((funcptr_readdir64)libc_readdir64)(sd->other_dirp[sd->curr_index]);
+        }
+
         if (d != NULL && d->d_name[0] != '\0') {
             for (int i = 0 ; i < sea_conf.n_sources; ++i) {
                 if (i != sd->curr_index + 1) {
@@ -376,7 +390,7 @@ extern "C" {
                     strcat(tmppath, d->d_name);
 
                     if (sea_files.find((std::string)tmppath) != sea_files.end()) {
-                            found = 1;
+                            found++;
                             break;
                     }
                 }
@@ -384,7 +398,6 @@ extern "C" {
             if (found) {
                 d = ((funcptr_readdir64)libc_readdir64)(sd->other_dirp[sd->curr_index]);
                 d = sea_readnext64(d, sea_conf, sd);
-            
             }
         }
         return d;

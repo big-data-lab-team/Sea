@@ -174,6 +174,7 @@ SOURCE_1="$PWD/source_1"
 @test "cd" {
     load setup
     out=$(bash -c "cd ${MOUNT};ls")
+    echo $out
     [[ $out == bin[[:space:]]complex_file.txt[[:space:]]file_in_mem.txt[[:space:]]file_in_source.txt[[:space:]]subdir ]]
 }
 

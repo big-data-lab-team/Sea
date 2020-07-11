@@ -338,7 +338,6 @@ int pass_getpath(const char* oldpath, char passpath[PATH_MAX], int masked_path, 
     // Get config
     struct config sea_config = get_sea_config();
     char * mount_dir = sea_config.mount_dir;
-    char ** source_mounts = sea_config.source_mounts;
 
     canonical = make_file_name_canonical(oldpath);
 
@@ -346,7 +345,7 @@ int pass_getpath(const char* oldpath, char passpath[PATH_MAX], int masked_path, 
 
     //log_msg(DEBUG, "oldpath: %s, actualpath: %s, mount_dir: %s", oldpath, actualpath, mount_dir);
 
-    get_pass_canonical(path, passpath, mount_dir, source_mounts[sea_lvl], masked_path);
+    get_pass_canonical(path, passpath, mount_dir, sea_config.source_mounts[sea_lvl], masked_path);
 
     match_found = check_if_seapath(path, canonical, passpath);
 

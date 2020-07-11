@@ -102,6 +102,7 @@ int sea_getpath(const char* oldpath, char passpath[PATH_MAX], int masked_path, i
 
     if (sea_lvl != -1) {
         match = pass_getpath(oldpath, passpath, masked_path, sea_lvl);
+        return match;
         //printf("match %d %s\n", match, passpath);
     }
     else {
@@ -153,7 +154,6 @@ int sea_getpath(const char* oldpath, char passpath[PATH_MAX], int masked_path, i
  */
 void populateFileSet(char *basePath, int sea_lvl, struct config sea_config, std::set<std::string> &sea_paths)
 {
-    //printf("base %s \n", basePath);
     char path[PATH_MAX];
     struct dirent *dp;
     DIR *dir = ((funcptr_opendir)libc_opendir)(basePath);
@@ -215,11 +215,14 @@ void initialize_sea() {
     sea_files.clear();
     sea_internal = 0;
     struct config sea_config = get_sea_config();
-    char ** source_mounts = sea_config.source_mounts;
 
     for (int i=0; i < sea_config.n_sources; i++){
-        populateFileSet(source_mounts[i], i, sea_config, sea_files);
+        populateFileSet(sea_config.source_mounts[i], i, sea_config, sea_files);
+        //printf("sources %s\n", sea_config.source_mounts[i]);
     }
+    //for (auto it=sea_files.begin(); it != sea_files.end(); ++it) 
+    //    printf("seafiles %s\n", it->c_str());
+    //printf("done\n");
 }
 
 static pthread_once_t sea_initialized = PTHREAD_ONCE_INIT;
