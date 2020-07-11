@@ -6,14 +6,14 @@ test: build/sea.so test/test_custom
 
 build/config.o: src/config.cpp
 	gcc ${gcc_opts} ${debug_opts} src/config.cpp -o build/config.o
-build/passthrough.o: src/passthrough.cpp src/passthrough.h
-	gcc ${gcc_opts} ${debug_opts} src/passthrough.cpp -o build/passthrough.o
-build/sea.o: src/sea.cpp src/sea.h
-	gcc ${gcc_opts} ${debug_opts} src/sea.cpp -o build/sea.o
 build/functions.o: src/functions.cpp src/functions.h
 	gcc ${gcc_opts} ${debug_opts} src/functions.cpp -o build/functions.o
 build/logger.o: src/logger.cpp src/logger.h
 	gcc ${gcc_opts} ${debug_opts} src/logger.cpp -o build/logger.o
+build/passthrough.o: src/passthrough.cpp src/passthrough.h
+	gcc ${gcc_opts} ${debug_opts} src/passthrough.cpp -o build/passthrough.o
+build/sea.o: src/sea.cpp src/sea.h
+	gcc ${gcc_opts} ${debug_opts} src/sea.cpp -o build/sea.o
 build/sea.so: build/passthrough.o build/functions.o build/logger.o build/config.o build/sea.o
 	gcc -shared build/passthrough.o build/functions.o build/logger.o build/config.o build/sea.o ${debug_opts} -o build/sea.so -ldl -lpthread -lstdc++ -liniparser
 test/test_custom: tests/test_custom.cpp passthrough.o sea.o config.o logger.o
