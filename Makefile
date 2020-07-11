@@ -2,7 +2,7 @@ gcc_opts=-Wall -fPIC -c -std=c++0x
 debug_opts=-g -ggdb
 
 all: sea.so
-test: test_custom.o
+test: sea.so test_custom.o
 
 config.o: src/config.cpp
 	gcc ${gcc_opts} ${debug_opts} src/config.cpp -o build/config.o
@@ -19,4 +19,4 @@ sea.so: passthrough.o functions.o logger.o config.o sea.o
 test_custom.o: tests/test_custom.cpp passthrough.o sea.o config.o logger.o
 	gcc ${debug_opts} -std=c++0x -Wall -fPIC tests/test_custom.cpp build/passthrough.o build/sea.o build/config.o build/logger.o -o tests/test_custom -lstdc++ -liniparser -ldl -lgtest -lpthread 
 clean:
-	\rm -f build/logger.o build/functions.o build/passthrough.o build/config.o build/sea.o build/sea.so *.gcda *.gcov *.gcno tests/test_custom
+	\rm -f build/logger.o build/functions.o build/passthrough.o build/config.o build/sea.o build/sea.so build/*.gcda build/*.gcov build/*.gcno tests/test_custom
