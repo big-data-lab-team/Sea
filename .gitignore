@@ -5,3 +5,8 @@
 **/*.swp
 sea.ini
 sea.log
+bin/*
+source*
+paper/*.pdf
+paper/*.log
+paper/*.aux

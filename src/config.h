@@ -4,6 +4,7 @@
 typedef struct config
 {
     bool parsed;
+    int n_levels;
     int n_sources;
     char ** source_mounts;
     char * mount_dir;

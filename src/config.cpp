@@ -3,6 +3,11 @@ extern "C"{
 }
 #include <linux/limits.h>
 #include <sys/stat.h>
+#include <vector>
+#include <sstream>
+#include <algorithm>
+#include <ctime>
+#include <cstdlib>
 #include "config.h"
 #include "logger.h"
 #include "passthrough.h"
@@ -47,11 +52,15 @@ void create_config_file(char * config_file)
             "mount_dir = %s/mount_dir ; # use absolute paths\n"
             "log_file = %s/sea.log ;\n"
             "log_level = 1 ; # DEBUG=4, INFO=3, WARNING=2, ERROR=1, NONE=0 (use <= 3 tests)\n"
-            "n_sources = 1 ;\n"
+            "n_levels = 1 ;\n"
             "source_0 = %s/source ; # use absolute paths\n"
+            "max_fs = 100"
             "\n", sea_home, sea_home, sea_home);
     fclose(ini);
 }
+
+// random generator function:
+int random_gen (int i) { return std::rand()%i;}
 
 void parse_config()
 {
@@ -69,25 +78,49 @@ void parse_config()
         printf("Cannot load config file %s\n", config_file);
         exit(1);
     }
-    if((sea_config.n_sources = iniparser_getint(config_dict, "sea:n_sources", 0))==0)
+    if((sea_config.n_levels = iniparser_getint(config_dict, "sea:n_levels", 0))==0)
     {
          printf("Missing n_sources in config file %s\n", config_file);
          exit(1);
     }
-    sea_config.source_mounts = new char* [sea_config.n_sources];
-    for(int i = 0 ; i <  sea_config.n_sources ; i++)
+    std::vector<std::string> all_sources;
+
+    // for random number generation
+    std::srand ( unsigned ( std::time(0) ) );
+
+    for(int i = 0 ; i <  sea_config.n_levels ; i++)
     {
+        std::vector<std::string> current_lvl;
         char source_name[15];
         sprintf(source_name, "sea:source_%d", i);
+        char * lvl_str;
         //sea_config.source_mounts[i] = new char[PATH_MAX];
-        if((sea_config.source_mounts[i] = (char *) iniparser_getstring(config_dict, source_name, NULL))==0)
+        if((lvl_str = (char *) iniparser_getstring(config_dict, source_name, NULL))==0)
         {
             printf("Missing %s in config file %s\n", source_name, config_file);
             exit(1);
         }
+        std::stringstream s_stream(lvl_str);
+        while(s_stream.good()) {
+            std::string substr;
+            getline(s_stream, substr, ',');
+            current_lvl.push_back(substr);
+        }
+        std::random_shuffle( current_lvl.begin(), current_lvl.end(), random_gen);
+        all_sources.insert( all_sources.end(), current_lvl.begin(), current_lvl.end() );
+
         // add '/' to the end of source mount path if missing
         //if (sea_config.source_mounts[i][strlen(sea_config.source_mounts[i])-1] != '/')
         //    strcat(sea_config.source_mounts[i], "/");
+    }
+    sea_config.n_sources = all_sources.size();
+    sea_config.source_mounts = new char*[sea_config.n_sources];
+
+    for (int i = 0 ; i < sea_config.n_sources; i++) {
+        std::vector<char> source_vec(all_sources.at(i).begin(), all_sources.at(i).end());
+        source_vec.push_back('\0');
+        sea_config.source_mounts[i] = (char *) malloc(sizeof(char)*PATH_MAX);
+        sea_config.source_mounts[i] = strndup(&source_vec[0], PATH_MAX);
     }
     if((sea_config.mount_dir = (char *) iniparser_getstring(config_dict, "sea:mount_dir", NULL))==0)
     {
@@ -99,7 +132,7 @@ void parse_config()
         printf("Missing log_file in config file %s\n", config_file);
         exit(1);
     }
-    if((sea_config.max_fs = (unsigned long) iniparser_getlongint(config_dict, "sea:max_fs", 0))==0)
+    if((sea_config.max_fs = atol((char *) iniparser_getstring(config_dict, "sea:max_fs", NULL)))==0)
     {
         printf("Missing max_fs in config file %s\n", config_file);
         exit(1);
@@ -119,6 +152,5 @@ config get_sea_config()
     {
         parse_config();
     }
-
     return sea_config;
 }
