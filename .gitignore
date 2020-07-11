@@ -5,7 +5,7 @@
 **/*.swp
 sea.ini
 sea.log
-bin/*
+build/*
 source*
 paper/*.pdf
 paper/*.log
