@@ -2,6 +2,7 @@
 
 \begin{document}
 \title{Sea: A hierarchical filesystem for processing Big Neuroimaging Data on HPC}
+% remove neuroimaging and replace with scientific computing  add user-space, switch HPC to computing clusters
 
 \author{Val\'erie Hayot-Sasson and Tristan Glatard}
 
@@ -38,10 +39,16 @@ High Performance Computing (HPC) clusters are often the infrastructure of choice
 While there are many benefits to using such clusters, such as large amounts of resources available at little to no cost to
 the researchers, the resources are shared amongst users concurrently. 
 
+% add need for userspace / intelligent pipeline flushing
+% there is no one-size fits all with data intensive applications
+% due to io patterns, so we decided with userspace.
+
 Goal - leverage local storage to speed up computation/Sea
 
+
+% add related work section
 \subsection{Lustre}
-\subsubsection{Burst Buffers}
+% change lustre to shared filesystem
 \subsubsection{Other Luster optimizations}
 \subsection{Big Data Frameworks and File systems}
 HDFS Alluxio Hadoop Spark Dask
@@ -52,9 +59,12 @@ HDFS Alluxio Hadoop Spark Dask
 \subsubsection{Why do we still need Sea}
 \subsection{File System implementations}
 \subsubsection{Kernel-space file systems}
+\subsubsection{Burst Buffers}
+\subsubsection{Unionfs}
 \subsubsection{FUSE}
 \subsubsection{System call interception with ptrace}
 \subsubsection{LD\_PRELOAD}
+xtreemfs/xtreemos
 
 \section{Materials and Methods}
 
