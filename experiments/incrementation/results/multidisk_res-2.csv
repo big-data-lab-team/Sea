@@ -1,0 +1,10 @@
+experiment,repetition,runtime,max_mem,flush_time,disk_files,total_flush
+mem_final,0,53.15,1991536,0m30.502s,6,22
+mem_all,0,53.54,1992080,0m1.781s real 0m45.014s real 10m11.614s,152,399
+lustre,0,73.63,1941532,0,0,399
+mem_final,1,80.16,1990180,0m19.154s,14,28
+lustre,1,57.23,1940736,0,0,28
+mem_all,1,74.67,1989860,0m1.722s real 10m2.996s,0,63
+mem_final,2,76.80,1990944,0m0.062s real 0m1.819s,22,40
+mem_all,2,51.55,1992792,1m17.909s,129,506
+lustre,2,76.25,1941536,0,0,506
