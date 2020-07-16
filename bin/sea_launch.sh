@@ -16,7 +16,7 @@ do
     mkdir -p ${source} 
 done
 
-bash ${SEA_HOME}/bin/sea_flusher.sh &
+${SEA_HOME}/bin/sea_flusher.sh &
 pid=$!
 echo "flusher pid" ${pid}
 
