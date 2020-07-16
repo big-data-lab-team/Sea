@@ -8,6 +8,8 @@
 #include <cstdlib>
 #include <algorithm>
 #include <sys/statvfs.h>
+#include <sys/types.h>
+#include <utime.h>
 
 int sea_internal;
 
@@ -61,6 +63,10 @@ int sea_checkpath(const char* path) {
         unset_internal();
         return 0;
     }
+
+    struct utimbuf times;
+    times.modtime = buf.st_mtime;    
+    utime(path, &times);
     unset_internal();
     return 1;
 }
@@ -114,8 +120,9 @@ int sea_getpath(const char* oldpath, char passpath[PATH_MAX], int masked_path, i
                 exists = sea_checkpath(passpath);
                 //printf("exists %d %s\n", exists, passpath);
 
-                if (exists)
+                if (exists) {
                     return match; 
+                }
             }
             else if ( masked_path == 1 ) {
                 return match;

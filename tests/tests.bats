@@ -221,3 +221,14 @@ SOURCE_1="$PWD/source_1"
     unlink ${MOUNT}/subdir/file_in_subdir.txt
 }
 
+@test "access time" {
+    load setup
+    before=$(ls -lu ${SOURCE}/file_in_source.txt)
+    after=${ls -lu ${MOUNT}/file_in_source.txt)
+
+    echo "Before $before After $after"
+
+    [[ $before != $after ]]
+    
+}
+
