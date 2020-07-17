@@ -65,8 +65,9 @@ int sea_checkpath(const char* path) {
     }
 
     struct utimbuf times;
+    times.actime = time(0);
     times.modtime = buf.st_mtime;    
-    utime(path, &times);
+    int out = utime(path, &times);
     unset_internal();
     return 1;
 }
