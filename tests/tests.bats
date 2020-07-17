@@ -224,11 +224,11 @@ SOURCE_1="$PWD/source_1"
 @test "access time" {
     load setup
     before=$(ls -lu ${SOURCE}/file_in_source.txt)
-    after=${ls -lu ${MOUNT}/file_in_source.txt)
+    # ensure at least 1 minute has changed
+    sleep 61
+    after=$(ls -lu ${MOUNT}/file_in_source.txt)
 
-    echo "Before $before After $after"
-
-    [[ $before != $after ]]
+    [[ $before != $after ]] || echo "Before $before After $after"
     
 }
 
