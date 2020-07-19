@@ -13,6 +13,7 @@ flush_file=${SEA_HOME}/.sea_flushlist
 get_rp_mv () {
     tobe_flushed=$1
     OLDTIME=$2
+    task=$3
     flushlist=""
     for f in $tobe_flushed
     do
@@ -34,7 +35,7 @@ get_rp_mv () {
         TIMEDIFF=$(($CURTIME - $FILETIME))
 
         # Check if file older
-        if [ $TIMEDIFF -gt $OLDTIME ]; then
+        if [ $TIMEDIFF -ge $OLDTIME ]; then
             echo "flushing and evicting $f to $base_source"
             #[ ! -f $f ] ||  &
 
@@ -46,19 +47,12 @@ get_rp_mv () {
             flushlist+=$f
            
         fi
-        #file_out=$(echo "${f/$s/$base_source}")
-        #for s in "${sources_arr[@]}"
-        #do
-            #if [[ "$f" == "${s}/"* ]]
-            #then
-            #fi
-        #done
     done
     if [[ ${flushlist} != "" ]]
     then
         (mv $flushlist ${base_source} || true) &
         pid=$!
-        wait $pid
+        wait
         #echo "flush and evict ${flushlist}"
         #rsync -a --no-owner --no-group --remove-source-files ${flushlist} ${base_source} || ( sleep 5 && rsync -a --no-owner --no-group --remove-source-files ${flushlist} ${base_source} ) || echo "files cannot be flushed"
     fi
@@ -66,6 +60,7 @@ get_rp_mv () {
 
 flush () {
         OLDTIME=$1
+        task=$2
         re_flush=""
         sources_str=""
         for s in "${sources_arr[@]}"
@@ -98,7 +93,8 @@ flush () {
             if [[ $found_files != "" ]]
             then
                 tobe_flushed=$(ls -tur ${found_files} 2> /dev/null || true)
-                get_rp_mv "${tobe_flushed}" "$OLDTIME"
+                get_rp_mv "${tobe_flushed}" "$OLDTIME" "$task"
+                echo "done mv"
             fi
         fi
 }
@@ -108,7 +104,7 @@ flush_process () {
     OLDTIME=$1
     while :
     do
-        flush $OLDTIME
+        flush $OLDTIME "process"
         sleep 5 &
         wait $!
     done
@@ -116,7 +112,9 @@ flush_process () {
 
 cleanup () {
     echo "Cleaning up Sea mount"
-    time flush 0
+    sp=$(jobs -p)
+    [[ $sp != "" ]] && kill $(jobs -p)
+    time flush 0 "cleanup"
 }
 
 
@@ -141,7 +139,7 @@ get_sources () {
 
 }
 
-trap 'cleanup' SIGTERM
+trap 'cleanup' SIGTERM 
 get_sources
 flush_process 5
 

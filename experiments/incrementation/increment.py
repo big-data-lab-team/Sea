@@ -3,12 +3,16 @@
 import sys
 import nibabel as nib
 import numpy as np
+from time import time
 
-from os import path as op
+from os import path as op, getpid
 
 in_file=sys.argv[1]
 out_folder=sys.argv[2]
 it=int(sys.argv[3])
+
+def benchmark(task, in_file):
+    print("{0},{1},{2},{3}".format(task, in_file, time(), getpid()))
 
 for i in range(it):
     if i == 0:
@@ -17,10 +21,17 @@ for i in range(it):
         out_f = op.join(out_folder, '{0}-{1}'.format(i, '-'.join(op.basename(in_file).split('-')[1:])))
     #print("iteration", i, "saving to", out_f)
 
+    benchmark("read_start", in_file)
     im = nib.load(in_file)
-    inc = np.asanyarray(im.dataobj) + 1
+    data = np.asanyarray(im.dataobj)
+    benchmark("read_end", in_file)
+    benchmark("inc_start", in_file)
+    inc = data + 1
+    benchmark("inc_end", in_file)
     inc_im = nib.Nifti1Image(inc, im.affine, header=im.header)
 
+    benchmark("save_start", in_file)
     nib.save(inc_im, out_f)
+    benchmark("save_end", in_file)
     in_file = out_f
 
