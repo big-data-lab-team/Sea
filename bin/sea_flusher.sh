@@ -1,23 +1,27 @@
 #!/bin/bash
 
-
-set -e
+#set -e
 set -u
+#set -x
 
 base_source=""
 sources_arr=()
 n_sources=0
 conf_file=${SEA_HOME}/sea.ini
 flush_file=${SEA_HOME}/.sea_flushlist
+tmpfile=$(mktemp /tmp/.sea_flush.inprog.XXXXXX)
 
-get_rp_mv () {
-    tobe_flushed=$1
-    OLDTIME=$2
-    task=$3
+mv_old () {
+
+    found_files=$1 # files that currently exist in source mounts
+    OLDTIME=$2 # user specified expiration time
+    task=$3 # the name of the calling task (either "process" or "cleanup")
+
     flushlist=""
-    for f in $tobe_flushed
+    for f in $found_files
     do
-
+        
+        # check if file exists otherwise continue (in case it has been flushed by another process)
         if [ ! -f $f ]
         then
             continue
@@ -25,20 +29,21 @@ get_rp_mv () {
         # code adapted from here https://stackoverflow.com/a/28341234
         # Get current and file times
         CURTIME=$(date +%s)
-        FILETIME=$(stat $f -c %Y || true)
+        FILETIME=$(stat $f -c %Y || true && continue)
 
-        if [[ $FILETIME == "" ]]
+        if [ $FILETIME == "" ]
         then
             continue
         fi
 
+        # calculate how old the file is (based on access time)
         TIMEDIFF=$(($CURTIME - $FILETIME))
 
         # Check if file older
         if [ $TIMEDIFF -ge $OLDTIME ]; then
             echo "flushing and evicting $f to $base_source"
-            #[ ! -f $f ] ||  &
 
+            # some string formatting
             if [[ "$flushlist" != "" ]]
             then
                 flushlist+=" "
@@ -48,21 +53,34 @@ get_rp_mv () {
            
         fi
     done
+
+    # if we have some files that older that OLDTIME, move them
     if [[ ${flushlist} != "" ]]
     then
-        (mv $flushlist ${base_source} || true) &
-        pid=$!
+
+        # mv each image individually (as opposed to all at once)
+        for f in $flushlist
+        do
+            ([ ! -f $f ] || mv $f ${base_source} || true) &
+        done
+
+        # wait for all images to be moved
         wait
-        #echo "flush and evict ${flushlist}"
-        #rsync -a --no-owner --no-group --remove-source-files ${flushlist} ${base_source} || ( sleep 5 && rsync -a --no-owner --no-group --remove-source-files ${flushlist} ${base_source} ) || echo "files cannot be flushed"
+
+        #(mv $flushlist ${base_source} || true) &
+        #pid=$!
+        #wait $pid # wait until subprocess completes
     fi
 }
 
 flush () {
-        OLDTIME=$1
-        task=$2
-        re_flush=""
-        sources_str=""
+        OLDTIME=$1 # user specified expiration time
+        task=$2 # the name of the calling task. either "process" or "cleanup"
+
+        re_flush="" # regex of files to flush
+        sources_str="" # string containing all source paths
+
+        # load all potential regex from file (concatenate the regex to existing source mounts)
         for s in "${sources_arr[@]}"
         do
             while IFS="" read -r re || [ -n "$re" ]
@@ -77,24 +95,25 @@ flush () {
             done < $flush_file
         done
 
+        # if .sea_flushlist file contains regex
         if [[ $re_flush != "" ]]
         then
             found_files=""
+
+            # Look for files that match provided regex patterns
             for rgx in ${re_flush}
             do
                 if [[ $found_files != "" ]]
                 then
                     found_files+=" "
                 fi
-
                 found_files+=$(find ${rgx} -type f -follow 2> /dev/null || true)
             done
             
+            # check to see if there are any candidate files for flushing and mv them
             if [[ $found_files != "" ]]
             then
-                tobe_flushed=$(ls -tur ${found_files} 2> /dev/null || true)
-                get_rp_mv "${tobe_flushed}" "$OLDTIME" "$task"
-                echo "done mv"
+                mv_old "${found_files}" "$OLDTIME" "$task"
             fi
         fi
 }
@@ -102,18 +121,21 @@ flush () {
 
 flush_process () {
     OLDTIME=$1
-    while :
+    while [[ -f $tmpfile ]]
     do
         flush $OLDTIME "process"
         sleep 5 &
         wait $!
     done
+    echo "flush process terminated"
 }
 
 cleanup () {
     echo "Cleaning up Sea mount"
     sp=$(jobs -p)
-    [[ $sp != "" ]] && kill $(jobs -p)
+    [[ $sp != "" ]] && kill -INT $sp
+    rm $tmpfile
+    ps aux | grep vhs
     time flush 0 "cleanup"
 }
 
@@ -139,7 +161,6 @@ get_sources () {
 
 }
 
-trap 'cleanup' SIGTERM 
+trap '[ -f $tmpfile ] && cleanup' SIGTERM 
 get_sources
 flush_process 5
-

@@ -24,6 +24,7 @@ for i in range(it):
     benchmark("read_start", in_file)
     im = nib.load(in_file)
     data = np.asanyarray(im.dataobj)
+    data += 0 # make sure it's in memory
     benchmark("read_end", in_file)
     benchmark("inc_start", in_file)
     inc = data + 1
