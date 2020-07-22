@@ -16,13 +16,15 @@ do
     mkdir -p ${source} 
 done
 
-${SEA_HOME}/bin/sea_flusher.sh &
+${SEA_HOME}/bin/sea_flusher.sh 1 &
 pid=$!
 echo "flusher pid" ${pid}
 
-trap 'trap - SIGTERM && kill $pid' SIGINT SIGTERM EXIT
+#trap 'trap - SIGTERM && kill $pid' SIGINT SIGTERM EXIT
 
 echo "Launching script $1"
 bash $1
 echo "killing flush" && kill $pid
+${SEA_HOME}/bin/sea_flusher.sh 2
+
 

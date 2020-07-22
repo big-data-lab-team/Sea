@@ -1,399 +1,539 @@
-flushing and evicting /dev/shm/seatmp/0-inc-bigbrain_0_0_6255.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/1-inc-bigbrain_0_0_6255.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/0-inc-bigbrain_0_0_2085.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/0-inc-bigbrain_0_1208_2085.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/0-inc-bigbrain_0_1208_4170.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/1-inc-bigbrain_0_0_2085.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/1-inc-bigbrain_0_1208_2085.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/2-inc-bigbrain_0_0_6255.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/2-inc-bigbrain_0_1208_2085.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/3-inc-bigbrain_0_0_6255.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/3-inc-bigbrain_0_1208_2085.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/4-inc-bigbrain_0_0_6255.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/4-inc-bigbrain_0_1208_2085.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/5-inc-bigbrain_0_0_6255.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/6-inc-bigbrain_0_0_6255.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/7-inc-bigbrain_0_0_6255.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/0-inc-bigbrain_0_0_0.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/0-inc-bigbrain_0_0_4865.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/0-inc-bigbrain_0_0_695.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/1-inc-bigbrain_0_0_0.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/1-inc-bigbrain_0_0_695.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/1-inc-bigbrain_0_1208_4170.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/2-inc-bigbrain_0_0_0.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/2-inc-bigbrain_0_0_2085.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/2-inc-bigbrain_0_0_695.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/2-inc-bigbrain_0_1208_4170.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/3-inc-bigbrain_0_0_2085.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/3-inc-bigbrain_0_0_695.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/3-inc-bigbrain_0_1208_4170.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/4-inc-bigbrain_0_0_2085.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/4-inc-bigbrain_0_1208_4170.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/5-inc-bigbrain_0_0_2085.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/5-inc-bigbrain_0_1208_2085.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/5-inc-bigbrain_0_1208_4170.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/6-inc-bigbrain_0_0_2085.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/6-inc-bigbrain_0_1208_2085.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/6-inc-bigbrain_0_1208_4170.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/7-inc-bigbrain_0_0_2085.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/7-inc-bigbrain_0_1208_2085.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/7-inc-bigbrain_0_1208_4170.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/8-inc-bigbrain_0_0_2085.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/8-inc-bigbrain_0_0_6255.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/8-inc-bigbrain_0_1208_2085.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/9-inc-bigbrain_0_0_6255.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/9-inc-bigbrain_0_1208_2085.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/0-inc-bigbrain_0_1208_0.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/0-inc-bigbrain_0_1208_5560.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/1-inc-bigbrain_0_0_4865.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/1-inc-bigbrain_0_1208_0.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/1-inc-bigbrain_0_1208_5560.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/2-inc-bigbrain_0_0_4865.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/2-inc-bigbrain_0_1208_0.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/2-inc-bigbrain_0_1208_5560.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/3-inc-bigbrain_0_0_0.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/3-inc-bigbrain_0_0_4865.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/3-inc-bigbrain_0_1208_5560.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/4-inc-bigbrain_0_0_0.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/4-inc-bigbrain_0_0_4865.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/4-inc-bigbrain_0_0_695.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/5-inc-bigbrain_0_0_0.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/5-inc-bigbrain_0_0_4865.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/5-inc-bigbrain_0_0_695.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/6-inc-bigbrain_0_0_0.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/6-inc-bigbrain_0_0_4865.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/6-inc-bigbrain_0_0_695.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/7-inc-bigbrain_0_0_0.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/7-inc-bigbrain_0_0_695.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/8-inc-bigbrain_0_0_0.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/8-inc-bigbrain_0_0_695.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/8-inc-bigbrain_0_1208_4170.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/9-inc-bigbrain_0_0_0.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/9-inc-bigbrain_0_0_2085.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/9-inc-bigbrain_0_0_695.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/9-inc-bigbrain_0_1208_4170.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/0-inc-bigbrain_0_1208_6255.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/1-inc-bigbrain_0_1208_6255.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/2-inc-bigbrain_0_1208_6255.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/3-inc-bigbrain_0_1208_0.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/4-inc-bigbrain_0_1208_0.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/4-inc-bigbrain_0_1208_5560.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/5-inc-bigbrain_0_1208_0.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/5-inc-bigbrain_0_1208_5560.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/6-inc-bigbrain_0_1208_0.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/6-inc-bigbrain_0_1208_5560.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/7-inc-bigbrain_0_0_4865.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/7-inc-bigbrain_0_1208_0.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/7-inc-bigbrain_0_1208_5560.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/8-inc-bigbrain_0_0_4865.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/8-inc-bigbrain_0_1208_0.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/8-inc-bigbrain_0_1208_5560.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/9-inc-bigbrain_0_0_4865.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/9-inc-bigbrain_0_1208_0.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/9-inc-bigbrain_0_1208_5560.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/3-inc-bigbrain_0_1208_6255.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/4-inc-bigbrain_0_1208_6255.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/5-inc-bigbrain_0_1208_6255.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/6-inc-bigbrain_0_1208_6255.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/7-inc-bigbrain_0_1208_6255.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/8-inc-bigbrain_0_1208_6255.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/0-inc-bigbrain_0_1812_1390.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/0-inc-bigbrain_0_1812_2085.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/9-inc-bigbrain_0_1208_6255.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/0-inc-bigbrain_0_0_1390.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/0-inc-bigbrain_0_0_2780.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/0-inc-bigbrain_0_0_4170.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/0-inc-bigbrain_0_0_5560.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/0-inc-bigbrain_0_1208_1390.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/0-inc-bigbrain_0_1208_3475.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/0-inc-bigbrain_0_1208_4865.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/0-inc-bigbrain_0_1208_695.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/0-inc-bigbrain_0_1812_2780.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/0-inc-bigbrain_0_1812_3475.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/1-inc-bigbrain_0_0_1390.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/1-inc-bigbrain_0_0_4170.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/1-inc-bigbrain_0_1208_1390.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/1-inc-bigbrain_0_1208_3475.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/1-inc-bigbrain_0_1208_695.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/1-inc-bigbrain_0_1812_1390.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/1-inc-bigbrain_0_1812_2085.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/1-inc-bigbrain_0_1812_2780.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/1-inc-bigbrain_0_1812_3475.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/2-inc-bigbrain_0_0_1390.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/2-inc-bigbrain_0_1208_1390.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/2-inc-bigbrain_0_1208_3475.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/2-inc-bigbrain_0_1208_695.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/2-inc-bigbrain_0_1812_1390.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/2-inc-bigbrain_0_1812_2085.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/2-inc-bigbrain_0_1812_2780.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/2-inc-bigbrain_0_1812_3475.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/3-inc-bigbrain_0_1208_1390.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/3-inc-bigbrain_0_1208_3475.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/3-inc-bigbrain_0_1208_695.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/3-inc-bigbrain_0_1812_1390.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/3-inc-bigbrain_0_1812_2085.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/3-inc-bigbrain_0_1812_2780.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/4-inc-bigbrain_0_1208_3475.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/4-inc-bigbrain_0_1812_1390.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/4-inc-bigbrain_0_1812_2085.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/4-inc-bigbrain_0_1812_2780.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/5-inc-bigbrain_0_1208_3475.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/5-inc-bigbrain_0_1812_1390.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/5-inc-bigbrain_0_1812_2085.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/5-inc-bigbrain_0_1812_2780.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/6-inc-bigbrain_0_1208_3475.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/6-inc-bigbrain_0_1812_1390.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/6-inc-bigbrain_0_1812_2085.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/7-inc-bigbrain_0_1812_1390.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/0-inc-bigbrain_0_0_3475.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/0-inc-bigbrain_0_1208_2780.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/0-inc-bigbrain_0_1812_0.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/0-inc-bigbrain_0_1812_4170.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/1-inc-bigbrain_0_0_2780.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/1-inc-bigbrain_0_0_3475.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/1-inc-bigbrain_0_0_5560.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/1-inc-bigbrain_0_1208_2780.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/1-inc-bigbrain_0_1208_4865.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/1-inc-bigbrain_0_1812_0.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/1-inc-bigbrain_0_1812_4170.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/2-inc-bigbrain_0_0_2780.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/2-inc-bigbrain_0_0_3475.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/2-inc-bigbrain_0_0_4170.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/2-inc-bigbrain_0_0_5560.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/2-inc-bigbrain_0_1208_2780.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/2-inc-bigbrain_0_1208_4865.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/2-inc-bigbrain_0_1812_0.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/2-inc-bigbrain_0_1812_4170.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/3-inc-bigbrain_0_0_1390.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/3-inc-bigbrain_0_0_2780.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/3-inc-bigbrain_0_0_3475.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/3-inc-bigbrain_0_0_4170.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/3-inc-bigbrain_0_0_5560.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/3-inc-bigbrain_0_1208_2780.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/3-inc-bigbrain_0_1208_4865.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/3-inc-bigbrain_0_1812_0.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/3-inc-bigbrain_0_1812_3475.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/3-inc-bigbrain_0_1812_4170.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/4-inc-bigbrain_0_0_1390.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/4-inc-bigbrain_0_0_2780.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/4-inc-bigbrain_0_0_4170.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/4-inc-bigbrain_0_0_5560.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/4-inc-bigbrain_0_1208_1390.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/4-inc-bigbrain_0_1208_2780.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/4-inc-bigbrain_0_1208_4865.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/4-inc-bigbrain_0_1208_695.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/4-inc-bigbrain_0_1812_0.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/4-inc-bigbrain_0_1812_3475.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/5-inc-bigbrain_0_0_1390.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/5-inc-bigbrain_0_0_2780.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/5-inc-bigbrain_0_0_4170.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/5-inc-bigbrain_0_0_5560.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/5-inc-bigbrain_0_1208_1390.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/5-inc-bigbrain_0_1208_4865.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/5-inc-bigbrain_0_1208_695.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/5-inc-bigbrain_0_1812_3475.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/6-inc-bigbrain_0_0_1390.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/6-inc-bigbrain_0_0_2780.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/6-inc-bigbrain_0_0_4170.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/6-inc-bigbrain_0_0_5560.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/6-inc-bigbrain_0_1208_1390.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/6-inc-bigbrain_0_1208_4865.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/6-inc-bigbrain_0_1208_695.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/6-inc-bigbrain_0_1812_2780.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/6-inc-bigbrain_0_1812_3475.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/7-inc-bigbrain_0_0_1390.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/7-inc-bigbrain_0_0_2780.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/7-inc-bigbrain_0_0_4170.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/7-inc-bigbrain_0_0_5560.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/7-inc-bigbrain_0_1208_1390.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/7-inc-bigbrain_0_1208_3475.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/7-inc-bigbrain_0_1208_4865.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/7-inc-bigbrain_0_1208_695.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/7-inc-bigbrain_0_1812_2085.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/7-inc-bigbrain_0_1812_2780.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/7-inc-bigbrain_0_1812_3475.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/8-inc-bigbrain_0_0_1390.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/8-inc-bigbrain_0_0_2780.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/8-inc-bigbrain_0_0_4170.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/8-inc-bigbrain_0_0_5560.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/8-inc-bigbrain_0_1208_1390.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/8-inc-bigbrain_0_1208_3475.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/8-inc-bigbrain_0_1208_4865.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/8-inc-bigbrain_0_1208_695.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/8-inc-bigbrain_0_1812_1390.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/8-inc-bigbrain_0_1812_2085.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/8-inc-bigbrain_0_1812_2780.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/8-inc-bigbrain_0_1812_3475.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/9-inc-bigbrain_0_0_1390.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/9-inc-bigbrain_0_0_4170.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/9-inc-bigbrain_0_1208_1390.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/9-inc-bigbrain_0_1208_3475.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/9-inc-bigbrain_0_1208_695.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/9-inc-bigbrain_0_1812_1390.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/9-inc-bigbrain_0_1812_2085.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/9-inc-bigbrain_0_1812_2780.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/9-inc-bigbrain_0_1812_3475.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/0-inc-bigbrain_0_1812_6255.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/4-inc-bigbrain_0_0_3475.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/4-inc-bigbrain_0_1812_4170.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/5-inc-bigbrain_0_0_3475.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/5-inc-bigbrain_0_1208_2780.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/5-inc-bigbrain_0_1812_0.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/5-inc-bigbrain_0_1812_4170.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/6-inc-bigbrain_0_0_3475.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/6-inc-bigbrain_0_1208_2780.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/6-inc-bigbrain_0_1812_0.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/6-inc-bigbrain_0_1812_4170.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/7-inc-bigbrain_0_0_3475.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/7-inc-bigbrain_0_1208_2780.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/7-inc-bigbrain_0_1812_0.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/7-inc-bigbrain_0_1812_4170.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/8-inc-bigbrain_0_0_3475.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/8-inc-bigbrain_0_1208_2780.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/8-inc-bigbrain_0_1812_0.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/8-inc-bigbrain_0_1812_4170.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/9-inc-bigbrain_0_0_2780.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/9-inc-bigbrain_0_0_3475.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/9-inc-bigbrain_0_0_5560.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/9-inc-bigbrain_0_1208_2780.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/9-inc-bigbrain_0_1208_4865.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/9-inc-bigbrain_0_1812_0.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/9-inc-bigbrain_0_1812_4170.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/1-inc-bigbrain_0_1812_6255.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/2-inc-bigbrain_0_1812_6255.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/3-inc-bigbrain_0_1812_6255.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/4-inc-bigbrain_0_1812_6255.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/5-inc-bigbrain_0_1812_6255.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/6-inc-bigbrain_0_1812_6255.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/7-inc-bigbrain_0_1812_6255.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/0-inc-bigbrain_0_2416_4170.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/1-inc-bigbrain_0_2416_4170.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/8-inc-bigbrain_0_1812_6255.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/9-inc-bigbrain_0_1812_6255.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/0-inc-bigbrain_0_2416_1390.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/0-inc-bigbrain_0_2416_6255.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/1-inc-bigbrain_0_2416_1390.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/1-inc-bigbrain_0_2416_6255.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/2-inc-bigbrain_0_2416_1390.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/2-inc-bigbrain_0_2416_4170.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/2-inc-bigbrain_0_2416_6255.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/3-inc-bigbrain_0_2416_1390.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/3-inc-bigbrain_0_2416_4170.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/4-inc-bigbrain_0_2416_4170.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/5-inc-bigbrain_0_2416_4170.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/6-inc-bigbrain_0_2416_4170.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/7-inc-bigbrain_0_2416_4170.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/0-inc-bigbrain_0_1812_695.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/0-inc-bigbrain_0_2416_0.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/0-inc-bigbrain_0_2416_2085.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/0-inc-bigbrain_0_2416_2780.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/0-inc-bigbrain_0_2416_3475.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/0-inc-bigbrain_0_2416_4865.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/1-inc-bigbrain_0_1812_695.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/1-inc-bigbrain_0_2416_2085.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/1-inc-bigbrain_0_2416_2780.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/1-inc-bigbrain_0_2416_3475.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/1-inc-bigbrain_0_2416_4865.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/2-inc-bigbrain_0_2416_2085.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/2-inc-bigbrain_0_2416_3475.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/3-inc-bigbrain_0_2416_2085.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/3-inc-bigbrain_0_2416_3475.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/3-inc-bigbrain_0_2416_6255.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/4-inc-bigbrain_0_2416_1390.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/4-inc-bigbrain_0_2416_2085.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/4-inc-bigbrain_0_2416_6255.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/5-inc-bigbrain_0_2416_1390.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/5-inc-bigbrain_0_2416_2085.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/5-inc-bigbrain_0_2416_6255.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/6-inc-bigbrain_0_2416_1390.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/6-inc-bigbrain_0_2416_6255.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/7-inc-bigbrain_0_2416_1390.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/7-inc-bigbrain_0_2416_6255.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/8-inc-bigbrain_0_2416_1390.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/8-inc-bigbrain_0_2416_4170.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/8-inc-bigbrain_0_2416_6255.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/9-inc-bigbrain_0_2416_1390.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/9-inc-bigbrain_0_2416_4170.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/9-inc-bigbrain_0_2416_6255.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/0-inc-bigbrain_0_1812_4865.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/0-inc-bigbrain_0_1812_5560.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/0-inc-bigbrain_0_2416_5560.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/1-inc-bigbrain_0_1812_4865.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/1-inc-bigbrain_0_1812_5560.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/1-inc-bigbrain_0_2416_0.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/1-inc-bigbrain_0_2416_5560.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/2-inc-bigbrain_0_1812_4865.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/0-inc-bigbrain_0_1812_4865.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/0-inc-bigbrain_0_1812_5560.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/0-inc-bigbrain_0_2416_5560.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/1-inc-bigbrain_0_1812_4865.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/1-inc-bigbrain_0_1812_5560.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/1-inc-bigbrain_0_2416_0.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/1-inc-bigbrain_0_2416_5560.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/2-inc-bigbrain_0_1812_4865.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/2-inc-bigbrain_0_1812_5560.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/2-inc-bigbrain_0_1812_695.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/2-inc-bigbrain_0_2416_0.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/2-inc-bigbrain_0_2416_2780.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/2-inc-bigbrain_0_2416_4865.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/2-inc-bigbrain_0_2416_5560.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/3-inc-bigbrain_0_1812_4865.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/3-inc-bigbrain_0_1812_5560.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/3-inc-bigbrain_0_1812_695.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/3-inc-bigbrain_0_2416_0.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/3-inc-bigbrain_0_2416_2780.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/3-inc-bigbrain_0_2416_4865.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/3-inc-bigbrain_0_2416_5560.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/4-inc-bigbrain_0_1812_4865.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/4-inc-bigbrain_0_1812_5560.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/4-inc-bigbrain_0_1812_695.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/4-inc-bigbrain_0_2416_0.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/4-inc-bigbrain_0_2416_2780.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/4-inc-bigbrain_0_2416_3475.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/4-inc-bigbrain_0_2416_4865.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/4-inc-bigbrain_0_2416_5560.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/5-inc-bigbrain_0_1812_4865.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/5-inc-bigbrain_0_1812_5560.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/5-inc-bigbrain_0_1812_695.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/5-inc-bigbrain_0_2416_0.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/5-inc-bigbrain_0_2416_2780.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/5-inc-bigbrain_0_2416_3475.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/5-inc-bigbrain_0_2416_4865.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/5-inc-bigbrain_0_2416_5560.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/6-inc-bigbrain_0_1812_4865.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/6-inc-bigbrain_0_1812_5560.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/6-inc-bigbrain_0_1812_695.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/6-inc-bigbrain_0_2416_0.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/6-inc-bigbrain_0_2416_2085.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/6-inc-bigbrain_0_2416_2780.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/6-inc-bigbrain_0_2416_3475.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/6-inc-bigbrain_0_2416_4865.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/6-inc-bigbrain_0_2416_5560.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/7-inc-bigbrain_0_1812_4865.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/7-inc-bigbrain_0_1812_5560.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/7-inc-bigbrain_0_1812_695.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/7-inc-bigbrain_0_2416_0.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/7-inc-bigbrain_0_2416_2085.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/7-inc-bigbrain_0_2416_2780.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/7-inc-bigbrain_0_2416_3475.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/7-inc-bigbrain_0_2416_4865.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/7-inc-bigbrain_0_2416_5560.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/8-inc-bigbrain_0_1812_4865.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/8-inc-bigbrain_0_1812_5560.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/8-inc-bigbrain_0_1812_695.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/8-inc-bigbrain_0_2416_0.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/8-inc-bigbrain_0_2416_2085.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/8-inc-bigbrain_0_2416_2780.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/8-inc-bigbrain_0_2416_3475.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/8-inc-bigbrain_0_2416_4865.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/8-inc-bigbrain_0_2416_5560.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/9-inc-bigbrain_0_1812_4865.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/9-inc-bigbrain_0_1812_5560.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/9-inc-bigbrain_0_1812_695.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/9-inc-bigbrain_0_2416_0.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/9-inc-bigbrain_0_2416_2085.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/9-inc-bigbrain_0_2416_2780.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/9-inc-bigbrain_0_2416_3475.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/9-inc-bigbrain_0_2416_4865.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/9-inc-bigbrain_0_2416_5560.nii to /mnt/lustre/vhs/output
-flushing and evicting /dev/shm/seatmp/9-inc-bigbrain_0_2416_5560.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/1-inc-bigbrain_0_0_3475.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/1-inc-bigbrain_0_0_4170.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/1-inc-bigbrain_0_0_4865.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/1-inc-bigbrain_0_0_5560.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/1-inc-bigbrain_0_0_6255.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/1-inc-bigbrain_0_1208_0.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/1-inc-bigbrain_0_1208_1390.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/1-inc-bigbrain_0_1208_2780.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/1-inc-bigbrain_0_1208_3475.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/2-inc-bigbrain_0_0_3475.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/2-inc-bigbrain_0_0_4170.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/2-inc-bigbrain_0_0_4865.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/2-inc-bigbrain_0_0_5560.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/2-inc-bigbrain_0_0_6255.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/2-inc-bigbrain_0_1208_0.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/2-inc-bigbrain_0_1208_3475.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/3-inc-bigbrain_0_0_4865.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/3-inc-bigbrain_0_0_6255.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/3-inc-bigbrain_0_1208_3475.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/4-inc-bigbrain_0_0_4865.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/4-inc-bigbrain_0_0_6255.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/5-inc-bigbrain_0_0_4865.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_0_0.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_0_1390.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_0_2085.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_0_2780.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_0_3475.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_0_4170.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_0_4865.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_0_5560.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_0_6255.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_0_695.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_1208_0.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_1208_1390.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_1208_2085.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_1208_2780.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_1208_3475.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_1208_4170.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/1-inc-bigbrain_0_0_0.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/1-inc-bigbrain_0_0_1390.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/1-inc-bigbrain_0_0_2085.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/1-inc-bigbrain_0_0_2780.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/1-inc-bigbrain_0_0_695.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/1-inc-bigbrain_0_1208_2085.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/1-inc-bigbrain_0_1208_4170.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/1-inc-bigbrain_0_1208_4865.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/2-inc-bigbrain_0_0_0.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/2-inc-bigbrain_0_0_1390.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/2-inc-bigbrain_0_0_2085.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/2-inc-bigbrain_0_0_2780.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/2-inc-bigbrain_0_0_695.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/2-inc-bigbrain_0_1208_1390.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/2-inc-bigbrain_0_1208_2085.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/2-inc-bigbrain_0_1208_2780.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/2-inc-bigbrain_0_1208_4170.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/2-inc-bigbrain_0_1208_4865.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/3-inc-bigbrain_0_0_0.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/3-inc-bigbrain_0_0_1390.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/3-inc-bigbrain_0_0_2085.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/3-inc-bigbrain_0_0_2780.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/3-inc-bigbrain_0_0_3475.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/3-inc-bigbrain_0_0_4170.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/3-inc-bigbrain_0_0_5560.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/3-inc-bigbrain_0_0_695.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/3-inc-bigbrain_0_1208_0.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/3-inc-bigbrain_0_1208_1390.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/3-inc-bigbrain_0_1208_2085.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/3-inc-bigbrain_0_1208_2780.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/3-inc-bigbrain_0_1208_4170.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/4-inc-bigbrain_0_0_0.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/4-inc-bigbrain_0_0_1390.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/4-inc-bigbrain_0_0_2085.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/4-inc-bigbrain_0_0_2780.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/4-inc-bigbrain_0_0_3475.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/4-inc-bigbrain_0_0_4170.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/4-inc-bigbrain_0_0_5560.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/4-inc-bigbrain_0_0_695.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/4-inc-bigbrain_0_1208_0.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/4-inc-bigbrain_0_1208_1390.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/4-inc-bigbrain_0_1208_2085.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/4-inc-bigbrain_0_1208_2780.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/4-inc-bigbrain_0_1208_3475.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/4-inc-bigbrain_0_1208_4170.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/5-inc-bigbrain_0_0_0.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/5-inc-bigbrain_0_0_1390.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/5-inc-bigbrain_0_0_2085.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/5-inc-bigbrain_0_0_2780.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/5-inc-bigbrain_0_0_3475.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/5-inc-bigbrain_0_0_4170.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/5-inc-bigbrain_0_0_5560.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/5-inc-bigbrain_0_0_6255.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/5-inc-bigbrain_0_0_695.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/5-inc-bigbrain_0_1208_0.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/5-inc-bigbrain_0_1208_1390.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/5-inc-bigbrain_0_1208_2085.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/5-inc-bigbrain_0_1208_2780.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/5-inc-bigbrain_0_1208_3475.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/5-inc-bigbrain_0_1208_4170.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/6-inc-bigbrain_0_0_0.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/6-inc-bigbrain_0_0_1390.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/6-inc-bigbrain_0_0_2085.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/6-inc-bigbrain_0_0_2780.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/6-inc-bigbrain_0_0_3475.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/6-inc-bigbrain_0_0_4170.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/6-inc-bigbrain_0_0_4865.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/6-inc-bigbrain_0_0_5560.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/6-inc-bigbrain_0_0_6255.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/6-inc-bigbrain_0_0_695.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/6-inc-bigbrain_0_1208_0.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/6-inc-bigbrain_0_1208_1390.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/6-inc-bigbrain_0_1208_2085.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/6-inc-bigbrain_0_1208_2780.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/6-inc-bigbrain_0_1208_3475.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/6-inc-bigbrain_0_1208_4170.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/7-inc-bigbrain_0_0_0.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/7-inc-bigbrain_0_0_1390.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/7-inc-bigbrain_0_0_2085.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/7-inc-bigbrain_0_0_2780.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/7-inc-bigbrain_0_0_3475.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/7-inc-bigbrain_0_0_4170.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/7-inc-bigbrain_0_0_4865.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/7-inc-bigbrain_0_0_5560.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/7-inc-bigbrain_0_0_6255.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/7-inc-bigbrain_0_0_695.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/7-inc-bigbrain_0_1208_0.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/7-inc-bigbrain_0_1208_1390.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/7-inc-bigbrain_0_1208_2085.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/7-inc-bigbrain_0_1208_2780.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/7-inc-bigbrain_0_1208_3475.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/7-inc-bigbrain_0_1208_4170.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/8-inc-bigbrain_0_0_0.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/8-inc-bigbrain_0_0_1390.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/8-inc-bigbrain_0_0_2085.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/8-inc-bigbrain_0_0_2780.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/8-inc-bigbrain_0_0_3475.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/8-inc-bigbrain_0_0_4170.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/8-inc-bigbrain_0_0_4865.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/8-inc-bigbrain_0_0_5560.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/8-inc-bigbrain_0_0_6255.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/8-inc-bigbrain_0_0_695.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/8-inc-bigbrain_0_1208_0.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/8-inc-bigbrain_0_1208_1390.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/8-inc-bigbrain_0_1208_2085.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/8-inc-bigbrain_0_1208_2780.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/8-inc-bigbrain_0_1208_3475.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/8-inc-bigbrain_0_1208_4170.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/9-inc-bigbrain_0_0_0.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/9-inc-bigbrain_0_0_1390.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/9-inc-bigbrain_0_0_2085.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/9-inc-bigbrain_0_0_2780.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/9-inc-bigbrain_0_0_3475.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/9-inc-bigbrain_0_0_4170.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/9-inc-bigbrain_0_0_4865.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/9-inc-bigbrain_0_0_5560.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/9-inc-bigbrain_0_0_6255.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/9-inc-bigbrain_0_0_695.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/9-inc-bigbrain_0_1208_0.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/9-inc-bigbrain_0_1208_1390.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/9-inc-bigbrain_0_1208_2085.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/9-inc-bigbrain_0_1208_2780.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/9-inc-bigbrain_0_1208_3475.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/9-inc-bigbrain_0_1208_4170.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_0_0.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_0_1390.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_0_2085.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_0_2780.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_0_3475.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_0_4170.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_0_4865.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_0_5560.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_0_6255.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_0_695.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_1208_0.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_1208_1390.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_1208_2085.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_1208_2780.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_1208_3475.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_1208_4170.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_1208_4865.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/1-inc-bigbrain_0_1208_6255.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/1-inc-bigbrain_0_1812_0.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/1-inc-bigbrain_0_1812_1390.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/1-inc-bigbrain_0_1812_2780.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/1-inc-bigbrain_0_1812_3475.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/1-inc-bigbrain_0_1812_5560.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/1-inc-bigbrain_0_1812_6255.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/1-inc-bigbrain_0_2416_1390.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/2-inc-bigbrain_0_1208_6255.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/2-inc-bigbrain_0_1812_0.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/2-inc-bigbrain_0_1812_1390.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/2-inc-bigbrain_0_1812_2780.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/2-inc-bigbrain_0_1812_3475.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/2-inc-bigbrain_0_1812_5560.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/2-inc-bigbrain_0_1812_6255.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/2-inc-bigbrain_0_2416_1390.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/3-inc-bigbrain_0_1208_4865.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/3-inc-bigbrain_0_1208_6255.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/3-inc-bigbrain_0_1812_0.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/3-inc-bigbrain_0_1812_1390.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/3-inc-bigbrain_0_1812_2780.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/3-inc-bigbrain_0_1812_3475.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/3-inc-bigbrain_0_1812_5560.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/3-inc-bigbrain_0_1812_6255.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/3-inc-bigbrain_0_2416_1390.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/4-inc-bigbrain_0_1208_4865.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/4-inc-bigbrain_0_1208_6255.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/4-inc-bigbrain_0_1812_0.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/4-inc-bigbrain_0_1812_1390.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/4-inc-bigbrain_0_1812_2780.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/4-inc-bigbrain_0_1812_3475.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/4-inc-bigbrain_0_1812_5560.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/4-inc-bigbrain_0_1812_6255.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/4-inc-bigbrain_0_2416_1390.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/5-inc-bigbrain_0_1208_4865.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/5-inc-bigbrain_0_1208_6255.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/5-inc-bigbrain_0_1812_0.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/5-inc-bigbrain_0_1812_1390.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/5-inc-bigbrain_0_1812_2780.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/5-inc-bigbrain_0_1812_3475.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/5-inc-bigbrain_0_1812_5560.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/5-inc-bigbrain_0_1812_6255.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/5-inc-bigbrain_0_2416_1390.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/6-inc-bigbrain_0_1208_4865.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/6-inc-bigbrain_0_1208_6255.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/6-inc-bigbrain_0_1812_0.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/6-inc-bigbrain_0_1812_1390.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/6-inc-bigbrain_0_1812_2780.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/6-inc-bigbrain_0_1812_3475.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/6-inc-bigbrain_0_1812_5560.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/6-inc-bigbrain_0_1812_6255.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/6-inc-bigbrain_0_2416_1390.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/7-inc-bigbrain_0_1208_4865.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/7-inc-bigbrain_0_1208_6255.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/7-inc-bigbrain_0_1812_0.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/7-inc-bigbrain_0_1812_1390.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/7-inc-bigbrain_0_1812_2780.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/7-inc-bigbrain_0_1812_3475.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/7-inc-bigbrain_0_1812_5560.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/7-inc-bigbrain_0_1812_6255.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/7-inc-bigbrain_0_2416_1390.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/8-inc-bigbrain_0_1208_4865.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/8-inc-bigbrain_0_1208_6255.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/8-inc-bigbrain_0_1812_0.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/8-inc-bigbrain_0_1812_1390.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/8-inc-bigbrain_0_1812_2780.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/8-inc-bigbrain_0_1812_3475.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/8-inc-bigbrain_0_1812_5560.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/8-inc-bigbrain_0_1812_6255.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/8-inc-bigbrain_0_2416_1390.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/9-inc-bigbrain_0_1208_4865.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/9-inc-bigbrain_0_1208_6255.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/9-inc-bigbrain_0_1812_0.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/9-inc-bigbrain_0_1812_1390.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/9-inc-bigbrain_0_1812_2780.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/9-inc-bigbrain_0_1812_3475.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/9-inc-bigbrain_0_1812_5560.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/9-inc-bigbrain_0_1812_6255.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/9-inc-bigbrain_0_2416_1390.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_0_0.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_0_1390.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_0_2085.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_0_2780.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_0_3475.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_0_4170.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_0_4865.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_0_5560.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_0_6255.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_0_695.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_1208_0.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_1208_1390.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_1208_2085.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_1208_2780.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_1208_3475.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_1208_4170.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_1208_4865.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_1208_6255.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_1812_0.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_1812_1390.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_1812_2780.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_1812_3475.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_1812_5560.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_1812_6255.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_2416_1390.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/1-inc-bigbrain_0_2416_2085.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/2-inc-bigbrain_0_2416_2085.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/3-inc-bigbrain_0_2416_2085.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/4-inc-bigbrain_0_2416_2085.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/5-inc-bigbrain_0_2416_2085.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/6-inc-bigbrain_0_2416_2085.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/7-inc-bigbrain_0_2416_2085.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/8-inc-bigbrain_0_2416_2085.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_0_0.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_0_1390.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_0_2085.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_0_2780.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_0_3475.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_0_4170.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_0_4865.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_0_5560.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_0_6255.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_0_695.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_1208_0.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_1208_1390.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_1208_2085.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_1208_2780.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_1208_3475.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_1208_4170.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_1208_4865.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_1208_6255.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_1812_0.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_1812_1390.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_1812_2780.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_1812_3475.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_1812_5560.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_1812_6255.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_2416_1390.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_2416_2085.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/1-inc-bigbrain_0_2416_4170.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/1-inc-bigbrain_0_2416_6255.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/2-inc-bigbrain_0_2416_4170.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/3-inc-bigbrain_0_2416_4170.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/4-inc-bigbrain_0_2416_4170.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/5-inc-bigbrain_0_2416_4170.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/6-inc-bigbrain_0_2416_4170.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/9-inc-bigbrain_0_2416_2085.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_0_0.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_0_1390.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_0_2085.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_0_2780.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_0_3475.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_0_4170.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_0_4865.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_0_5560.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_0_6255.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_0_695.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_1208_0.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_1208_1390.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_1208_2085.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_1208_2780.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_1208_3475.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_1208_4170.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_1208_4865.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_1208_6255.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_1208_695.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_1812_0.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_1812_1390.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_1812_2780.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_1812_3475.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_1812_5560.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_1812_6255.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_2416_1390.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_2416_2085.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_2416_4170.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_2416_6255.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/1-inc-bigbrain_0_1208_695.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/1-inc-bigbrain_0_1812_4170.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/1-inc-bigbrain_0_1812_4865.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/1-inc-bigbrain_0_1812_695.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/1-inc-bigbrain_0_2416_0.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/1-inc-bigbrain_0_2416_3475.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/2-inc-bigbrain_0_1208_695.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/2-inc-bigbrain_0_1812_4170.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/2-inc-bigbrain_0_1812_4865.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/2-inc-bigbrain_0_1812_695.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/2-inc-bigbrain_0_2416_0.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/2-inc-bigbrain_0_2416_3475.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/2-inc-bigbrain_0_2416_6255.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/3-inc-bigbrain_0_1208_695.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/3-inc-bigbrain_0_1812_4170.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/3-inc-bigbrain_0_1812_4865.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/3-inc-bigbrain_0_1812_695.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/3-inc-bigbrain_0_2416_0.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/3-inc-bigbrain_0_2416_3475.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/3-inc-bigbrain_0_2416_6255.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/4-inc-bigbrain_0_1208_695.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/4-inc-bigbrain_0_1812_4170.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/4-inc-bigbrain_0_1812_4865.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/4-inc-bigbrain_0_1812_695.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/4-inc-bigbrain_0_2416_0.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/4-inc-bigbrain_0_2416_3475.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/4-inc-bigbrain_0_2416_6255.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/5-inc-bigbrain_0_1208_695.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/5-inc-bigbrain_0_1812_4170.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/5-inc-bigbrain_0_1812_4865.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/5-inc-bigbrain_0_1812_695.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/5-inc-bigbrain_0_2416_0.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/5-inc-bigbrain_0_2416_3475.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/5-inc-bigbrain_0_2416_6255.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/6-inc-bigbrain_0_1208_695.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/6-inc-bigbrain_0_1812_695.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/6-inc-bigbrain_0_2416_0.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/6-inc-bigbrain_0_2416_3475.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/6-inc-bigbrain_0_2416_6255.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/7-inc-bigbrain_0_1208_695.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/7-inc-bigbrain_0_2416_0.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/7-inc-bigbrain_0_2416_3475.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/7-inc-bigbrain_0_2416_4170.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/7-inc-bigbrain_0_2416_6255.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/8-inc-bigbrain_0_1208_695.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/8-inc-bigbrain_0_2416_3475.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/8-inc-bigbrain_0_2416_4170.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/8-inc-bigbrain_0_2416_6255.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/9-inc-bigbrain_0_1208_695.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/9-inc-bigbrain_0_2416_4170.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/9-inc-bigbrain_0_2416_6255.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_0_0.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_0_1390.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_0_2085.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_0_2780.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_0_3475.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_0_4170.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_0_4865.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_0_5560.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_0_6255.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_0_695.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_1208_0.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_1208_1390.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_1208_2085.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_1208_2780.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_1208_3475.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_1208_4170.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_1208_4865.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_1208_6255.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_1208_695.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_1812_0.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_1812_1390.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_1812_2085.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_1812_2780.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_1812_3475.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_1812_4170.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_1812_4865.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_1812_5560.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_1812_6255.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_1812_695.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_2416_0.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_2416_1390.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_2416_2085.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_2416_3475.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_2416_4170.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_2416_6255.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/1-inc-bigbrain_0_1208_5560.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/1-inc-bigbrain_0_1812_2085.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/1-inc-bigbrain_0_2416_2780.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/1-inc-bigbrain_0_2416_4865.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/1-inc-bigbrain_0_2416_5560.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/2-inc-bigbrain_0_1208_5560.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/2-inc-bigbrain_0_1812_2085.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/2-inc-bigbrain_0_2416_2780.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/2-inc-bigbrain_0_2416_4865.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/2-inc-bigbrain_0_2416_5560.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/3-inc-bigbrain_0_1208_5560.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/3-inc-bigbrain_0_1812_2085.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/3-inc-bigbrain_0_2416_2780.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/3-inc-bigbrain_0_2416_4865.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/3-inc-bigbrain_0_2416_5560.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/4-inc-bigbrain_0_1208_5560.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/4-inc-bigbrain_0_1812_2085.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/4-inc-bigbrain_0_2416_2780.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/4-inc-bigbrain_0_2416_4865.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/4-inc-bigbrain_0_2416_5560.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/5-inc-bigbrain_0_1208_5560.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/5-inc-bigbrain_0_1812_2085.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/5-inc-bigbrain_0_2416_2780.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/5-inc-bigbrain_0_2416_4865.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/5-inc-bigbrain_0_2416_5560.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/6-inc-bigbrain_0_1208_5560.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/6-inc-bigbrain_0_1812_2085.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/6-inc-bigbrain_0_1812_4170.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/6-inc-bigbrain_0_1812_4865.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/6-inc-bigbrain_0_2416_2780.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/6-inc-bigbrain_0_2416_4865.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/6-inc-bigbrain_0_2416_5560.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/7-inc-bigbrain_0_1208_5560.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/7-inc-bigbrain_0_1812_2085.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/7-inc-bigbrain_0_1812_4170.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/7-inc-bigbrain_0_1812_4865.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/7-inc-bigbrain_0_1812_695.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/7-inc-bigbrain_0_2416_2780.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/7-inc-bigbrain_0_2416_4865.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/7-inc-bigbrain_0_2416_5560.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/8-inc-bigbrain_0_1208_5560.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/8-inc-bigbrain_0_1812_2085.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/8-inc-bigbrain_0_1812_4170.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/8-inc-bigbrain_0_1812_4865.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/8-inc-bigbrain_0_1812_695.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/8-inc-bigbrain_0_2416_0.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/8-inc-bigbrain_0_2416_2780.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/8-inc-bigbrain_0_2416_4865.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/8-inc-bigbrain_0_2416_5560.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/9-inc-bigbrain_0_1208_5560.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/9-inc-bigbrain_0_1812_2085.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/9-inc-bigbrain_0_1812_4170.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/9-inc-bigbrain_0_1812_4865.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/9-inc-bigbrain_0_1812_695.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/9-inc-bigbrain_0_2416_0.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/9-inc-bigbrain_0_2416_2780.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/9-inc-bigbrain_0_2416_3475.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/9-inc-bigbrain_0_2416_4865.nii to /mnt/lustre/vhs/output
+mv /dev/shm/seatmp/9-inc-bigbrain_0_2416_5560.nii to /mnt/lustre/vhs/output
+flush process terminated
+cp /dev/shm/seatmp/0-inc-bigbrain_0_0_0.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_0_1390.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_0_2085.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_0_2780.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_0_3475.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_0_4170.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_0_4865.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_0_5560.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_0_6255.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_0_695.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_1208_0.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_1208_1390.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_1208_2085.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_1208_2780.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_1208_3475.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_1208_4170.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_1208_4865.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_1208_5560.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_1208_6255.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_1208_695.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_1812_0.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_1812_1390.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_1812_2085.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_1812_2780.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_1812_3475.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_1812_4170.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_1812_4865.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_1812_5560.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_1812_6255.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_1812_695.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_2416_0.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_2416_1390.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_2416_2085.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_2416_2780.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_2416_3475.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_2416_4170.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_2416_4865.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_2416_5560.nii to /mnt/lustre/vhs/output
+cp /dev/shm/seatmp/0-inc-bigbrain_0_2416_6255.nii to /mnt/lustre/vhs/output

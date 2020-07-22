@@ -52,7 +52,7 @@ launch_exp () {
 
     if [[ curr_exp != "lustre" ]]
     then
-        grep -i "flushing*" ${all_file} > ${flush_file}
+        grep -Ei "mv|cp|rm" ${all_file} > ${flush_file}
         flushtime=$(grep 'real' ${all_file} | grep "[0-9].*")
         flushtime=$(echo ${flushtime:5})
         ssdwrites=$(grep 'disk' ${flush_file} | sort --unique | wc -l)
@@ -95,6 +95,7 @@ do
         then
             curr_exp="mem_final"
             cp .sea_flushlist_mem ${SEA_HOME}/.sea_flushlist
+            cp .sea_evictlist_mem ${SEA_HOME}/.sea_evictlist
             echo "mem_final ${experiments[0]}"
             launch_exp "$curr_exp" 39
 
