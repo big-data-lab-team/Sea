@@ -21,18 +21,12 @@ fe_old () {
 
     for f in $found_files
     do
-        
-        # check if file exists otherwise continue (in case it has been flushed by another process)
-        if [ ! -f $f ]
-        then
-            continue
-        fi
         # code adapted from here https://stackoverflow.com/a/28341234
         # Get current and file times
         CURTIME=$(date +%s)
         FILETIME=$(stat $f -c %Y || true && continue)
 
-        if [ $FILETIME == "" ]
+        if [[ $FILETIME == "" ]]
         then
             continue
         fi
@@ -62,30 +56,17 @@ fe_old () {
         # process each image individually (as opposed to all at once)
         if [[ $task == "mv" ]]
         then 
-            for f in $flist
-            do
-                ([ ! -f $f ] || mv $f ${base_source} || true) &
-            done
+            mv $flist ${base_source} || true
         elif [[ $task == "cp" ]]
         then 
-            for f in $flist
-            do
-                ([ ! -f $f ] || cp $f ${base_source} || true) &
-            done
+            cp $f ${base_source} || true
         elif [[ $task == "rm" ]]
         then 
-            for f in $flist
-            do
-                ([ ! -f $f ] || rm $f || true) &
-            done
+            rm $f || true
         fi
 
         # wait for all images to be processed
-        wait
-
-        #(mv $flushlist ${base_source} || true) &
-        #pid=$!
-        #wait $pid # wait until subprocess completes
+        #wait
     fi
 }
 
@@ -268,6 +249,8 @@ flush_process () {
         wait $!
     done
     echo "flush process terminated"
+    echo "starting cleanup"
+    time flush 0 "cleanup"
 }
 
 cleanup () {
@@ -305,11 +288,5 @@ get_sources () {
 
 trap '[ -f $tmpfile ] && rm $tmpfile' SIGTERM SIGINT EXIT
 
-if [[ $1 == 1 ]]
-then
-    get_sources
-    flush_process 5
-else
-    get_sources
-    cleanup
-fi
+get_sources
+flush_process 5
