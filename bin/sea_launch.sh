@@ -16,7 +16,7 @@ do
     mkdir -p ${source} 
 done
 
-${SEA_HOME}/bin/sea_flusher.sh 1 &
+${SEA_HOME}/bin/sea_flusher.sh &
 pid=$!
 echo "flusher pid" ${pid}
 
@@ -25,6 +25,5 @@ echo "flusher pid" ${pid}
 echo "Launching script $1"
 bash $1
 echo "killing flush" && kill $pid
-${SEA_HOME}/bin/sea_flusher.sh 2
 
 

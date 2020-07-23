@@ -1,7 +1,7 @@
 \documentclass[10pt,journal,compsoc]{IEEEtran}
 
 \begin{document}
-\title{Sea: A hierarchical filesystem for processing Big Neuroimaging Data on HPC}
+\title{Sea: A hierarchical filesystem for Big-Data Scientific Computing}
 % remove neuroimaging and replace with scientific computing  add user-space, switch HPC to computing clusters
 
 \author{Val\'erie Hayot-Sasson and Tristan Glatard}
@@ -25,7 +25,17 @@
 
 
 \IEEEraisesectionheading{\section{Introduction}\label{sec:introduction}}
-\IEEEPARstart{N}{euroimaging} datasets have significantly grown in size in the past decade,
+\IEEEPARstart{S}{cientific} computing comes with a unique set of constraints. Such
+applications may be composed of heterogeneous workflows, with tasks individual tasks
+varying from data to compute intensive, and are typically executed on
+shared High Performance Computing (HPC) infrastructure. Scientific applications may consist
+of a series of well-established tools. These tools may have initially been developed at
+a time when Big Data played a less important role in Scientific computing, and are now
+paying a penalty as the amount of data has vastly increased in size. Significant effort
+
+
+
+datasets have significantly grown in size in the past decade,
 resulting in Petabytes of data. As a result, processing pipelines have now shifted from compute to 
 data intensive. Some efforts have been made to reduce the data transfer costs in neuroimaging by
 introducing new methods to generate pipelines, such as through the adoption of Big Data frameworks
