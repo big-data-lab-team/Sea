@@ -122,8 +122,8 @@ TEST(Passthrough, GetRealPath) {
 TEST(Sea, InitializeSea) {
 
     initialize_sea();
-    // 2 mounts * 2 ('.' & '..') + 2 subdirs * 2 mounts * 3 (dirname & '.' & '..') + 3 files
-    ASSERT_EQ(sea_files.size(), 19);
+    // 2 mounts * 2 ('.' & '..') + 2 subdirs * 2 mounts * 3 (dirname & '.' & '..') + 5 files
+    ASSERT_EQ(sea_files.size(), 21);
 
     initialize_passthrough_if_necessary();
     config sea_config = get_sea_config();
@@ -135,8 +135,8 @@ TEST(Sea, InitializeSea) {
     ((funcptr_mkdir)libc_mkdir)(added_dir, 0666);
     sea_files.clear();
     initialize_sea();
-    // 19 from before + 6 ((dirname, ., ..)*2)
-    ASSERT_EQ(sea_files.size(), 25);
+    // 21 from before + 6 ((dirname, ., ..)*2)
+    ASSERT_EQ(sea_files.size(), 27);
 
 
 }
