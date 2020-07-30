@@ -91,7 +91,6 @@ get_rgx () {
         done < $FILE
 
     fi
-
     echo $rgx
 }
 
@@ -140,7 +139,7 @@ flush () {
             fi
             all_files+=$(find ${rgx} -type f -follow 2> /dev/null || true)
         done
-        echo $all_files
+
 
         # if .sea_flushlist file contains regex
         for rgx in $re_flush
@@ -149,9 +148,10 @@ flush () {
             then
                 flush_files+=" "
             fi
-            echo "rgx $rgx"
             flush_files+=$(echo $all_files | grep -Eo $rgx || true)
         done
+        #echo "re_flush $re_flush"
+        #echo "flush_files $flush_files"
 
         # if .sea_evictlist file contains regex
         for rgx in $re_evict
@@ -242,6 +242,7 @@ flush () {
 
 flush_process () {
     OLDTIME=$1
+    echo "starting flusher"
     while [[ -f $tmpfile ]]
     do
         flush $OLDTIME "process"

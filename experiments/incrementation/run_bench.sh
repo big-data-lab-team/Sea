@@ -11,6 +11,7 @@ results_file=$2
 export SEA_HOME=/home/vhs/Sea
 experiments=("${SEA_HOME}/bin/sea_launch.sh sea_parallel.sh")
 experiments+=("bash ./lustre_parallel.sh")
+experiments+=("bash ./disk_parallel.sh")
 results_dir=./results
 all_out=mem_all.out
 flush_out=flushlist.out
@@ -30,12 +31,20 @@ launch_exp () {
     bench_file="${exp_dir}/${bench_out}"
     mkdir -p ${exp_dir}
 
-    if [[ $curr_exp != "lustre" ]]
+    if [[ $curr_exp == "disk" ]]
+    then
+        echo "running disk"
+        command time -f ${time_params} ${experiments[2]} &> ${all_file}
+    fi
+
+
+    if [[ $curr_exp != "lustre" && $curr_exp != "disk" ]]
     then
         echo "running sea"
         cp mem_sea.ini ${SEA_HOME}/sea.ini
         command time -f ${time_params} ${experiments[0]} &> ${all_file}
-    else
+    elif [[ $curr_exp == "lustre" ]]
+    then
         echo "running lustre"
         command time -f ${time_params} ${experiments[1]} &> ${all_file}
     fi
@@ -89,7 +98,7 @@ do
             curr_exp="mem_all"
             cp .sea_flushlist_all ${SEA_HOME}/.sea_flushlist
             echo "mem_all ${experiments[0]}" 
-            launch_exp "$curr_exp" 390
+            launch_exp "$curr_exp" 195
 
         elif [[ $e == 1 ]]
         then
@@ -99,10 +108,17 @@ do
             echo "mem_final ${experiments[0]}"
             launch_exp "$curr_exp" 39
 
-        else
+        elif [[ $e == 2 ]]
+        then
             curr_exp="lustre"
             echo "lustre ${experiments[1]}"
-            launch_exp "$curr_exp" 390
+            launch_exp "$curr_exp" 195
+
+        else
+            curr_exp="disk"
+            echo "disk ${experiments[2]}"
+            launch_exp "$curr_exp" 0
+
         fi
         sleep 20
         echo "done experiment $curr_exp repetition $i"
