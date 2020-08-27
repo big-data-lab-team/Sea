@@ -25,38 +25,53 @@
 
 
 \IEEEraisesectionheading{\section{Introduction}\label{sec:introduction}}
-\IEEEPARstart{S}{cientific} computing comes with a unique set of constraints. Such
-applications may be composed of heterogeneous workflows, with tasks individual tasks
-varying from data to compute intensive, and are typically executed on
-shared High Performance Computing (HPC) infrastructure. Scientific applications may consist
-of a series of well-established tools. These tools may have initially been developed at
-a time when Big Data played a less important role in Scientific computing, and are now
-paying a penalty as the amount of data has vastly increased in size. Significant effort
+\IEEEPARstart{E}{ffecient} data-management strategies have become imperative in 
+mitigating the costs of processing large datasets. These strategies come in the form
+of data locality, which ensures that computation is performed where the data resides
+rather than relocating the data, and in-memory computing, which ensures that the data is
+maintained in RAM, whenever possible. Big Data frameworks, such as the Hadoop MapReduce, Spark and Dask,
+have evolved to support either or both of these strategies.
+However, while many domains have adopted the use of Big Data framework and filesystems to ensure effective data
+management within their applications, many scientific applications are developed without such strategies in mind.
+% add speedup results
+
+Scientific applications may omit leveraging Big Data frameworks, despite having Big Data workloads,
+for many reasons. One such reason may be the data format. BigData frameworks were originally developed
+for text-processing. Scientific applications, in contrast, may rely on image processing for their
+analyses. The fundamental differences between these two data formats made leveraging BigData frameworks for
+scientific image processing non-trivial. While recent efforts have been made to support data-intensive
+image processing workloads, there remains some work to be done.
+
+Scientific applications are usually composed of numerous well-established command-line tools. These tools
+may have been developed at a time when the processing would have been compute intensive, thus not requiring any
+data management strategies, yet remain scientifically relevant. While newer applications
+that leverage such tools may be written using Big Data frameworks, such frameworks are not designed to transfer
+data in-memory to command-line applications, and thus would require some instrumentation.
+
+While various infrastructures are available to researchers, including local workstations, cloud and 
+High Performance Computing (HPC) clusters, researchers commonly rely on HPC clusters due to their low cost and available
+resources. Such clusters typically rely on a network-based parallel file system, such as Lustre, Ceph and GlusterFS.
+Since data storage and compute are maintained as separate entities on HPC clusters, processing BigData workflows on them
+may be particularly costly, particularly when no BigData framework is applied. Furthermore, while it is possible to execute
+workloads using BigData frameworks on HPC, these frameworks are typically incompatible with the native resource managers (e.g. SLURM, PBS),
+and therefore, and overlay cluster must be used.
+
+In this paper we introduce Sea, a user-space hierarchical file system for scientific workloads. The aim of Sea
+is to bring BigData performance to scientific workloads through the incorporation of data locality and
+in-memory computing. Unlike Big Data frameworks, Sea can be utilized alongside existing workloads without
+the need to entirely reinstrument the existing workload. Furthermore, as it executes entirely in userspace,
+it does not require elevated privileges to be installed and executed.
 
 
 
-datasets have significantly grown in size in the past decade,
-resulting in Petabytes of data. As a result, processing pipelines have now shifted from compute to 
-data intensive. Some efforts have been made to reduce the data transfer costs in neuroimaging by
-introducing new methods to generate pipelines, such as through the adoption of Big Data frameworks
-like Apache Spark \cite{Spark} for the pipeline definition \cite{thunder} \cite{other papers}. 
-However, such pipelines would have to be entirely rewritten for the framework of choice and Big Data
-frameworks like Spark and Dask were found to be difficult to use in describing neuroimaging pipelines \cite{mehta}.
-Furthermore, the neuroimaging community relies heavily on the use of well-established command-line tools \cite{fsl, afni, freesurfer}, resulting in
-data transfers being inevitable, even with a Big Data framework. 
-
-High Performance Computing (HPC) clusters are often the infrastructure of choice for researchers looking to processing their data.
-While there are many benefits to using such clusters, such as large amounts of resources available at little to no cost to
-the researchers, the resources are shared amongst users concurrently. 
 
 % add need for userspace / intelligent pipeline flushing
 % there is no one-size fits all with data intensive applications
 % due to io patterns, so we decided with userspace.
 
-Goal - leverage local storage to speed up computation/Sea
-
 
 % add related work section
+\section{Related Work}
 \subsection{Lustre}
 % change lustre to shared filesystem
 \subsubsection{Other Luster optimizations}
@@ -79,15 +94,75 @@ xtreemfs/xtreemos
 \section{Materials and Methods}
 
 \subsection{Sea design and implementation}
+\subsubsection{Overview}
+
+Sea is a C++ library that redirects files written to a user-specified mount point, to the
+appropriate storage devices. It achieves this through the interception of libc calls using
+the LD\_PRELOAD functionality. Within an intercepted call the file will be written to or read
+from the best available storage device. At minimum, a user must specify at least two storage devices, a fast
+temporary one and a slower long-term storage one. This could be RAM and SSD if working on a single node, or a compute-local SSD
+and a shared parallel file system, in the case of an HPC cluster. Ideally, a user will provide a multitude of short-term storage
+devices to improve Sea's efficacy. Furthermore, to maximize usage of the fastest available
+storage devices, Sea will allow the user to outline which files can be removed from short-term storage in addition
+to which files need to be materialized onto long-term storage.
+
+In this subsection, we will discuss and outline the various design and implementation details made. Furthermore,
+we will go into detail into the functionality of Sea and how it should and should not be used.
+
 \subsubsection{Requirements and Assumptions}
+
+Sea is primarily designed to work with workloads that generate copious amount of intermediate data.
+Since data must be read from the slower storage device and final output data most likely would have to
+be written to the same device, the use of Sea with workloads that do not produce intermediate data would
+bring no speedup and may introduce some overheads. 
+
+Sea provides two main modes, that are dictated by how the user specifies flushing and eviction: In-memory computing and flush-all.
+In-memory computing is achieved when intermediate need not be materialized to long-term storage. In these scenarios, Sea can fully
+leverage local (short-term) storage performance to maximize performance. This can be coupled with eviction to limit the amount of
+data that will be written to slower, but larger local storage devices. With Sea in memory, we can expect performance comparable to
+that of using BigData frameworks.
+
+Occasionally, it is desired to materialize even intermediate data to long-term storage devices, for potential future use. The
+performance gain from using Sea in these scenarios, however, is largely bounded by data size. In the instance where the workloads is more compute intensive,
+we can gain speedup by masking all or part of the I/O through long-term storage by executing the flush during a compute task. In data-intensive scenarios, the 
+opposite can be seen: compute time can be masked by I/O (add figure + model). Despite the performance gain being limited in
+such a scenario, a performance gain can still be observed through the use of Sea.
+
+One important assumption that must be made is that the amount of data produced by the workload far exceeds the amount of page cache space available and utilized
+by the different filesystems. In the case where all workload data can fit into page cache memory, the benefit of Sea may be
+greatly diminished if not negligible.
+
+In order to redirect data to different filesystems, Sea uses LD\_PRELOAD to intercept libc calls. Depending on the
+version of libc used, function calls may differ. Sea is currently compatible with libc version X-X.
+
+
 \subsubsection{Benefits}
-User does not need to create logic to determine what file systems to write to / implement flushing
+Sea alleviates the user of the need to implement the logic to redirect data to the appropriate
+storage locations. Furthermore, it implements logic to ensure that files are written to the best possible
+location at any given time. It is both pipeline and infrastructure agnostic. 
+
+As it executes in user-space, root permissions are not required, enabling users to use Sea on most linux-based systems
+available to them. This differs from Big Data filesystems which may require elevated permissions to install.
+The overhead of intercepting libc calls
+is minimal, and negligible compared to system call interception and file systems such as FUSE.
+
+Unlike BigData frameworks, Sea does not require reinstrumentation of the existing pipelines, allowing
+users to gain an instant performance boost.
 
 \subsubsection{libc interception}
-\subsubsection{Flushing}
+
+libc interception is achieved by writing wrappers to existing libc functions. Most importantly, every
+libc function accepting a file path needs to be wrapped. The wrappers' job is to take any input filepath
+that is located within the user-provided Sea mountpoint and convert it a filepath pointing to the best available storage device.
+
+\subsubsection{Flushing and eviction}
+There are four different available usage scenarios: flush, evict, flush and evict and do nothing.
+A flush operation represents a copy operation that duplicates the data located on short-term storage to long-term storage.
+In contrast, an evict represents a rm. That is 
 \subsubsection{Configuration File}
 \subsubsection{Program execution}
 \subsubsection{Limitations}
+behaviour unspecified in mixed static/dynamic workloads
 
 \subsection{Experiments}
 \subsubsection{Infrastructure}
