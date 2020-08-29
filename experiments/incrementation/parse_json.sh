@@ -1,6 +1,7 @@
 #!/bin/bash
 
 cond_file=$1
+results_file=$2
 
 sea_home=/home/vhs/Sea
 out_fldr="/mnt/lustre/vhs/output"
@@ -8,11 +9,14 @@ sea_mount="/mnt/lustre/vhs/mount"
 rdir="./results"
 library="/home/vhs/Sea/build/sea.so"
 executable="python increment.py"
+flush_out=flushlist.out
+bench_out=benchmarks.out
 alldisks=("/disk0/vhs/seatmp" "/disk1/vhs/seatmp" "/disk2/vhs/seatmp" "/disk3/vhs/seatmp" "/disk4/vhs/seatmp" "/disk5/vhs/seatmp")
 
 mkdir -p ${rdir}
 ncond=$(jq ". | length" ${cond_file})
 
+echo "experiment,repetition,runtime,max_mem,flush_time,disk_files,total_flush" > ${results_file}
 
 format_config () {
     ndisks=$1
@@ -65,8 +69,54 @@ n_threads = '"$nthreads"' ;' > $conf
 
 }
 
+launch_exp () {
+    name=$1
+    exp_dir=$2
+    sfile=$3
+    run=$4
+
+    # launch experiment and obtain job id
+    slurm_id=$(sbatch ${sfile} | grep -Eo "[0-9]*")
+    echo "Launched job ${name} with id ${slurm_id}"
+
+    # wait until experiment completes
+    running=$(squeue --job ${slurm_id} | wc -l)
+    while [[ ${running} == 2 ]]
+    do
+        sleep 10
+        running=$(squeue --job ${slurm_id} | wc -l)
+    done 
+
+    echo "Slurm job complete"
+
+    all_out="slurm-$name-${slurm_id}.out"
+    all_file="${exp_dir}/${all_out}"
+    flush_file="${exp_dir}/${flush_out}"
+    bench_file="${exp_dir}/${bench_out}"
+
+    grep -E "start,|end," ${all_file} > ${bench_file}
+
+    res=$(grep -i runtime ${all_file}| grep -Eo "[0-9]+\.[0-9]+" )
+    flushtime=0
+    sddwrites=0
+    totalflush=0
+
+    if [[ $name != "lustre" ]]
+    then
+        grep -Ei "mv|cp|rm" ${all_file} > ${flush_file}
+        flushtime=$(grep 'real' ${all_file} | grep "[0-9].*")
+        flushtime=$(echo ${flushtime:5})
+        ssdwrites=$(grep 'disk' ${flush_file} | sort --unique | wc -l)
+        totalflush=$(cat ${flush_file} | sort --unique | wc -l)
+    fi
+
+    echo "$name,$run,$res,$flushtime,$ssdwrites,$totalflush" >> ${results_file}
+}
 
 main () {
+
+    run=$1
+
     echo "Preparing experiment launch"
 
     for ((i=0;i<ncond;i++))
@@ -134,7 +184,7 @@ source '"${sea_home}"'/.venv/bin/activate
 srun -N'"$nnodes"' echo "Clearing cache" && sync && echo 3 | sudo tee /proc/sys/vm/drop_caches
     ' >> ${sl_script}
         else
-            echo 'SEA_HOME='"${sea_home}"'
+            echo 'export SEA_HOME='"${sea_home}"'
 
 srun -N'"$nnodes"' rm -rf /disk0/vhs/seatmp /disk1/vhs/seatmp /disk2/vhs/seatmp /disk3/vhs/seatmp /disk4/vhs/seatmp /disk5/vhs/seatmp /dev/shm/seatmp
 srun -N'"$nnodes"' echo "Clearing cache" && sync && echo 3 | sudo tee /proc/sys/vm/drop_caches
@@ -144,7 +194,7 @@ srun -N'"$nnodes"' mkdir /dev/shm/seatmp
 srun -N'"$nnodes"' mkdir /disk0/vhs/seatmp /disk1/vhs/seatmp /disk2/vhs/seatmp /disk3/vhs/seatmp /disk4/vhs/seatmp /disk5/vhs/seatmp' >> ${sl_script}
         fi
 
-        echo 'start=`date +%s.%`' >> ${sl_script}
+        echo 'start=`date +%s.%N`' >> ${sl_script}
 
         # flag to see if remainder was allotted to node (if applicable)
         if [[ $rem == 0 ]]
@@ -189,7 +239,7 @@ srun -N'"$nnodes"' mkdir /disk0/vhs/seatmp /disk1/vhs/seatmp /disk2/vhs/seatmp /
                 then
                     echo "srun -N 1 ${parallel_script} &" >> ${sl_script}
                 else
-                    echo "srun -N 1 ${SEA_HOME}/bin/sea_launch.sh ${parallel_script} &" >> ${sl_script}
+                    echo 'srun -N 1 bash ${SEA_HOME}/bin/sea_launch.sh '"${parallel_script}"' &' >> ${sl_script}
                 fi
             fi
             nprev=$node
@@ -199,7 +249,9 @@ srun -N'"$nnodes"' mkdir /disk0/vhs/seatmp /disk1/vhs/seatmp /disk2/vhs/seatmp /
         # for final node
         echo -e "Number of files processed by node $node: $fcount\n"
 
-        echo 'end=`date +%s.%N`
+        echo 'wait
+
+end=`date +%s.%N`
 
 runtime=$( echo "$end - $start" | bc -l )
 
@@ -218,7 +270,8 @@ srun -N'"${nnodes}"' rm -rf /disk0/vhs/seatmp /disk1/vhs/seatmp /disk2/vhs/seatm
         then
             format_config $ndisks $nthreads $fsize $exp_fldr $strategy $niterations
         fi
+        launch_exp $name ${exp_fldr} ${sl_script} $run
 
     done
 }
-main
+main 0
