@@ -26,4 +26,5 @@ echo "Launching script $1"
 bash $1
 echo "killing flush" && kill $pid
 
+wait $pid
 

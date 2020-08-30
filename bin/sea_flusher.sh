@@ -140,7 +140,6 @@ flush () {
             all_files+=$(find ${rgx} -type f -follow 2> /dev/null || true)
         done
 
-
         # if .sea_flushlist file contains regex
         for rgx in $re_flush
         do
@@ -256,9 +255,6 @@ flush_process () {
 
 cleanup () {
     echo "Cleaning up Sea mount"
-    #sp=$(jobs -p)
-    #[[ $sp != "" ]] && kill -INT $sp
-    #ps aux | grep vhs
     time flush 0 "cleanup"
 }
 
