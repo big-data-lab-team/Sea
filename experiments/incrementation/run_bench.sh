@@ -21,6 +21,13 @@ time_params="%e,%K"
 curr_exp=""
 
 
+create_template() {
+    nnodes=$1
+    ncpus=$2
+
+}
+
+
 launch_exp () {
     curr_exp=$1
     num_files=$2
@@ -97,8 +104,9 @@ do
         then
             curr_exp="mem_all"
             cp .sea_flushlist_all ${SEA_HOME}/.sea_flushlist
+            echo "" > ${SEA_HOME}/.sea_evictlist
             echo "mem_all ${experiments[0]}" 
-            launch_exp "$curr_exp" 195
+            launch_exp "$curr_exp" 390
 
         elif [[ $e == 1 ]]
         then
@@ -112,7 +120,7 @@ do
         then
             curr_exp="lustre"
             echo "lustre ${experiments[1]}"
-            launch_exp "$curr_exp" 195
+            launch_exp "$curr_exp" 390
 
         else
             curr_exp="disk"

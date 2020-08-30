@@ -2,6 +2,7 @@
 
 cond_file=$1
 results_file=$2
+runs=$3
 
 sea_home=/home/vhs/Sea
 out_fldr="/mnt/lustre/vhs/output"
@@ -77,7 +78,7 @@ launch_exp () {
 
     # launch experiment and obtain job id
     slurm_id=$(sbatch ${sfile} | grep -Eo "[0-9]*")
-    echo "Launched job ${name} with id ${slurm_id}"
+    echo "Launched job ${name} run ${run} with id ${slurm_id}"
 
     # wait until experiment completes
     running=$(squeue --job ${slurm_id} | wc -l)
@@ -103,7 +104,7 @@ launch_exp () {
 
     if [[ $name != "lustre" ]]
     then
-        grep -Ei "mv|cp|rm" ${all_file} > ${flush_file}
+        grep -Ei "mv |cp |rm " ${all_file} > ${flush_file}
         flushtime=$(grep 'real' ${all_file} | grep "[0-9].*")
         flushtime=$(echo ${flushtime:5})
         ssdwrites=$(grep 'disk' ${flush_file} | sort --unique | wc -l)
@@ -116,10 +117,12 @@ launch_exp () {
 main () {
 
     run=$1
+    declare -a EXP_ORDER=( $(for((i=0;i<ncond;i++)); do echo $i; done;) )
 
     echo "Preparing experiment launch"
 
-    for ((i=0;i<ncond;i++))
+    EXP_ORDER=( $(shuf -e "${EXP_ORDER[@]}") )
+    for i in "${EXP_ORDER[@]}"
     do
         name=$(jq -r ".[$i] .name" ${cond_file})
         ndisks=$(jq ".[$i] .ndisks" ${cond_file})
@@ -141,7 +144,7 @@ number of threads: $nthreads
 number of files: $nfiles
 file size in bytes: $fsize
 number of iterations: ${niterations}"
-        exp_fldr="${rdir}/${name}"
+        exp_fldr="${rdir}/run-${run}/${name}"
         rm -rf $exp_fldr/*
         echo -e "Experiment directory: ${exp_fldr}\n"
 
@@ -237,7 +240,7 @@ srun -N'"$nnodes"' mkdir /disk0/vhs/seatmp /disk1/vhs/seatmp /disk2/vhs/seatmp /
 
                 if [[ ${strategy} == "lustre" ]]
                 then
-                    echo "srun -N 1 ${parallel_script} &" >> ${sl_script}
+                    echo "srun -N 1 bash ${parallel_script} &" >> ${sl_script}
                 else
                     echo 'srun -N 1 bash ${SEA_HOME}/bin/sea_launch.sh '"${parallel_script}"' &' >> ${sl_script}
                 fi
@@ -274,4 +277,9 @@ srun -N'"${nnodes}"' rm -rf /disk0/vhs/seatmp /disk1/vhs/seatmp /disk2/vhs/seatm
 
     done
 }
-main 0
+
+for((r=0;r<runs;r++))
+do
+    echo "Executing repetition $r"
+    main $r
+done
