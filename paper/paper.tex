@@ -1,5 +1,6 @@
 \documentclass[10pt,journal,compsoc]{IEEEtran}
-
+\usepackage{xcolor}
+\newcommand{\todo}[1]{\marginpar{\parbox{18mm}{\flushleft\tiny\color{red}\textbf{TODO}: #1}}}
 \begin{document}
 \title{Sea: A hierarchical filesystem for Big-Data Scientific Computing}
 % remove neuroimaging and replace with scientific computing  add user-space, switch HPC to computing clusters
@@ -25,7 +26,7 @@
 
 
 \IEEEraisesectionheading{\section{Introduction}\label{sec:introduction}}
-\IEEEPARstart{E}{ffecient} data-management strategies have become imperative in 
+\IEEEPARstart{E}{fficient} data-management strategies have become imperative in 
 mitigating the costs of processing large datasets. These strategies come in the form
 of data locality, which ensures that computation is performed where the data resides
 rather than relocating the data, and in-memory computing, which ensures that the data is
@@ -62,6 +63,15 @@ in-memory computing. Unlike Big Data frameworks, Sea can be utilized alongside e
 the need to entirely reinstrument the existing workload. Furthermore, as it executes entirely in userspace,
 it does not require elevated privileges to be installed and executed.
 
+%multiple disk support
+% pipeline agnostic and pipeline access patterns
+% don't leverage workflows
+% leverage existing filesystems
+% replace storage devices with storage location.
+% use applications
+% memory management paragraph: PAGE CACHE
+% shared filesystems are slow and metadata management can be slow
+
 
 
 
@@ -73,6 +83,7 @@ it does not require elevated privileges to be installed and executed.
 % add related work section
 \section{Related Work}
 \subsection{Lustre}
+Shared parallel filesystems
 % change lustre to shared filesystem
 \subsubsection{Other Luster optimizations}
 \subsection{Big Data Frameworks and File systems}
@@ -96,9 +107,9 @@ xtreemfs/xtreemos
 \subsection{Sea design and implementation}
 \subsubsection{Overview}
 
-Sea is a C++ library that redirects files written to a user-specified mount point, to the
-appropriate storage devices. It achieves this through the interception of libc calls using
-the LD\_PRELOAD functionality. Within an intercepted call the file will be written to or read
+Sea is a Linux-compatible C++ library that redirects files accessed from a user-specified mount point to the
+appropriate storage devices. In order to effectively redirect all data transfers, it leverages the LIBC\_PRELOAD functionality which
+enables the interception of libc calls. Within an intercepted call the file will be written to or read
 from the best available storage device. At minimum, a user must specify at least two storage devices, a fast
 temporary one and a slower long-term storage one. This could be RAM and SSD if working on a single node, or a compute-local SSD
 and a shared parallel file system, in the case of an HPC cluster. Ideally, a user will provide a multitude of short-term storage
@@ -114,16 +125,16 @@ we will go into detail into the functionality of Sea and how it should and shoul
 Sea is primarily designed to work with workloads that generate copious amount of intermediate data.
 Since data must be read from the slower storage device and final output data most likely would have to
 be written to the same device, the use of Sea with workloads that do not produce intermediate data would
-bring no speedup and may introduce some overheads. 
+bring no speedup and may even introduce some overheads. 
 
-Sea provides two main modes, that are dictated by how the user specifies flushing and eviction: In-memory computing and flush-all.
+Sea provides two main modes that are dictated by how the user specifies flushing and eviction: In-memory computing and flush-all.
 In-memory computing is achieved when intermediate need not be materialized to long-term storage. In these scenarios, Sea can fully
-leverage local (short-term) storage performance to maximize performance. This can be coupled with eviction to limit the amount of
+leverage local (short-term) storage to maximize performance. This can be coupled with eviction to limit the amount of
 data that will be written to slower, but larger local storage devices. With Sea in memory, we can expect performance comparable to
 that of using BigData frameworks.
 
 Occasionally, it is desired to materialize even intermediate data to long-term storage devices, for potential future use. The
-performance gain from using Sea in these scenarios, however, is largely bounded by data size. In the instance where the workloads is more compute intensive,
+performance gain from using Sea in these scenarios, however, is largely bounded by data size. In the instances where the workloads is more compute intensive,
 we can gain speedup by masking all or part of the I/O through long-term storage by executing the flush during a compute task. In data-intensive scenarios, the 
 opposite can be seen: compute time can be masked by I/O (add figure + model). Despite the performance gain being limited in
 such a scenario, a performance gain can still be observed through the use of Sea.
@@ -132,8 +143,7 @@ One important assumption that must be made is that the amount of data produced b
 by the different filesystems. In the case where all workload data can fit into page cache memory, the benefit of Sea may be
 greatly diminished if not negligible.
 
-In order to redirect data to different filesystems, Sea uses LD\_PRELOAD to intercept libc calls. Depending on the
-version of libc used, function calls may differ. Sea is currently compatible with libc version X-X.
+Depending on the version of libc used, function calls may differ. Sea is currently compatible with libc version X-X.
 
 
 \subsubsection{Benefits}
@@ -155,10 +165,25 @@ libc interception is achieved by writing wrappers to existing libc functions. Mo
 libc function accepting a file path needs to be wrapped. The wrappers' job is to take any input filepath
 that is located within the user-provided Sea mountpoint and convert it a filepath pointing to the best available storage device.
 
+Sea currently does not support the partitioning of files across multiple devices. Since it cannot predict the size of the outputs to ensure the
+existence of sufficient space on storage devices, the user must provide within the Sea configuration file the maximum file size produced by the workflow.
+Together with the specified amount of parallel processes, Sea calculates the minimum space required on a storage device to write the file to it \todo{should include an equation here}.
+Sea will then go through the hierarchy of available storage devices an select the fastest storage device with sufficient available space.
+
+While this process may result in not utilizing all available space in fast storage devices, it will still allow users to gain a performance speedup on the pipeline given that the
+number of threads multiplied by the file size does not exceed storage space.
+
+
 \subsubsection{Flushing and eviction}
+\todo{add diagrams here?}
 There are four different available usage scenarios: flush, evict, flush and evict and do nothing.
-A flush operation represents a copy operation that duplicates the data located on short-term storage to long-term storage.
-In contrast, an evict represents a rm. That is 
+A Sea flush is synonymous to a file copy in that files that are stored within Sea but have not yet been materialized
+to the long-term storage device will be copied to long-term storage. Flushing generally required for all intermediate data
+that are required for future analysis.
+
+Eviction, on the other hand, depicts a remove operation. Any file that is evicted from Sea will be removed from any of the storage mount
+points located in Sea. 
+
 \subsubsection{Configuration File}
 \subsubsection{Program execution}
 \subsubsection{Limitations}
