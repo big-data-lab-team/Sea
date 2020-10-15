@@ -5,6 +5,7 @@ from bokeh.models import ColumnDataSource, HoverTool, Legend, LegendItem, Whiske
 from bokeh.plotting import figure
 from datetime import datetime
 import pandas as pd
+from os import path as op
 
 
 colours = ["#c9d9d3", "#718dbf", "#e84d60"]
@@ -13,12 +14,12 @@ colours = ["#c9d9d3", "#718dbf", "#e84d60"]
 def bokeh_gantt(df):
 
     output_notebook()
-    y_range = sorted(df["pid"].unique())
+    y_range = sorted(df["pid"].unique(), key=lambda x: int(x))
     source_read = ColumnDataSource(df[df["action"].str.contains("read")])
     source_increment = ColumnDataSource(df[df["action"].str.contains("inc")])
     source_write = ColumnDataSource(df[df["action"].str.contains("save")])
 
-    p = figure(toolbar_location="below", x_range=(0, 130), y_range=y_range)
+    p = figure(toolbar_location="below", x_range=(0, 1000), y_range=y_range)
     p.hbar(
         y="pid",
         left="start",
@@ -176,6 +177,10 @@ def mean_std(df):
     df_std = (
         df.groupby("action").std().rename(columns={"duration": "std"}).reset_index()
     )
+
+    #if df_std.isnull().values.any():
+    #    df = pd.merge(df_mean, df_std, on=["action"])
+    #else:
     df = pd.merge(df_mean, df_std, on=["repetition", "action"])
 
     return df
@@ -192,7 +197,7 @@ def group_actions(in_mem_df, mem_flush_df, lustre_df):
 
     in_mem_df = group(in_mem_df)
     in_mem_df = mean_std(in_mem_df)
-    in_mem_df["type"] = "Sea - In memory"
+    in_mem_df["type"] = "Sea - Flush last"
 
     mem_flush_df = group(mem_flush_df)
     mem_flush_df = mean_std(mem_flush_df)
@@ -226,7 +231,15 @@ def add_rep_idx(df_list):
 def load_df(fn):
     from datetime import datetime
 
-    df = pd.read_csv(fn, names=["action", "img", "time", "pid"], header=None)
+    if op.basename(fn) != "benchmarks.out":
+        threads = int(op.basename(fn).split('_')[3].strip('t')) if 'sea' in fn else int(op.basename(fn).split('_')[2].strip('t'))
+    else:
+        threads = int(op.basename(op.dirname(fn)).split('_')[3].strip('t')) if 'sea' in fn else int(op.basename(op.dirname(fn)).split('_')[2].strip('t'))
+
+    unique_pid = lambda x: x['pid'] % (int(x["node"][-1]) * threads)
+
+    df = pd.read_csv(fn, names=["action", "img", "time", "pid", "node"], header=None, index_col=False)
+    df['pid'] = df.apply(lambda x: unique_pid(x), axis=1)
     df_start = format_df(df, "start")
     df_end = format_df(df, "end")
 
