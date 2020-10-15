@@ -3,8 +3,8 @@
 import sys
 import nibabel as nib
 import numpy as np
-from time import time
-
+import socket
+from time import time, sleep
 from os import path as op, getpid
 
 in_file=sys.argv[1]
@@ -12,7 +12,7 @@ out_folder=sys.argv[2]
 it=int(sys.argv[3])
 
 def benchmark(task, in_file):
-    print("{0},{1},{2},{3}".format(task, in_file, time(), getpid()))
+    print("{0},{1},{2},{3},{4}".format(task, in_file, time(), getpid(), socket.gethostname()))
 
 for i in range(it):
     if i == 0:
@@ -27,9 +27,10 @@ for i in range(it):
     data += 0 # make sure it's in memory
     benchmark("read_end", in_file)
     benchmark("inc_start", in_file)
-    inc = data + 1
+    #sleep(1)
+    data += 1
     benchmark("inc_end", in_file)
-    inc_im = nib.Nifti1Image(inc, im.affine, header=im.header)
+    inc_im = nib.Nifti1Image(data, im.affine, header=im.header)
 
     benchmark("save_start", in_file)
     nib.save(inc_im, out_f)
