@@ -19,7 +19,7 @@ def bokeh_gantt(df):
     source_increment = ColumnDataSource(df[df["action"].str.contains("inc")])
     source_write = ColumnDataSource(df[df["action"].str.contains("save")])
 
-    p = figure(toolbar_location="below", x_range=(0, 1000), y_range=y_range)
+    p = figure(toolbar_location="below", x_range=(0, 1100), y_range=y_range)
     p.hbar(
         y="pid",
         left="start",
@@ -74,6 +74,7 @@ def bokeh_gantt(df):
 
 def bokeh_stacked(df):
 
+    df["whisker"] = df.index + 0.5
     output_notebook()
 
     actions = ["read", "increment", "write"]
@@ -98,7 +99,7 @@ def bokeh_stacked(df):
     p.add_layout(
         Whisker(
             source=source,
-            base="type",
+            base="whisker",
             upper="read_upper",
             lower="read_lower",
             level="overlay",
@@ -107,7 +108,7 @@ def bokeh_stacked(df):
     p.add_layout(
         Whisker(
             source=source,
-            base="type",
+            base="whisker",
             upper="inc_upper",
             lower="inc_lower",
             level="overlay",
@@ -116,7 +117,7 @@ def bokeh_stacked(df):
     p.add_layout(
         Whisker(
             source=source,
-            base="type",
+            base="whisker",
             upper="write_upper",
             lower="write_lower",
             level="overlay",
@@ -181,7 +182,7 @@ def mean_std(df):
     #if df_std.isnull().values.any():
     #    df = pd.merge(df_mean, df_std, on=["action"])
     #else:
-    df = pd.merge(df_mean, df_std, on=["repetition", "action"])
+    df = pd.merge(df_mean, df_std, on=["action"])
 
     return df
 
@@ -236,9 +237,19 @@ def load_df(fn):
     else:
         threads = int(op.basename(op.dirname(fn)).split('_')[3].strip('t')) if 'sea' in fn else int(op.basename(op.dirname(fn)).split('_')[2].strip('t'))
 
-    unique_pid = lambda x: x['pid'] % (int(x["node"][-1]) * threads)
-
     df = pd.read_csv(fn, names=["action", "img", "time", "pid", "node"], header=None, index_col=False)
+
+    all_pids = df.sort_values(by=["time"])[["node", "pid"]].apply(lambda row:  row["node"] + str(row["pid"]), axis=1).unique().tolist()
+    all_nodes = df["node"].sort_values().unique().tolist()
+
+    def unique_pid(row):
+        idx = all_pids.index(row["node"] + str(row["pid"]))
+        #print("idx", idx)
+        pid = (idx % threads) + (all_nodes.index(row["node"]) * 10)
+        #print("pid", pid)
+        return pid
+    #unique_pid = lambda x: all_pids.index(x["node"] + str(x["pid"])) % threads
+
     df['pid'] = df.apply(lambda x: unique_pid(x), axis=1)
     df_start = format_df(df, "start")
     df_end = format_df(df, "end")
