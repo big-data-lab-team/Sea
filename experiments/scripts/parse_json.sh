@@ -105,7 +105,7 @@ launch_exp () {
 
     grep -E "start,|end," ${all_file} > ${bench_file}
 
-    res=$(grep -i runtime ${all_file}| grep -Eo "[0-9]+\.[0-9]+" )
+    res=$(grep -i runtime ${all_file}| grep -Eo "[0-9]*\.[0-9]+" )
     flushtime=0
     sddwrites=0
     totalflush=0

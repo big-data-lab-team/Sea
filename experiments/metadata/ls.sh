@@ -8,5 +8,5 @@ end=`date +%s`
 
 pid=`echo $$`
 host=`hostname`
-echo "start_ls,${infile},${start},${pid}"
-echo "end_ls,${infile},${start},${pid}"
+echo "ls_start,${infile},${start},${pid}"
+echo "ls_end,${infile},${start},${pid}"
