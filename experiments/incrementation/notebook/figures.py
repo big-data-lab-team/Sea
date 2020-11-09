@@ -239,6 +239,7 @@ def load_df(fn):
 
     df = pd.read_csv(fn, names=["action", "img", "time", "pid", "node"], header=None, index_col=False)
 
+
     all_pids = df.sort_values(by=["time"])[["node", "pid"]].apply(lambda row:  row["node"] + str(row["pid"]), axis=1).unique().tolist()
     all_nodes = df["node"].sort_values().unique().tolist()
 
@@ -258,6 +259,7 @@ def load_df(fn):
     df.loc[df["action"] == "read", "color"] = colours[0]
     df.loc[df["action"] == "inc", "color"] = colours[1]
     df.loc[df["action"] == "save", "color"] = colours[2]
+    df.loc[df["action"] == "ls", "action"] = "read"
 
     start_time = df["start"].min()
     df["start"] = df["start"] - start_time
