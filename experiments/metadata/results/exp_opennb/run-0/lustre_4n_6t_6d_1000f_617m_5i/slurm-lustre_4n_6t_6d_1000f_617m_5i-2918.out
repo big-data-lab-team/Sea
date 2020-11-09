@@ -1,3 +1,8 @@
+Clearing cache
+Clearing cache
+Clearing cache
+Clearing cache
+3
 open_start,/mnt/lustre/shared/bigbrain/nii/1000_blocks/bigbrain_2310_3624_2085.nii,1604880256.33264,1274810,comp03
 open_end,/mnt/lustre/shared/bigbrain/nii/1000_blocks/bigbrain_2310_3624_2085.nii,1604880256.346606,1274810,comp03
 open_start,/mnt/lustre/shared/bigbrain/nii/1000_blocks/bigbrain_6160_3624_0.nii,1604880256.3357508,837279,comp04
@@ -35,6 +40,12 @@ open_end,/mnt/lustre/shared/bigbrain/nii/1000_blocks/bigbrain_4620_0_0.nii,16048
 open_start,/mnt/lustre/shared/bigbrain/nii/1000_blocks/bigbrain_4620_0_4170.nii,1604880256.3915787,1495773,comp02
 open_end,/mnt/lustre/shared/bigbrain/nii/1000_blocks/bigbrain_4620_0_4170.nii,1604880256.402268,1495773,comp02
 open_start,/mnt/lustre/shared/bigbrain/nii/1000_blocks/bigbrain_0_0_0.nii,1604880256.5181115,1916230,comp01
+Traceback (most recent call last):
+  File "./opennb.py", line 16, in <module>
+    im = nib.load(in_file)
+  File "/home/vhs/Sea/.venv/lib64/python3.6/site-packages/nibabel/loadsave.py", line 56, in load
+    filename)
+nibabel.filebasedimages.ImageFileError: Cannot work out file type of "/mnt/lustre/shared/bigbrain/nii/1000_blocks/bigbrain_0_0_0.nii"
 open_start,/mnt/lustre/shared/bigbrain/nii/1000_blocks/bigbrain_0_0_2780.nii,1604880256.5181277,1916233,comp01
 open_end,/mnt/lustre/shared/bigbrain/nii/1000_blocks/bigbrain_0_0_2780.nii,1604880256.5380878,1916233,comp01
 open_start,/mnt/lustre/shared/bigbrain/nii/1000_blocks/bigbrain_0_0_3475.nii,1604880256.518271,1916234,comp01
@@ -1937,6 +1948,7 @@ open_start,/mnt/lustre/shared/bigbrain/nii/1000_blocks/bigbrain_2310_3020_5560.n
 open_end,/mnt/lustre/shared/bigbrain/nii/1000_blocks/bigbrain_2310_3020_5560.nii,1604880274.8569353,1932403,comp01
 open_start,/mnt/lustre/shared/bigbrain/nii/1000_blocks/bigbrain_3850_5436_5560.nii,1604880274.7421768,1290447,comp03
 open_end,/mnt/lustre/shared/bigbrain/nii/1000_blocks/bigbrain_3850_5436_5560.nii,1604880274.7842875,1290447,comp03
+srun: error: comp01: task 0: Exited with exit code 1
 open_start,/mnt/lustre/shared/bigbrain/nii/1000_blocks/bigbrain_6160_2416_6255.nii,1604880274.8699305,1511475,comp02
 open_end,/mnt/lustre/shared/bigbrain/nii/1000_blocks/bigbrain_6160_2416_6255.nii,1604880274.8774881,1511475,comp02
 open_start,/mnt/lustre/shared/bigbrain/nii/1000_blocks/bigbrain_3850_5436_6255.nii,1604880274.9283066,1290515,comp03
@@ -1997,3 +2009,4 @@ open_start,/mnt/lustre/shared/bigbrain/nii/1000_blocks/bigbrain_6160_3020_695.ni
 open_end,/mnt/lustre/shared/bigbrain/nii/1000_blocks/bigbrain_6160_3020_695.nii,1604880275.6416352,1512138,comp02
 open_start,/mnt/lustre/shared/bigbrain/nii/1000_blocks/bigbrain_3850_604_695.nii,1604880275.652166,1291237,comp03
 open_end,/mnt/lustre/shared/bigbrain/nii/1000_blocks/bigbrain_3850_604_695.nii,1604880275.6657155,1291237,comp03
+Runtime: 19.977321915
