@@ -241,7 +241,7 @@ srun -N'"$nnodes"' mkdir /disk0/vhs/seatmp /disk1/vhs/seatmp /disk2/vhs/seatmp /
 
             node_jobs="${job_dir}/jobs_n${node}.txt"
 
-            if [[ $prefix == "*increment*" ]]
+            if [[ $prefix == "*increment.py*" ]]
             then
                 echo "$prefix ${in_fldr}$j ${out_mount} ${niterations}" >> ${node_jobs}
             else
