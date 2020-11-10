@@ -1,3 +1,7 @@
+Clearing cache
+Clearing cache
+Clearing cache
+3
 read_start,/mnt/lustre/shared/bigbrain/nii/1000_blocks/bigbrain_5390_4228_5560.nii,1604969080,2064268,comp02
 read_end,/mnt/lustre/shared/bigbrain/nii/1000_blocks/bigbrain_5390_4228_5560.nii,1604969081,2064268,comp02
 read_start,/mnt/lustre/shared/bigbrain/nii/1000_blocks/bigbrain_5390_4228_695.nii,1604969080,2064270,comp02
@@ -1998,3 +2002,4 @@ read_start,/mnt/lustre/shared/bigbrain/nii/1000_blocks/bigbrain_3080_2416_2780.n
 read_end,/mnt/lustre/shared/bigbrain/nii/1000_blocks/bigbrain_3080_2416_2780.nii,1604969737,2823694,comp01
 read_start,/mnt/lustre/shared/bigbrain/nii/1000_blocks/bigbrain_3080_1812_695.nii,1604969720,2823690,comp01
 read_end,/mnt/lustre/shared/bigbrain/nii/1000_blocks/bigbrain_3080_1812_695.nii,1604969738,2823690,comp01
+Runtime: 658.323151818
