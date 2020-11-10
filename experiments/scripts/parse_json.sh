@@ -194,7 +194,7 @@ source '"${sea_home}"'/.venv/bin/activate
         if [[ $strategy == "lustre" ]]
         then
             echo '
-srun -N'"$nnodes"' echo "Clearing cache" && sync && echo 3 | sudo tee /proc/sys/vm/drop_caches
+srun -N'"$nnodes"' ../scripts/clear_client_pc.sh
     ' >> ${sl_script}
         else
             echo 'export SEA_HOME='"${sea_home}"'
