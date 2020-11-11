@@ -1,20 +1,4 @@
-Clearing cache
-Clearing cache
-Clearing cache
-Clearing cache
-Clearing cache
-3
-3
-3
-3
-3
 read_start,/mnt/lustre/shared/bigbrain/nii/1000_blocks/bigbrain_0_0_0.nii,1605107237.262627,709381,comp07
-Traceback (most recent call last):
-  File "./increment.py", line 25, in <module>
-    im = nib.load(in_file)
-  File "/home/vhs/Sea/.venv/lib64/python3.6/site-packages/nibabel/loadsave.py", line 56, in load
-    filename)
-nibabel.filebasedimages.ImageFileError: Cannot work out file type of "/mnt/lustre/shared/bigbrain/nii/1000_blocks/bigbrain_0_0_0.nii"
 read_start,/mnt/lustre/shared/bigbrain/nii/1000_blocks/bigbrain_0_0_2085.nii,1605107237.2606761,709383,comp07
 read_end,/mnt/lustre/shared/bigbrain/nii/1000_blocks/bigbrain_0_0_2085.nii,1605107240.0238256,709383,comp07
 inc_start,/mnt/lustre/shared/bigbrain/nii/1000_blocks/bigbrain_0_0_2085.nii,1605107240.0238655,709383,comp07
@@ -5991,7 +5975,6 @@ inc_start,/mnt/lustre/shared/bigbrain/nii/1000_blocks/bigbrain_1540_604_695.nii,
 inc_end,/mnt/lustre/shared/bigbrain/nii/1000_blocks/bigbrain_1540_604_695.nii,1605107683.1721504,722530,comp07
 save_start,/mnt/lustre/shared/bigbrain/nii/1000_blocks/bigbrain_1540_604_695.nii,1605107683.1727278,722530,comp07
 save_end,/mnt/lustre/shared/bigbrain/nii/1000_blocks/bigbrain_1540_604_695.nii,1605107683.7930949,722530,comp07
-srun: error: comp07: task 0: Exited with exit code 1
 read_start,/mnt/lustre/shared/bigbrain/nii/1000_blocks/bigbrain_4620_604_695.nii,1605107678.553055,2008734,comp03
 read_end,/mnt/lustre/shared/bigbrain/nii/1000_blocks/bigbrain_4620_604_695.nii,1605107683.7633953,2008734,comp03
 inc_start,/mnt/lustre/shared/bigbrain/nii/1000_blocks/bigbrain_4620_604_695.nii,1605107683.7634273,2008734,comp03
@@ -6010,4 +5993,3 @@ inc_start,/mnt/lustre/shared/bigbrain/nii/1000_blocks/bigbrain_4620_604_5560.nii
 inc_end,/mnt/lustre/shared/bigbrain/nii/1000_blocks/bigbrain_4620_604_5560.nii,1605107686.9320233,2008602,comp03
 save_start,/mnt/lustre/shared/bigbrain/nii/1000_blocks/bigbrain_4620_604_5560.nii,1605107686.932639,2008602,comp03
 save_end,/mnt/lustre/shared/bigbrain/nii/1000_blocks/bigbrain_4620_604_5560.nii,1605107687.5280433,2008602,comp03
-Runtime: 451.250805657

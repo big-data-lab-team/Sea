@@ -1,2 +1,6 @@
 experiment,repetition,runtime,flush_time,disk_files,total_flush
 lustre_2n_6t_6d_1000f_617m_1i,0,970.483327909,,0,0
+lustre_5n_6t_6d_1000f_617m_1i,0,451.250805657,,0,0
+lustre_1n_6t_6d_1000f_617m_1i,0,1892.307646914,,0,0
+lustre_4n_6t_6d_1000f_617m_1i,0,560.003611406,,0,0
+lustre_3n_6t_6d_1000f_617m_1i,0,665.337930453,,0,0

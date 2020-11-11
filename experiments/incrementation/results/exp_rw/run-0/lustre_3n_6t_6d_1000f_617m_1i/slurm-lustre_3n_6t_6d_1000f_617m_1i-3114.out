@@ -1,4 +1,16 @@
+Clearing cache
+Clearing cache
+Clearing cache
+3
+3
+3
 read_start,/mnt/lustre/shared/bigbrain/nii/1000_blocks/bigbrain_0_0_0.nii,1605110588.1360202,2025519,comp03
+Traceback (most recent call last):
+  File "./increment.py", line 25, in <module>
+    im = nib.load(in_file)
+  File "/home/vhs/Sea/.venv/lib64/python3.6/site-packages/nibabel/loadsave.py", line 56, in load
+    filename)
+nibabel.filebasedimages.ImageFileError: Cannot work out file type of "/mnt/lustre/shared/bigbrain/nii/1000_blocks/bigbrain_0_0_0.nii"
 read_start,/mnt/lustre/shared/bigbrain/nii/1000_blocks/bigbrain_5390_4228_695.nii,1605110588.075476,2622884,comp02
 read_end,/mnt/lustre/shared/bigbrain/nii/1000_blocks/bigbrain_5390_4228_695.nii,1605110590.5792165,2622884,comp02
 inc_start,/mnt/lustre/shared/bigbrain/nii/1000_blocks/bigbrain_5390_4228_695.nii,1605110590.5793803,2622884,comp02
@@ -5993,3 +6005,5 @@ inc_start,/mnt/lustre/shared/bigbrain/nii/1000_blocks/bigbrain_3080_2416_0.nii,1
 inc_end,/mnt/lustre/shared/bigbrain/nii/1000_blocks/bigbrain_3080_2416_0.nii,1605111251.856101,2047316,comp03
 save_start,/mnt/lustre/shared/bigbrain/nii/1000_blocks/bigbrain_3080_2416_0.nii,1605111251.8587818,2047316,comp03
 save_end,/mnt/lustre/shared/bigbrain/nii/1000_blocks/bigbrain_3080_2416_0.nii,1605111252.490116,2047316,comp03
+srun: error: comp03: task 0: Exited with exit code 1
+Runtime: 665.337930453
