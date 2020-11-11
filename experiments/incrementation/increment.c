@@ -25,7 +25,7 @@ struct AppArgs{
 
 struct Nifti read_img(char* filename){
 
-  clock_t start = clock();
+  time_t start = time(NULL);
 
   long size;
   size_t number_of_ints;
@@ -70,7 +70,7 @@ struct Nifti read_img(char* filename){
   struct Nifti img = {h_buffer, buffer, read};
   fclose(file);
 
-  clock_t end = clock();
+  time_t end = time(NULL);
 
   char hostname[HOST_NAME_MAX + 1];
   gethostname(hostname, HOST_NAME_MAX + 1);
