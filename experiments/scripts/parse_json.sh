@@ -15,6 +15,7 @@ library="/home/vhs/Sea/build/sea.so"
 flush_out=flushlist.out
 bench_out=benchmarks.out
 alldisks=("/disk0/vhs/seatmp" "/disk1/vhs/seatmp" "/disk2/vhs/seatmp" "/disk3/vhs/seatmp" "/disk4/vhs/seatmp" "/disk5/vhs/seatmp")
+cnodes=("comp02" "comp03" "comp04" "comp06" "comp07")
 
 mkdir -p ${rdir}
 ncond=$(jq ". | length" ${cond_file})
@@ -144,6 +145,18 @@ main () {
         fsize=$(jq ".[$i] .fsize" ${cond_file})
         strategy=$(jq -r ".[$i] .strategy" ${cond_file})
 
+        nodelist=""
+
+        for ((x=0;x<nnodes;x++))
+        do
+            if [[ $x -gt 0 ]]
+            then
+                nodelist+=","
+            fi
+            nodelist+="${cnodes[$x]}"
+        done
+
+
         echo "Experiment $i Run $run conditions
 name: $name
 strategy: $strategy
@@ -186,6 +199,7 @@ number of iterations: ${niterations}"
 #SBATCH --account=vhs
 #SBATCH --job-name='"$name"'
 #SBATCH --nodes='"$nnodes"'
+#SBATCH --nodelist='"$nodelist"'
 #SBATCH --output='"${exp_fldr}"'/slurm-%x-%j.out
 
 source '"${sea_home}"'/.venv/bin/activate
@@ -295,7 +309,6 @@ srun -N'"${nnodes}"' rm -rf /disk0/vhs/seatmp /disk1/vhs/seatmp /disk2/vhs/seatm
         # clear data node pages cache
         sudo ansible-playbook ../scripts/clear_data_pc.yml
         launch_exp $name ${exp_fldr} ${sl_script} $run
-        sleep 120
 
     done
 }

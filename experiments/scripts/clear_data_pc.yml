@@ -1,4 +1,4 @@
-- hosts: data
+- hosts: ct02,data
   remote_user: root
   tasks:
       - name: "clear page cache on data nodes"
