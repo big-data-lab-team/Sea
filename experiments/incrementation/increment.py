@@ -1,4 +1,4 @@
-#!/user/bin/env python
+#!/usr/bin/env python
 
 import sys
 import nibabel as nib
@@ -36,4 +36,3 @@ for i in range(it):
     nib.save(inc_im, out_f)
     benchmark("save_end", in_file)
     in_file = out_f
-
