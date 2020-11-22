@@ -59,10 +59,10 @@ fe_old () {
             mv $flist ${base_source} || true
         elif [[ $task == "cp" ]]
         then 
-            cp $f ${base_source} || true
+            cp $flist ${base_source} || true
         elif [[ $task == "rm" ]]
         then 
-            rm $f || true
+            rm $flist || true
         fi
 
         # wait for all images to be processed
