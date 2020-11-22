@@ -1,0 +1,6 @@
+experiment,repetition,runtime,flush_time,disk_files,total_flush
+sea_mem_4n_6t_6d_1000f_617m_10i,0,767.011752140,0m21.185s real 0m22.257s real 0m16.345s,904,985
+sea_mem_1n_6t_6d_1000f_617m_10i,0,3219.005793356,,477,498
+sea_mem_2n_6t_6d_1000f_617m_10i,0,1796.593105255,0m33.658s,878,920
+sea_mem_5n_6t_6d_1000f_617m_10i,0,646.900305596,0m19.347s real 0m13.143s real 0m17.901s real 0m12.434s,891,991
+sea_mem_3n_6t_6d_1000f_617m_10i,0,1041.474111308,0m22.807s real 0m30.042s,926,989
