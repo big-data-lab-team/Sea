@@ -53,5 +53,16 @@
         "niterations": 20,
         "fsize": 646461552,
         "strategy": "mem"
+    },
+    {
+        "name": "sea_mem_4n_6t_6d_1000f_617m_25i",
+        "ndisks": 6,
+        "nthreads": 6,
+        "nnodes": 4,
+        "nfiles": 1000,
+        "in_fldr": "/mnt/lustre/shared/bigbrain/nii/1000_blocks/",
+        "niterations": 25,
+        "fsize": 646461552,
+        "strategy": "mem"
     }
 ]
