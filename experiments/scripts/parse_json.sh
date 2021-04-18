@@ -7,14 +7,14 @@ runs=$4
 exp_name=$5
 
 sea_home=/home/vhs/Sea
-out_fldr="/mnt/lustre/vhs/output"
-sea_mount="/mnt/lustre/vhs/mount"
+out_fldr="/mnt/lustre/vhs/output/"
+sea_mount="/mnt/lustre/vhs/mount/"
 rdir="./results"
 library="/home/vhs/Sea/build/sea.so"
 #executable="python increment.py"
 flush_out=flushlist.out
 bench_out=benchmarks.out
-alldisks=("/disk0/vhs/seatmp" "/disk1/vhs/seatmp" "/disk2/vhs/seatmp" "/disk3/vhs/seatmp" "/disk4/vhs/seatmp" "/disk5/vhs/seatmp")
+alldisks=("/disk0/vhs/seatmp/" "/disk1/vhs/seatmp/" "/disk2/vhs/seatmp/" "/disk3/vhs/seatmp/" "/disk4/vhs/seatmp/" "/disk5/vhs/seatmp/")
 cnodes=("comp02" "comp03" "comp04" "comp06" "comp07")
 
 mkdir -p ${rdir}
@@ -48,7 +48,7 @@ format_config () {
 [Sea]                                                                    
 mount_dir = '"${sea_mount}"' ;           
 n_levels = 3 ;                                                          
-source_0 = /dev/shm/seatmp ;           
+source_0 = /dev/shm/seatmp/ ;           
 source_1 = '"$disks"' ;
 source_2 = '"$out_fldr"' ;
 log_level = 0 ; # 4 crashes tests                                        
