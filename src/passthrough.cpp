@@ -56,6 +56,7 @@ void* libc_rmdir;
 void* libc_readdir;
 void* libc_readdir64;
 void* libc_mkdir;
+void* libc_mkdirat;
 void* libc_chdir;
 void* libc_dirfd;
 void* libc_access;
@@ -174,6 +175,7 @@ FILE* xtreemfs_stdout() {
 */
 char* make_file_name_canonical(char const *file_path)
 {
+  log_msg(INFO, "In make_file_name_canonical %s", file_path);
   if(!strcmp(file_path, "") || file_path == NULL || strstr(file_path, "\n"))
   {
      return (char*) file_path;
@@ -184,6 +186,10 @@ char* make_file_name_canonical(char const *file_path)
 
   if (file_path_len > 0)
   {
+
+    if (file_path[0] == '/') {
+          return strdup(file_path);
+    }
     canonical_file_path = ((funcptr_realpath)libc_realpath)(file_path, NULL);
 
     if (canonical_file_path == NULL && errno == ENOENT)
@@ -191,11 +197,11 @@ char* make_file_name_canonical(char const *file_path)
       // The file was not found. Back up to a segment which exists,
       // and append the remainder of the path to it.
       char *file_path_copy = NULL;
-      if (file_path[0] == '/'                ||
-          (strncmp(file_path, "./", 2) == 0) ||
+
+      if ((strncmp(file_path, "./", 2) == 0) ||
           (strncmp(file_path, "../", 3) == 0))
       {
-        // Absolute path, or path starts with "./" or "../"
+        // Path starts with "./" or "../"
         file_path_copy = strdup(file_path);
       }
       else
@@ -235,11 +241,16 @@ char* make_file_name_canonical(char const *file_path)
             file_path_copy[char_idx] = '/';
           }
         }
+	else if (file_path_copy[char_idx] == '\n')
+	{
+	    // assumes file paths do not have newline characters
+	    return NULL;
+	}
       }
 
       free(file_path_copy);
     }
-    else if (strlen(canonical_file_path) == 1 && canonical_file_path[0] == '/' ) {
+    else if (canonical_file_path != NULL && strlen(canonical_file_path) == 1 && canonical_file_path[0] == '/' ) {
         return canonical_file_path;
     }
   }
@@ -251,6 +262,10 @@ char* make_file_name_canonical(char const *file_path)
             canonical_file_path[len -1] = '\0';
       }
   }
+
+  if ( canonical_file_path != NULL )
+      log_msg(INFO, "Canonical path %s", canonical_file_path);
+	
 
   return canonical_file_path;
 }
@@ -278,6 +293,8 @@ void get_pass_canonical(char path[PATH_MAX], char passpath[PATH_MAX], char* moun
         strcpy(passpath, sea_source);
     }
 
+    log_msg(DEBUG, "get pass canonical %s %s %d", passpath, mount_dir, masked_path);
+
 }
 
 /**
@@ -300,7 +317,7 @@ int check_if_seapath(char path[PATH_MAX], char canonical[PATH_MAX], char passpat
             if (match == NULL || match[0] == '\0')
                 log_msg(DEBUG, "match null");
 
-            log_msg(DEBUG, "match");
+            log_msg(DEBUG, "match %s", passpath);
             *match = '\0';
             strcat(passpath, match + len);
             match_found = 1;
@@ -349,6 +366,9 @@ int pass_getpath(const char* oldpath, char passpath[PATH_MAX], int masked_path, 
 
     match_found = check_if_seapath(path, canonical, passpath);
 
+    if(passpath == NULL)
+        return 0;
+
     log_msg(INFO, "old fn %s ---> new fn %s", oldpath, passpath);
     return match_found;
 }
@@ -381,6 +401,7 @@ void initialize_functions()
   libc_readdir = dlsym(libc, "readdir");
   libc_readdir64 = dlsym(libc, "readdir64");
   libc_mkdir = dlsym(libc, "mkdir");
+  libc_mkdirat = dlsym(libc, "mkdirat");
   libc_chdir = dlsym(libc, "chdir");
   libc_dirfd = dlsym(libc, "dirfd");
   libc_rename = dlsym(libc, "rename");
