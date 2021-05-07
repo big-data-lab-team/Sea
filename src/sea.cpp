@@ -144,6 +144,11 @@ int sea_getpath(const char* oldpath, char passpath[PATH_MAX], int masked_path, i
         }
     }
 
+   if (match == 0) {
+       //passpath = NULL;
+       strcpy(passpath,oldpath);
+   }
+
     return match;
 
 }

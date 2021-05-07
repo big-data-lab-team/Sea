@@ -231,16 +231,33 @@ extern "C" {
             sd->curr_index = 0;
             sd->dirnames = (char**) malloc(sizeof(char*) * sea_conf.n_sources * PATH_MAX);
             sd->other_dirp = (DIR**) malloc(sizeof(DIR*) * sea_conf.n_sources - 1);
+	    // indicator for if list is empty
+	    sd->other_dirp[0] = NULL;
 
             sd->dirp = ((funcptr_opendir)libc_opendir)(passpath); 
+            log_msg(INFO, "opened directory %s with fd %d", passpath, dirfd((DIR*)sd));
 
-            sd->dirnames[0] = passpath;
+            sd->dirnames[0] = strdup(passpath);
 
             for (int i=1; i < sea_conf.n_sources; ++i) {
+		passpath[0] = '\0';
                 sea_getpath(mountpath, passpath, 0, i);
-                sd->other_dirp[i-1] = ((funcptr_opendir)libc_opendir)(passpath); 
-                sd->dirnames[i] = passpath;
                 log_msg(INFO, "opening directory %s", passpath);
+		DIR* dirp = ((funcptr_opendir)libc_opendir)(passpath); 
+
+		// initialize a new sea dir
+		SEA_DIR *csd = new SEA_DIR;
+		strcpy(csd->type, "seadir");
+		csd->curr_index = 0;
+		csd->dirnames = (char**) malloc(sizeof(char*) * sea_conf.n_sources * PATH_MAX);
+		csd->other_dirp = (DIR**) malloc(sizeof(DIR*) * sea_conf.n_sources - 1);
+		// if set differently, keep reading
+		csd->other_dirp[0] = NULL;
+		csd->dirp = dirp;
+
+                sd->other_dirp[i-1] = (DIR*)csd;
+                sd->dirnames[i] = passpath;
+                log_msg(INFO, "opened other mount directory %s with fd %d", passpath, dirfd((DIR*)csd));
             }
             return (DIR*)sd;
         }
@@ -337,10 +354,11 @@ extern "C" {
 
     struct dirent *sea_readnext(struct dirent* d, config sea_conf, SEA_DIR* sd) { 
         int found = 0;
+	log_msg(DEBUG,  "in sea_readnext");
 
         while (d == NULL && sd->curr_index + 1 < sea_conf.n_sources - 1) {
-            sd->curr_index++;
             d = ((funcptr_readdir)libc_readdir)(sd->other_dirp[sd->curr_index]);
+            sd->curr_index++;
         }
         if (d != NULL && d->d_name[0] != '\0') {
             for (int i = 0 ; i < sea_conf.n_sources; ++i) {
@@ -375,15 +393,18 @@ extern "C" {
     //TODO:refactor
     struct dirent64 *sea_readnext64(struct dirent64* d, config sea_conf, SEA_DIR* sd) { 
         int found = 0;
+	log_msg(DEBUG,  "in sea_readnext64 D is NULL %d Current index %d", d==NULL, sd->curr_index);
 
-        while (d == NULL && sd->curr_index + 1 < sea_conf.n_sources - 1) {
+        while (d == NULL && sd->curr_index + 1 < sea_conf.n_sources -1) {
+	    log_msg(DEBUG,"reading file at index %d, otherdirp is NULL %d", sd->curr_index, sd->other_dirp[sd->curr_index] == NULL);
+            d = ((funcptr_readdir64)libc_readdir64)((DIR*)sd->other_dirp[sd->curr_index]);
             sd->curr_index++;
-            d = ((funcptr_readdir64)libc_readdir64)(sd->other_dirp[sd->curr_index]);
         }
+	log_msg(DEBUG,  "about to enter sea_readnext64 if");
 
         if (d != NULL && d->d_name[0] != '\0') {
             for (int i = 0 ; i < sea_conf.n_sources; ++i) {
-                if (i != sd->curr_index + 1) {
+                if (i != sd->curr_index + 1 && sd->curr_index + 1 < sea_conf.n_sources) {
                     char tmppath[PATH_MAX];
                     strcpy(tmppath, sea_conf.source_mounts[i]);
                     strcat(tmppath, "/");
@@ -414,9 +435,11 @@ extern "C" {
         config sea_conf = get_sea_config();
         initialize_passthrough_if_necessary();
         if (sea_conf.parsed && sea_conf.n_sources > 1){
+	    log_msg(DEBUG, "reading dir and sea is enabled");
 
             SEA_DIR* sd = (SEA_DIR*) dirp;
             if (strcmp(sd->type, "seadir") == 0) {
+		log_msg(DEBUG, "reading sea dir");
                 d = ((funcptr_readdir)libc_readdir)(sd->dirp);
 
                 if (d == NULL && sea_conf.n_sources > 1 ) {
@@ -425,12 +448,14 @@ extern "C" {
                     //((funcptr_readdir)libc_readdir)(sd->other_dirp[0]);
 
                     //printf("current index %d %d\n", sd->curr_index, sd->other_dirp[sd->curr_index]);
-                    d = ((funcptr_readdir)libc_readdir)(sd->other_dirp[sd->curr_index]);
+		    //log_msg(INFO, "reading seadir at position1 %s fd %d", sd->dirnames[sd->curr_index], dirfd(sd->other_dirp[sd->curr_index]));
+                    //d = ((funcptr_readdir)libc_readdir)(((funcptr_opendir)libc_opendir)(sd->dirnames[sd->curr_index+1]));//((DIR*)((SEA_DIR*)sd->other_dirp[sd->curr_index])->dirp);
 
-                    if (d == NULL && sd->curr_index + 1 < sea_conf.n_sources) {
-                        sd->curr_index += 1;
-                    }
+                    //if (d == NULL && sd->curr_index + 1 < sea_conf.n_sources) {
+                    //    sd->curr_index += 1;
+                    //}
                     //printf("curr_index %d\n", sd->curr_index);
+		    log_msg(INFO, "launching sea read next");
                     d = sea_readnext(d, sea_conf, sd);
 
 
@@ -448,16 +473,23 @@ extern "C" {
                 }
            }
            else {
+		log_msg(INFO, "non seadir");
                 d = ((funcptr_readdir)libc_readdir)(dirp);
            }
         }
         else {
+	    log_msg(INFO, "non seadir");
             d = ((funcptr_readdir)libc_readdir)(dirp);
         }
-
+        log_msg(INFO, "test end readdir1");
         if (d == NULL && errno)
-            log_msg(ERROR, "reading dir %s %s", d->d_name);
-        log_msg(INFO, "end readdir");
+            log_msg(ERROR, "failed to read null dir %d", errno);
+        else if (d != NULL)
+	    log_msg(INFO, "attempting to read dir %s", d->d_name);
+	else if (d != NULL && errno)
+	    log_msg(ERROR, "failed to read null dir %d", errno);
+
+        log_msg(INFO, "end readdir1");
         return d;
     }
     
@@ -473,25 +505,36 @@ extern "C" {
 
             SEA_DIR* sd = (SEA_DIR*) dirp;
             if (strcmp(sd->type, "seadir") == 0) {
+		log_msg(DEBUG, "reading seadir");
                 d = ((funcptr_readdir64)libc_readdir64)(sd->dirp);
 
                 if (d == NULL && sea_conf.n_sources > 1 ) {
-                    d = ((funcptr_readdir64)libc_readdir64)(sd->other_dirp[sd->curr_index]);
+		    //log_msg(DEBUG, "reading seadir at position %s", sd->dirnames[sd->curr_index]);
+                    //d = ((funcptr_readdir64)libc_readdir64)(sd->other_dirp[sd->curr_index]);
 
-                    if (d == NULL && sd->curr_index + 1 < sea_conf.n_sources) {
-                        sd->curr_index += 1;
-                    }
+                    //if (d == NULL && sd->curr_index + 1 < sea_conf.n_sources) {
+                    //    sd->curr_index += 1;
+                    //}
+		    log_msg(DEBUG, "reading sea read next");
                     d = sea_readnext64(d, sea_conf, sd);
                 }
            }
-           else
+           else {
+		log_msg(DEBUG, "reading non seadir");
                 d = ((funcptr_readdir64)libc_readdir64)(dirp);
+	  }
         }
-        else
+        else {
+	    log_msg(DEBUG, "reading non seadir");
             d = ((funcptr_readdir64)libc_readdir64)(dirp);
+	}
 
         if (d == NULL && errno)
-            log_msg(ERROR, "reading dir %s %s", d->d_name);
+            log_msg(ERROR, "failed to read null dir %d", errno);
+        else if (d != NULL)
+	    log_msg(DEBUG, "attempting to read dir %s", d->d_name);
+	else if (d != NULL && errno)
+	    log_msg(ERROR, "failed to read null dir %d", errno);
         log_msg(INFO, "end readdir64");
         return d;
     }
@@ -600,6 +643,29 @@ extern "C" {
         char passpath[PATH_MAX];
         init_path("mkdir", pathname, passpath, 0);
         return ((funcptr_mkdir)libc_mkdir)(passpath, mode);
+        //initialize_passthrough_if_necessary();
+        //config sea_conf = get_sea_config();
+
+        //if (sea_conf.parsed && sea_conf.n_sources > 1) {
+    	//   for (int i=0; i < sea_conf.n_sources; ++i) {
+	//	passpath[0] = '\0';
+	//	sea_getpath(pathname, passpath, 0, i);
+	//	log_msg(INFO, "creating directory %s", passpath);
+	//	int fd = ((funcptr_mkdir)libc_mkdir)(passpath, mode); 
+	//	log_msg(INFO, "created directory %s with fd %d", passpath, fd);
+	//	
+	//	if (i == sea_conf.n_sources - 1)
+	//	   return fd;
+    	//   }
+	//   return -1;
+	//   
+        //}
+        //else
+    }
+    int mkdirat(int dirfd, const char *pathname, mode_t mode){
+        char passpath[PATH_MAX];
+        init_path("mkdirat", pathname, passpath, 0);
+        return ((funcptr_mkdirat)libc_mkdirat)(dirfd, passpath, mode);
     }
 
     int chdir(const char *pathname){
@@ -612,11 +678,17 @@ extern "C" {
         initialize_passthrough_if_necessary();
         config sea_conf = get_sea_config();
 
-        if (sea_conf.parsed && sea_conf.n_sources > 1) {
-            SEA_DIR* sd = (SEA_DIR*) dirp;
 
-            if (strcmp(sd->type, "seadir") == 0)
-                return ((funcptr_dirfd)libc_dirfd)(sd->dirp);
+        if (sea_conf.parsed && sea_conf.n_sources > 1) {
+	    log_msg(DEBUG, "in dirfd");
+            SEA_DIR* sd = (SEA_DIR*) dirp;
+	    log_msg(DEBUG, "in dirfd2");
+
+            if (sd->type[0] != '\0' && strcmp(sd->type, "seadir") == 0) {
+	    	log_msg(DEBUG, "in dirfd3");
+                return ((funcptr_dirfd)libc_dirfd)((DIR*)sd);
+	    }
+	    log_msg(DEBUG, "in dirfd4");
         }
        return ((funcptr_dirfd)libc_dirfd)(dirp);
     }
@@ -1037,6 +1109,7 @@ extern "C" {
     ssize_t readlink (const char *filename, char *buffer, size_t size){
         char passpath[PATH_MAX];
         init_path("readlink", filename, passpath, 0);
+        log_msg(INFO, "READLINK  %s %lu", passpath, size);
         return ((funcptr_readlink)libc_readlink)(passpath, buffer, size);
     }
 
@@ -1118,6 +1191,7 @@ extern "C" {
         if (strlen(path) > strlen(passpath))
             path[strlen(passpath)] = '\0';
         memmove(path, passpath, strlen(passpath));
+	log_msg(DEBUG, "in getcwd. converted %s %s", path, passpath);
         return path;
     }
     
