@@ -7,6 +7,7 @@ trap "exit" INT TERM
 #trap "kill 0" EXIT
 
 conf_file=${SEA_HOME}/sea.ini
+curr_dir=`dirname "$(readlink -f "$0")"`
 
 n_sources="$(($(awk -F "=" '/n_sources/ {print $2}' ${conf_file} | tr -d ' ;') - 1))"
 
@@ -16,7 +17,7 @@ do
     mkdir -p ${source} 
 done
 
-${SEA_HOME}/bin/sea_flusher.sh &
+${curr_dir}/sea_flusher.sh &
 pid=$!
 echo "flusher pid" ${pid}
 
