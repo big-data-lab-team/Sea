@@ -32,6 +32,7 @@ void *libc_open64;
 void *libc___open64;
 void *libc_openat;
 void *libc_opendir;
+void *libc_fdopendir;
 void *libc_scandir;
 void *libc_scandir64;
 void *libc_close;
@@ -399,6 +400,7 @@ int pass_getpath(const char *oldpath, char passpath[PATH_MAX], int masked_path, 
 
 void initialize_functions()
 {
+
   libc = dlopen("libc.so.6", RTLD_LAZY); // TODO: link with correct libc, version vs. 32 bit vs. 64 bit
   libc_creat = dlsym(libc, "creat");
   libc_creat64 = dlsym(libc, "creat64");
@@ -409,6 +411,7 @@ void initialize_functions()
   libc___open64 = dlsym(libc, "__open64");
   libc_openat = dlsym(libc, "openat");
   libc_opendir = dlsym(libc, "opendir");
+  libc_fdopendir = dlsym(libc, "fdopendir");
   libc_scandir = dlsym(libc, "scandir");
   libc_scandir64 = dlsym(libc, "scandir64");
   libc_close = dlsym(libc, "close");
