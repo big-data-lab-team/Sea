@@ -36,10 +36,10 @@ mkdir -p ${SOURCE} ${MOUNT} ${SOURCE_1} # Create source and mount (defined in te
 echo a > a.txt # This file will be used in tests
 echo b > ${SOURCE}/file_in_source.txt # This file will be used in tests
 echo "seafile" > ${SOURCE_1}/file_in_mem.txt
-mkdir ${SOURCE}/subdir
+mkdir ${SOURCE}/subdir ${SOURCE_1}/subdir
 echo a > ${SOURCE}/subdir/file_in_subdir.txt
 echo "a b" > ${SOURCE}/complex_file.txt
-mkdir ${SOURCE}/bin # where fake binaries will be located
+mkdir ${SOURCE}/bin ${SOURCE_1}/bin # where fake binaries will be located
 echo "#!/bin/bash" > ${SOURCE}/bin/hello.sh
 echo "echo \"hello\"" > ${SOURCE}/bin/hello.sh
 chmod +x ${SOURCE}/bin/hello.sh

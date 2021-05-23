@@ -8,6 +8,8 @@
 #define _STAT_VER_LINUX 1
 #endif
 
+#include <map>
+#include <vector>
 #include <limits.h>
 #include <set>
 #include <string>
@@ -23,15 +25,27 @@ int sea_getpath(const char *oldpath, char passpath[PATH_MAX], int masked_path);
 int sea_getpath(const char *oldpath, char passpath[PATH_MAX], int masked_path, int source_id);
 void initialize_sea();
 void initialize_sea_if_necessary();
+extern const char *fdpath;
 
 struct SEA_DIR
 {
     DIR *dirp;
     DIR **other_dirp;
-    char type[7] = {'\0'}; // mostly useless. only used in closedir to ensure struct type is right
+    int issea = 0; // mostly useless. only used in closedir to ensure struct type is right
     char **dirnames;
     int curr_index;
     int total_dp;
+    int *fds;
 };
+
+// need to convert to C struct
+struct SEA_FD
+{
+    std::vector<int> fd;
+    std::vector<char *> dirnames;
+};
+
+// need to convert to C struct
+extern std::map<int, SEA_FD *> seafd;
 
 #endif
