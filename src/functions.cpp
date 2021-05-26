@@ -4,6 +4,101 @@
 #include "config.h"
 #include <stdlib.h>
 
+#define DEFINE_SEAREADNEXT(VERSION, TYPE)                                                                                                                        \
+    struct TYPE *sea_readnext##VERSION(struct TYPE *d, config sea_conf, SEA_DIR *sd)                                                                             \
+    {                                                                                                                                                            \
+        log_msg(DEBUG, "sea_readnext%s: D is NULL %d Current index %d %d", #VERSION, d == NULL, sd->curr_index - 1, sd->other_dirp[sd->curr_index - 1] == NULL); \
+        d = ((funcptr_readdir##VERSION)libc_readdir##VERSION)(sd->other_dirp[sd->curr_index - 1]);                                                               \
+        log_msg(DEBUG, "sea_readnext%s: done reading", #VERSION);                                                                                                \
+                                                                                                                                                                 \
+        if (d == NULL)                                                                                                                                           \
+        {                                                                                                                                                        \
+            log_msg(DEBUG, "sea_readnext%s: recently read d is NULL %d", #VERSION, d == NULL);                                                                   \
+            while (d == NULL && sd->curr_index + 1 < sd->total_dp)                                                                                               \
+            {                                                                                                                                                    \
+                sd->curr_index++;                                                                                                                                \
+                d = ((funcptr_readdir##VERSION)libc_readdir##VERSION)(sd->other_dirp[sd->curr_index - 1]);                                                       \
+            }                                                                                                                                                    \
+        }                                                                                                                                                        \
+        if (d != NULL)                                                                                                                                           \
+        {                                                                                                                                                        \
+            log_msg(DEBUG, "sea_readnext%s: read entry %s", #VERSION, d->d_name);                                                                                \
+            if (sd->curr_index > 0 && d->d_type == DT_DIR)                                                                                                       \
+            {                                                                                                                                                    \
+                log_msg(DEBUG, "sea_readnext%s: Curr dir is a directory, reading next inode.", #VERSION);                                                        \
+                d = sea_readnext##VERSION(d, sea_conf, sd);                                                                                                      \
+            }                                                                                                                                                    \
+        }                                                                                                                                                        \
+        return d;                                                                                                                                                \
+    }
+
+#define DEFINE_READDIR(VERSION, TYPE)                                                                                                   \
+    struct TYPE *readdir##VERSION(DIR *dirp)                                                                                            \
+    {                                                                                                                                   \
+        struct TYPE *d;                                                                                                                 \
+        d = NULL;                                                                                                                       \
+                                                                                                                                        \
+        log_msg(INFO, "readdir%s: readdir%s started", #VERSION, #VERSION);                                                              \
+        errno = 0;                                                                                                                      \
+        config sea_conf = get_sea_config();                                                                                             \
+        initialize_passthrough_if_necessary();                                                                                          \
+                                                                                                                                        \
+        if (sea_conf.parsed == true && sea_conf.n_sources > 1)                                                                          \
+        {                                                                                                                               \
+            initialize_sea_if_necessary();                                                                                              \
+                                                                                                                                        \
+            SEA_DIR *sd = (SEA_DIR *)dirp;                                                                                              \
+            if (sd->issea)                                                                                                              \
+            {                                                                                                                           \
+                log_msg(DEBUG, "readdir%s: reading dir and sea is enabled", #VERSION);                                                  \
+                                                                                                                                        \
+                log_msg(DEBUG, "readdir%s: reading sea directory1 %s", #VERSION, sd->dirnames[0]);                                      \
+                if (sd->curr_index == 0)                                                                                                \
+                {                                                                                                                       \
+                    log_msg(DEBUG, "readdir%s: reading sea dir current idx = %d", #VERSION, sd->curr_index);                            \
+                    d = ((funcptr_readdir##VERSION)libc_readdir##VERSION)(sd->dirp);                                                    \
+                }                                                                                                                       \
+                                                                                                                                        \
+                log_msg(DEBUG, "readdir%s: curr_idx %d n_sources %d d NULL %d", #VERSION, sd->curr_index + 1, sd->total_dp, d == NULL); \
+                if (sd->curr_index + 1 < sd->total_dp && d == NULL)                                                                     \
+                {                                                                                                                       \
+                    if (sd->curr_index == 0)                                                                                            \
+                    {                                                                                                                   \
+                        log_msg(DEBUG, "readdir%s: incrementing value of sd->curr_index++ to %d", #VERSION, sd->curr_index + 1);        \
+                        sd->curr_index++;                                                                                               \
+                    }                                                                                                                   \
+                    log_msg(DEBUG, "readdir%s: launching sea_readnext %d %d", #VERSION, sd->curr_index, sd->total_dp);                  \
+                    d = sea_readnext##VERSION(d, sea_conf, sd);                                                                         \
+                }                                                                                                                       \
+            }                                                                                                                           \
+            else                                                                                                                        \
+            {                                                                                                                           \
+                log_msg(INFO, "readdir%s: non seadir %s", #VERSION, sd->dirnames[0]);                                                   \
+                d = ((funcptr_readdir##VERSION)libc_readdir##VERSION)(sd->dirp);                                                        \
+            }                                                                                                                           \
+        }                                                                                                                               \
+        else                                                                                                                            \
+        {                                                                                                                               \
+            log_msg(DEBUG, "readdir%s: passthrough", #VERSION);                                                                         \
+            d = ((funcptr_readdir##VERSION)libc_readdir##VERSION)(dirp);                                                                \
+        }                                                                                                                               \
+        log_msg(DEBUG, "readdir%s: test end readdir1", #VERSION);                                                                       \
+        if (d == NULL && errno)                                                                                                         \
+            log_msg(ERROR, "readdir%s: failed to read null dir %d", #VERSION, errno);                                                   \
+        else if (d != NULL)                                                                                                             \
+            log_msg(INFO, "readdir%s: attempting to read %s", #VERSION, d->d_name);                                                     \
+        else if (d != NULL && errno)                                                                                                    \
+            log_msg(ERROR, "readdir%s: failed to read null dir %d", #VERSION, errno);                                                   \
+                                                                                                                                        \
+        log_msg(INFO, "readdir%s: readdir%s ended", #VERSION, #VERSION);                                                                \
+        return d;                                                                                                                       \
+    }
+
+DEFINE_SEAREADNEXT(, dirent);
+DEFINE_SEAREADNEXT(64, dirent64);
+DEFINE_READDIR(, dirent);
+DEFINE_READDIR(64, dirent64);
+
 /**
  * Function to setup passthrough/Sea environment and return corresponding passpath
  *
@@ -204,34 +299,64 @@ extern "C"
             char afd[10];
             sprintf(afd, "%d", fd);
 
-            strcpy(fdloc, fdpath);
+            strcpy(fdloc, "/proc/self/fd");
             strcat(fdloc, "/");
             strcat(fdloc, afd);
 
-            FILE *f;
+            struct stat sb;
+            char linkname[PATH_MAX];
+            ssize_t r;
 
-            log_msg(DEBUG, "get_dirpath: trying to read dirfd %d. looking in location %s", fd, fdloc);
-            if ((f = ((funcptr_fopen)libc_fopen)(fdloc, "r")) != NULL)
+            // segfault in lstat occurs
+            // log_msg(DEBUG, "get_dirpath: checking fd location %s", fdloc);
+            // if (((funcptr_fstat)libc_fstat)(fd, &sb) == -1)
+            // {
+            //     log_msg(DEBUG, "get_dirpath: stat error");
+            // }
+            // log_msg(DEBUG, "get_dirpath: malloc");
+
+            // linkname = (char *)malloc(sb.st_size + 1);
+
+            r = ((funcptr_readlink)libc_readlink)(fdloc, linkname, PATH_MAX + 1);
+
+            log_msg(DEBUG, "get_dirpath: value of r %lu", r);
+
+            if (r >= 0)
             {
-                log_msg(DEBUG, "get_dirpath: file exists in Sea");
-                char *line = NULL;
-                size_t len = 0;
-                ssize_t nread;
+                linkname[r] = '\0';
+                strcpy(dirpath, linkname);
+                strcat(dirpath, "/");
+                strcat(dirpath, pathname);
 
-                nread = getline(&line, &len, f);
+                log_msg(DEBUG, "get_dir: updated name %s", dirpath);
 
-                if (nread != -1)
-                {
-                    strcpy(dirpath, line);
-                    dirpath[strlen(line) - 1] = '/';
-                    strcat(dirpath, pathname);
-                    log_msg(DEBUG, "get_dirpath: read path %s", dirpath);
-                    fclose(f);
-                    return 0;
-                }
-
-                fclose(f);
+                return 0;
             }
+
+            // FILE *f;
+
+            // log_msg(DEBUG, "get_dirpath: trying to read dirfd %d. looking in location %s", fd, fdloc);
+            // if ((f = ((funcptr_fopen)libc_fopen)(fdloc, "r")) != NULL)
+            // {
+            //     log_msg(DEBUG, "get_dirpath: file exists in Sea");
+            //     char *line = NULL;
+            //     size_t len = 0;
+            //     ssize_t nread;
+
+            //     nread = getline(&line, &len, f);
+
+            //     if (nread != -1)
+            //     {
+            //         strcpy(dirpath, line);
+            //         dirpath[strlen(line) - 1] = '/';
+            //         strcat(dirpath, pathname);
+            //         log_msg(DEBUG, "get_dirpath: read path %s", dirpath);
+            //         fclose(f);
+            //         return 0;
+            //     }
+
+            //     fclose(f);
+            // }
         }
         // is not a sea dir
         log_msg(DEBUG, "get_dirpath: is not a sea dir");
@@ -269,35 +394,43 @@ extern "C"
                     int source_match = 0;
                     initialize_sea_if_necessary();
 
-                    mount_match = sea_getpath(pathname, passpath, 0, 0);
-                    source_match = sea_getpath(pathname, mountpath, 1);
+                    mount_match = sea_getpath(abspath, passpath, 0, 0);
+                    source_match = sea_getpath(abspath, mountpath, 1);
 
                     // if not a directory within the mountpoint or the source directories, return just the current dir
                     if (mount_match == 0 && source_match == 0)
                     {
                         int fd = ((funcptr_openat)libc_openat)(dirfd, passpath, flags);
-                        sprintf(afd, "%d", fd);
 
-                        strcpy(fdloc, fdpath);
-                        strcat(fdloc, "/");
-                        strcat(fdloc, afd);
-
-                        FILE *seaf = ((funcptr_fopen)libc_fopen)(fdloc, "w");
-
-                        if (seaf != NULL)
+                        if (fd != -1)
                         {
-                            fprintf(seaf, "%s\n", passpath);
-                        }
+                            sprintf(afd, "%d", fd);
 
-                        fclose(seaf);
+                            strcpy(fdloc, fdpath);
+                            strcat(fdloc, "/");
+                            strcat(fdloc, afd);
+
+                            FILE *seaf = ((funcptr_fopen)libc_fopen)(fdloc, "w");
+
+                            if (seaf != NULL)
+                            {
+                                fprintf(seaf, "%s\n", passpath);
+                            }
+
+                            fclose(seaf);
+                        }
                         return fd;
                     }
 
                     if (mount_match)
-                        strcpy(mountpath, pathname);
+                        strcpy(mountpath, abspath);
 
                     log_msg(DEBUG, "openat: passpath is %s", passpath);
                     int main_fd = ((funcptr_openat)libc_openat)(dirfd, passpath, flags);
+
+                    if (main_fd == -1)
+                        return main_fd;
+
                     fdloc[0] = '\0';
                     afd[0] = '\0';
                     sprintf(afd, "%d", main_fd);
@@ -403,9 +536,13 @@ extern "C"
             // if not a directory within the mountpoint or the source directories, don't need to create a SEA_DIR struct.
             if (mount_match == 0 && source_match == 0)
             {
-
+                log_msg(DEBUG, "opendir: %s not within Sea mount", passpath);
                 sd->dirnames[0] = passpath;
                 sd->dirp = ((funcptr_opendir)libc_opendir)(passpath);
+
+                if (sd->dirp == NULL)
+                    return sd->dirp;
+
                 sd->fds[0] = ((funcptr_dirfd)libc_dirfd)(sd->dirp);
                 sd->total_dp = 1;
                 return (DIR *)sd;
@@ -420,6 +557,10 @@ extern "C"
             sd->other_dirp[0] = NULL;
             sd->total_dp = sea_conf.n_sources;
             sd->dirp = ((funcptr_opendir)libc_opendir)(passpath);
+
+            if (sd->dirp == NULL)
+                return sd->dirp;
+
             sd->fds[0] = ((funcptr_dirfd)libc_dirfd)(sd->dirp);
             log_msg(INFO, "opened directory %s with fd %d", passpath, dirfd((DIR *)sd));
 
@@ -467,7 +608,7 @@ extern "C"
         }
         else
         {
-            log_msg(INFO, "fdopendir: is a Sea dir");
+            log_msg(INFO, "fdopendir: is a Sea dir %d", fd);
             char *line = NULL;
             size_t len = 0;
             ssize_t nread;
@@ -483,6 +624,12 @@ extern "C"
             sd->other_dirp = (DIR **)malloc(sizeof(DIR *) * sea_conf.n_sources - 1);
 
             sd->dirp = ((funcptr_fdopendir)libc_fdopendir)(fd);
+
+            if (sd->dirp == NULL)
+            {
+                log_msg(DEBUG, "fdopendir: sd->dirp is NULL");
+                return sd->dirp;
+            }
 
             int i = 0;
 
@@ -606,203 +753,122 @@ extern "C"
         return 0;
     }
 
-    struct dirent *sea_readnext(struct dirent *d, config sea_conf, SEA_DIR *sd)
-    {
-        log_msg(DEBUG, "in sea_readnext D is NULL %d Current index %d %d", d == NULL, sd->curr_index - 1, sd->other_dirp[sd->curr_index - 1] == NULL);
-        d = ((funcptr_readdir)libc_readdir)(sd->other_dirp[sd->curr_index - 1]);
-        log_msg(DEBUG, "sea_readnext: done reading");
+    // struct dirent *sea_readnext(struct dirent *d, config sea_conf, SEA_DIR *sd)
+    // {
+    // }
 
-        if (d == NULL)
-        {
-            log_msg(DEBUG, "sea_readnext: recently read d is NULL %d", d == NULL);
-            while (d == NULL && sd->curr_index + 1 < sd->total_dp)
-            {
-                sd->curr_index++;
-                d = ((funcptr_readdir)libc_readdir)(sd->other_dirp[sd->curr_index - 1]);
-            }
-        }
-        if (d != NULL)
-        {
-            log_msg(DEBUG, "sea_readnext: read entry %s", d->d_name);
-            if (sd->curr_index > 0 && d->d_type == DT_DIR)
-            {
-                log_msg(DEBUG, "sea_readnext: Curr dir is a directory, reading next inode.");
-                d = sea_readnext(d, sea_conf, sd);
-            }
-        }
-        return d;
-    }
+    // //TODO:refactor
+    // struct dirent64 *sea_readnext64(struct dirent64 *d, config sea_conf, SEA_DIR *sd)
+    // {
+    //     log_msg(DEBUG, "in sea_readnext64 D is NULL %d Current index %d", d == NULL, sd->curr_index);
+    //     d = ((funcptr_readdir64)libc_readdir64)(sd->other_dirp[sd->curr_index - 1]);
+    //     log_msg(DEBUG, "sea_readnext64: done reading");
 
-    //TODO:refactor
-    struct dirent64 *sea_readnext64(struct dirent64 *d, config sea_conf, SEA_DIR *sd)
-    {
-        log_msg(DEBUG, "in sea_readnext64 D is NULL %d Current index %d", d == NULL, sd->curr_index);
-        d = ((funcptr_readdir64)libc_readdir64)(sd->other_dirp[sd->curr_index - 1]);
-        log_msg(DEBUG, "sea_readnext64: done reading");
+    //     if (d == NULL)
+    //     {
+    //         log_msg(DEBUG, "sea_readnext64: recently read d is NULL %d", d == NULL);
+    //         while (d == NULL && sd->curr_index + 1 < sd->total_dp)
+    //         {
+    //             sd->curr_index++;
+    //             d = ((funcptr_readdir64)libc_readdir64)(sd->other_dirp[sd->curr_index - 1]);
+    //         }
+    //     }
+    //     if (d != NULL)
+    //     {
+    //         log_msg(DEBUG, "sea_readnext64: read entry %s", d->d_name);
+    //         if (sd->curr_index > 0 && d->d_type == DT_DIR)
+    //         {
+    //             log_msg(DEBUG, "sea_readnext64: Curr dir is a directory, reading next inode.");
+    //             d = sea_readnext64(d, sea_conf, sd);
+    //         }
+    //     }
 
-        if (d == NULL)
-        {
-            log_msg(DEBUG, "sea_readnext64: recently read d is NULL %d", d == NULL);
-            while (d == NULL && sd->curr_index + 1 < sd->total_dp)
-            {
-                sd->curr_index++;
-                d = ((funcptr_readdir64)libc_readdir64)(sd->other_dirp[sd->curr_index - 1]);
-            }
-        }
-        if (d != NULL)
-        {
-            log_msg(DEBUG, "sea_readnext64: read entry %s", d->d_name);
-            if (sd->curr_index > 0 && d->d_type == DT_DIR)
-            {
-                log_msg(DEBUG, "sea_readnext64: Curr dir is a directory, reading next inode.");
-                d = sea_readnext64(d, sea_conf, sd);
-            }
-        }
+    //     //sd->curr_index++;
 
-        //sd->curr_index++;
+    //     // while (d == NULL && sd->curr_index + 1 < sea_conf.n_sources)
+    //     // {
+    //     //     log_msg(DEBUG, "reading file at index %d, otherdirp is NULL %d", sd->curr_index, sd->other_dirp[sd->curr_index] == NULL);
 
-        // while (d == NULL && sd->curr_index + 1 < sea_conf.n_sources)
-        // {
-        //     log_msg(DEBUG, "reading file at index %d, otherdirp is NULL %d", sd->curr_index, sd->other_dirp[sd->curr_index] == NULL);
+    //     // do {
+    //     //     d = ((funcptr_readdir64)libc_readdir64)(sd->other_dirp[sd->curr_index]);
+    //     // }
+    //     // while (d != NULL)
+    //     // sd->curr_index++;
+    //     // }
+    //     // log_msg(DEBUG, "about to enter sea_readnext64 if statement with D is NULL %d", d == NULL);
 
-        // do {
-        //     d = ((funcptr_readdir64)libc_readdir64)(sd->other_dirp[sd->curr_index]);
-        // }
-        // while (d != NULL)
-        // sd->curr_index++;
-        // }
-        // log_msg(DEBUG, "about to enter sea_readnext64 if statement with D is NULL %d", d == NULL);
+    //     return d;
+    // }
 
-        return d;
-    }
+    // //TODO: works (for now) but perhaps needs some cleaning up
+    // struct dirent *readdir(DIR *dirp)
+    // {
+    // }
 
-    //TODO: works (for now) but perhaps needs some cleaning up
-    struct dirent *readdir(DIR *dirp)
-    {
+    // //TODO:refactor
+    // struct dirent64 *readdir64(DIR *dirp)
+    // {
+    //     struct dirent64 *d;
+    //     d = NULL;
 
-        struct dirent *d;
-        d = NULL;
+    //     log_msg(INFO, "readdir64");
+    //     errno = 0;
+    //     config sea_conf = get_sea_config();
+    //     initialize_passthrough_if_necessary();
 
-        log_msg(INFO, "readdir started");
-        errno = 0;
-        config sea_conf = get_sea_config();
-        initialize_passthrough_if_necessary();
+    //     if (dirp != NULL && sea_conf.parsed == true && sea_conf.n_sources > 1)
+    //     {
+    //         initialize_sea_if_necessary();
 
-        if (sea_conf.parsed == true && sea_conf.n_sources > 1)
-        {
-            initialize_sea_if_necessary();
+    //         SEA_DIR *sd = (SEA_DIR *)dirp;
+    //         if (sd->issea)
+    //         {
 
-            SEA_DIR *sd = (SEA_DIR *)dirp;
-            if (sd->issea)
-            {
-                log_msg(DEBUG, "reading dir and sea is enabled");
+    //             if (sd->curr_index == 0)
+    //             {
+    //                 log_msg(DEBUG, "reading sea dir current idx = %d", sd->curr_index);
+    //                 d = ((funcptr_readdir64)libc_readdir64)(sd->dirp);
+    //             }
 
-                log_msg(DEBUG, "readdir: reading sea directory1 %s", sd->dirnames[0]);
-                if (sd->curr_index == 0)
-                {
-                    log_msg(DEBUG, "reading sea dir current idx = %d", sd->curr_index);
-                    d = ((funcptr_readdir)libc_readdir)(sd->dirp);
-                }
+    //             log_msg(DEBUG, "readdir64: curr_idx %d n_sources %d d NULL %d", sd->curr_index + 1, sea_conf.n_sources, d == NULL);
+    //             if (sd->curr_index + 1 < sd->total_dp && d == NULL)
+    //             {
+    //                 if (sd->curr_index == 0)
+    //                 {
+    //                     log_msg(DEBUG, "readdir64: incrementing value of sd->curr_index++ to %d", sd->curr_index + 1);
+    //                     sd->curr_index++;
+    //                 }
+    //                 //log_msg(DEBUG, "reading seadir at position %s", sd->dirnames[sd->curr_index]);
+    //                 //d = ((funcptr_readdir64)libc_readdir64)(sd->other_dirp[sd->curr_index]);
 
-                log_msg(DEBUG, "readdir: curr_idx %d n_sources %d d NULL %d", sd->curr_index + 1, sd->total_dp, d == NULL);
-                if (sd->curr_index + 1 < sd->total_dp && d == NULL)
-                {
-                    if (sd->curr_index == 0)
-                    {
-                        log_msg(DEBUG, "readdir: incrementing value of sd->curr_index++ to %d", sd->curr_index + 1);
-                        sd->curr_index++;
-                    }
-                    log_msg(DEBUG, "launching sea_readnext %d %d", sd->curr_index, sd->total_dp);
-                    d = sea_readnext(d, sea_conf, sd);
-                }
-            }
-            else
-            {
-                log_msg(INFO, "non seadir %s", sd->dirnames[0]);
-                d = ((funcptr_readdir)libc_readdir)(sd->dirp);
-            }
-        }
-        else
-        {
-            log_msg(DEBUG, "readdir: passthrough");
-            d = ((funcptr_readdir)libc_readdir)(dirp);
-        }
-        log_msg(INFO, "test end readdir1");
-        if (d == NULL && errno)
-            log_msg(ERROR, "failed to read null dir %d", errno);
-        else if (d != NULL)
-            log_msg(INFO, "attempting to read %s", d->d_name);
-        else if (d != NULL && errno)
-            log_msg(ERROR, "failed to read null dir %d", errno);
+    //                 //if (d == NULL && sd->curr_index + 1 < sea_conf.n_sources) {
+    //                 //    sd->curr_index += 1;
+    //                 //}
+    //                 log_msg(DEBUG, "reading sea read next %d %d", sd->curr_index, sea_conf.n_sources);
+    //                 d = sea_readnext64(d, sea_conf, sd);
+    //             }
+    //         }
+    //         else
+    //         {
+    //             log_msg(DEBUG, "reading non seadir %", sd->dirnames[0]);
+    //             d = ((funcptr_readdir64)libc_readdir64)(sd->dirp);
+    //         }
+    //     }
+    //     else
+    //     {
+    //         log_msg(DEBUG, "readdir64: passthrough");
+    //         d = ((funcptr_readdir64)libc_readdir64)(dirp);
+    //     }
 
-        log_msg(INFO, "end readdir1");
-        return d;
-    }
-
-    //TODO:refactor
-    struct dirent64 *readdir64(DIR *dirp)
-    {
-        struct dirent64 *d;
-        d = NULL;
-
-        log_msg(INFO, "readdir64");
-        errno = 0;
-        config sea_conf = get_sea_config();
-        initialize_passthrough_if_necessary();
-
-        if (sea_conf.parsed == true && sea_conf.n_sources > 1)
-        {
-            initialize_sea_if_necessary();
-
-            SEA_DIR *sd = (SEA_DIR *)dirp;
-            if (sd->issea)
-            {
-
-                if (sd->curr_index == 0)
-                {
-                    log_msg(DEBUG, "reading sea dir current idx = %d", sd->curr_index);
-                    d = ((funcptr_readdir64)libc_readdir64)(sd->dirp);
-                }
-
-                log_msg(DEBUG, "readdir64: curr_idx %d n_sources %d d NULL %d", sd->curr_index + 1, sea_conf.n_sources, d == NULL);
-                if (sd->curr_index + 1 < sd->total_dp && d == NULL)
-                {
-                    if (sd->curr_index == 0)
-                    {
-                        log_msg(DEBUG, "readdir64: incrementing value of sd->curr_index++ to %d", sd->curr_index + 1);
-                        sd->curr_index++;
-                    }
-                    //log_msg(DEBUG, "reading seadir at position %s", sd->dirnames[sd->curr_index]);
-                    //d = ((funcptr_readdir64)libc_readdir64)(sd->other_dirp[sd->curr_index]);
-
-                    //if (d == NULL && sd->curr_index + 1 < sea_conf.n_sources) {
-                    //    sd->curr_index += 1;
-                    //}
-                    log_msg(DEBUG, "reading sea read next %d %d", sd->curr_index, sea_conf.n_sources);
-                    d = sea_readnext64(d, sea_conf, sd);
-                }
-            }
-            else
-            {
-                log_msg(DEBUG, "reading non seadir");
-                d = ((funcptr_readdir64)libc_readdir64)(sd->dirp);
-            }
-        }
-        else
-        {
-            log_msg(DEBUG, "readdir64: passthrough");
-            d = ((funcptr_readdir64)libc_readdir64)(dirp);
-        }
-
-        if (d == NULL && errno)
-            log_msg(ERROR, "failed to read null dir %d", errno);
-        else if (d != NULL)
-            log_msg(DEBUG, "attempting to read dir %s", d->d_name);
-        else if (d != NULL && errno)
-            log_msg(ERROR, "failed to read null dir %d", errno);
-        log_msg(INFO, "end readdir64");
-        return d;
-    }
+    //     if (d == NULL && errno)
+    //         log_msg(ERROR, "failed to read null dir %d", errno);
+    //     else if (d != NULL)
+    //         log_msg(DEBUG, "attempting to read dir %s", d->d_name);
+    //     else if (d != NULL && errno)
+    //         log_msg(ERROR, "failed to read null dir %d", errno);
+    //     log_msg(INFO, "end readdir64");
+    //     return d;
+    // }
 
 #undef creat
     int creat(__const char *name, mode_t mode)
@@ -1627,10 +1693,10 @@ extern "C"
         // get masked path rather than real path
         init_path("getcwd", path, passpath, 1);
         strcpy(path, passpath);
-        // memset(path, '\0', strlen(passpath));
-        // memmove(path, passpath, strlen(passpath));
-        // path[strlen(passpath)] = '\0';
-        // path[strlen(passpath) + 1] = '\0';
+        //memset(path, '\0', strlen(passpath));
+        //memmove(path, passpath, strlen(passpath));
+        //path[strlen(passpath)] = '\0';
+        //path[strlen(passpath) + 1] = '\0';
 
         // make sure there are no trailing characters after memmove
 
