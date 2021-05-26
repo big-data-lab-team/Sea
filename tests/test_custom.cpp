@@ -5,6 +5,17 @@
 #include "../src/config.h"
 #include <stdlib.h>
 
+// helpers
+void close_seadir(SEA_DIR *sd)
+{
+    ((funcptr_closedir)libc_closedir)(sd->dirp);
+
+    for (int i = 1; i < sd->total_dp; i++)
+    {
+        ((funcptr_closedir)libc_closedir)(sd->other_dirp[i - 1]);
+    }
+}
+
 // need to add symlink tests here
 TEST(Passthrough, GetCanonical)
 {
@@ -153,12 +164,8 @@ TEST(Sea, OpenDir)
 
     if (seadp->dirp == NULL)
         printf("%s is NULL\n", seadp->dirnames[0]);
-    ((funcptr_closedir)libc_closedir)(seadp->dirp);
 
-    for (int i = 1; i < seadp->total_dp; i++)
-    {
-        ((funcptr_closedir)libc_closedir)(seadp->other_dirp[i - 1]);
-    }
+    close_seadir(seadp);
 
     // Test if subdir in sea can be opened
     char seasd[PATH_MAX];
@@ -169,12 +176,7 @@ TEST(Sea, OpenDir)
     EXPECT_TRUE(sdp != NULL);
 
     SEA_DIR *seasdp = (SEA_DIR *)ssdirp;
-
-    ((funcptr_closedir)libc_closedir)(seasdp->dirp);
-    for (int i = 1; i < seasdp->total_dp; i++)
-    {
-        ((funcptr_closedir)libc_closedir)(seasdp->other_dirp[i - 1]);
-    }
+    close_seadir(seasdp);
 
     free(seadp);
     free(seasdp);
@@ -191,40 +193,84 @@ TEST(Sea, ReadDir)
     // Test nonseadir
     char *regdir = "newdir";
     struct dirent *entry;
+    std::set<std::string> reg_files = {".", "..", "subdir"};
+    std::set<std::string> found_files;
 
-    int files = 0;
     // 32bit
     DIR *rd = opendir(regdir);
 
     while ((entry = readdir(rd)))
     {
-        files++;
-        printf("reading file %s\n", entry->d_name);
+        found_files.insert(entry->d_name);
     }
     ((funcptr_closedir)libc_closedir)(rd);
 
-    ASSERT_EQ(files, 3);
+    ASSERT_EQ(reg_files, found_files);
 
     // 64bit
-    files = 0;
     rd = opendir(regdir);
     struct dirent64 *entry64;
+    found_files.clear();
 
     while ((entry64 = readdir64(rd)))
     {
-        files++;
-        printf("reading64 file %s\n", entry64->d_name);
+        found_files.insert(entry64->d_name);
     }
     ((funcptr_closedir)libc_closedir)(rd);
 
-    ASSERT_EQ(files, 3);
-
-    // 64bit
-    files = 0;
+    ASSERT_EQ(reg_files, found_files);
 
     // Test sea mount
+    std::set<std::string> sea_files = {".", "..", "file_in_source.txt", "subdir", "complex_file.txt", "bin", "file_in_mem.txt"};
+    found_files.clear();
+
+    // 32bit
+    char *seadir = "mount";
+    DIR *sdp = opendir(seadir);
+
+    while ((entry = readdir(sdp)))
+    {
+        found_files.insert(entry->d_name);
+    }
+    close_seadir((SEA_DIR *)sdp);
+    ASSERT_EQ(sea_files, found_files);
+
+    //64bit
+    found_files.clear();
+    sdp = opendir(seadir);
+
+    while ((entry64 = readdir64(sdp)))
+    {
+        found_files.insert(entry64->d_name);
+    }
+    close_seadir((SEA_DIR *)sdp);
+    ASSERT_EQ(sea_files, found_files);
 
     // Test sea subdirectory
+    seadir = "mount/subdir";
+    std::set<std::string> subdir_files = {".", "..", "file_in_subdir.txt"};
+
+    // 32bit
+    sdp = opendir(seadir);
+    found_files.clear();
+
+    while ((entry = readdir(sdp)))
+    {
+        found_files.insert(entry->d_name);
+    }
+    close_seadir((SEA_DIR *)sdp);
+    ASSERT_EQ(subdir_files, found_files);
+
+    //64bit
+    found_files.clear();
+    sdp = opendir(seadir);
+
+    while ((entry64 = readdir64(sdp)))
+    {
+        found_files.insert(entry64->d_name);
+    }
+    close_seadir((SEA_DIR *)sdp);
+    ASSERT_EQ(subdir_files, found_files);
 }
 
 TEST(Sea, InitializeSea)
