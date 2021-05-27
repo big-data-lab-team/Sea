@@ -45,6 +45,12 @@ SOURCE_1="$PWD/source_1"
     [ ! -f ${SOURCE}/file_in_source.txt ]
     [ ! -f ${SOURCE}/subdir/file_in_subdir.txt ]
 }
+@test "rmdir" {
+    load setup
+    rm -rf ${MOUNT}/subdir
+    load unset
+    [ ! -d ${SOURCE}/subdir ]
+}
 
 @test "cp" {
     load setup

@@ -377,83 +377,8 @@ extern "C"
                     mount_match = sea_getpath(abspath, passpath, 0, 0);
                     source_match = sea_getpath(abspath, mountpath, 1);
 
-                    // if not a directory within the mountpoint or the source directories, return just the current dir
-                    if (mount_match == 0 && source_match == 0)
-                    {
-                        int fd = ((funcptr_openat)libc_openat)(dirfd, passpath, flags);
-
-                        if (fd != -1)
-                        {
-                            sprintf(afd, "%d", fd);
-
-                            strcpy(fdloc, fdpath);
-                            strcat(fdloc, "/");
-                            strcat(fdloc, afd);
-
-                            FILE *seaf = ((funcptr_fopen)libc_fopen)(fdloc, "w");
-
-                            if (seaf != NULL)
-                            {
-                                fprintf(seaf, "%s\n", passpath);
-                            }
-
-                            fclose(seaf);
-                        }
-                        return fd;
-                    }
-
-                    if (mount_match)
-                        strcpy(mountpath, abspath);
-
                     log_msg(DEBUG, "openat: passpath is %s", passpath);
                     int main_fd = ((funcptr_openat)libc_openat)(dirfd, passpath, flags);
-
-                    if (main_fd == -1)
-                        return main_fd;
-
-                    fdloc[0] = '\0';
-                    afd[0] = '\0';
-                    sprintf(afd, "%d", main_fd);
-
-                    strcpy(fdloc, fdpath);
-                    strcat(fdloc, "/");
-                    strcat(fdloc, afd);
-
-                    FILE *seaf = ((funcptr_fopen)libc_fopen)(fdloc, "w");
-                    log_msg(DEBUG, "adding fd %d at path %s. fd of logfile is %d", main_fd, passpath, fileno(seaf));
-
-                    if (seaf != NULL)
-                    {
-                        fprintf(seaf, "%s\n", strdup(passpath));
-                    }
-
-                    for (int i = 1; i < sea_conf.n_sources; ++i)
-                    {
-                        passpath[0] = '\0';
-                        sea_getpath(mountpath, passpath, 0, i);
-                        log_msg(INFO, "openat: opening other directory %s", passpath);
-                        int fd = ((funcptr_openat)libc_openat)(dirfd, strdup(passpath), flags);
-
-                        fdloc[0] = '\0';
-                        afd[0] = '\0';
-                        sprintf(afd, "%d", fd);
-
-                        strcpy(fdloc, fdpath);
-                        strcat(fdloc, "/");
-                        strcat(fdloc, afd);
-
-                        log_msg(DEBUG, "adding fd %d", fd);
-                        if (seaf != NULL)
-                        {
-                            fprintf(seaf, "%d\n", fd);
-                            fprintf(seaf, "%s\n", passpath);
-                        }
-
-                        log_msg(INFO, "openat: opened other mount directory %s", passpath);
-                    }
-                    fclose(seaf);
-
-                    log_msg(DEBUG, "openat: returning fd %d", main_fd);
                     return main_fd;
                 }
             }
