@@ -142,6 +142,7 @@ void *libc_getcwd;
 //void* libc_mknod;
 //void* libc_execveat;
 //void* libc_fanotify_mark;
+void *libc_popen;
 
 // Our "copy" of stdout, because the application might close stdout
 // or reuse the first file descriptors for other purposes.
@@ -521,6 +522,7 @@ void initialize_functions()
   libc_realpath = dlsym(libc, "realpath");
   libc_canonicalize_file_name = dlsym(libc, "canonicalize_file_name");
   libc_getcwd = dlsym(libc, "getcwd");
+  libc_popen = dlsym(libc, "popen");
   //libc_mknod = dlsym(libc, "mknod");
   //libc_execveat = dlsym(libc, "execveat"); -- function not defined
   //libc_fanotify_mark = dlsym(libc, "fanotify_mark");

@@ -144,6 +144,8 @@ typedef char *(*funcptr_getwd)(char *, size_t);
 //typedef int (*funcptr_execveat)(int, const char*, char *const[], char *const[], int);
 //typedef int (*funcptr_fanotify_mark)(int, unsigned int, uint64_t, int, const char*);
 
+typedef FILE *(*funcptr_popen)(const char *command, const char *type);
+
 extern void *libc_creat;
 extern void *libc_creat64;
 extern void *libc_open;
@@ -260,6 +262,7 @@ extern void *libc_mkfifo;
 extern void *libc_realpath;
 extern void *libc_canonicalize_file_name;
 extern void *libc_getcwd;
+extern void *libc_popen;
 //extern void* libc_mknod;
 
 //extern void* libc_execveat;
