@@ -17,7 +17,7 @@ std::set<std::string> sea_files;
 
 // need to convert to C structs
 std::map<int, SEA_FD *> seafd;
-const char *fdpath = "/tmp/seafd";
+const char *fdpath = "/proc/self/fd";
 /**
  * Getter for the sea_internal global variable
  *
@@ -255,18 +255,6 @@ int sea_getpath(const char *oldpath, char passpath[PATH_MAX], int masked_path, i
  */
 void initialize_sea()
 {
-
-    int result = ((funcptr_mkdir)libc_mkdir)(fdpath, S_IRWXU);
-    if (result != 0)
-    {
-        log_msg(INFO, "ERROR: could not create %s", fdpath);
-    }
-    else
-    {
-        log_msg(INFO, "created fdpath %s", fdpath);
-    }
-
-    errno = 0;
     //printf("test\n");
     //sea_files.clear();
     //sea_internal = 0;
