@@ -843,13 +843,8 @@ extern "C"
             initialize_sea_if_necessary();
 
             SEA_DIR *sd = (SEA_DIR *)dirp;
-            if (sd->issea)
-            {
-                log_msg(DEBUG, "in dirfd3. returning %d", sd->fds[0]);
-                return sd->fds[0];
-            }
-            log_msg(DEBUG, "in dirfd4. returning %d", sd->fds[0]);
-            return sd->fds[0];
+            log_msg(DEBUG, "in dirfd4. returning %d", sd->dirp);
+            return ((funcptr_dirfd)libc_dirfd)(sd->dirp);
         }
         else
         {
