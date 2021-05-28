@@ -40,6 +40,7 @@ void *libc_scandirat64;
 void *libc_close;
 void *libc___close;
 void *libc_closedir;
+void *libc_rewinddir;
 void *libc_read;
 void *libc_write;
 void *libc_pread;
@@ -424,6 +425,7 @@ void initialize_functions()
   libc_close = dlsym(libc, "close");
   libc___close = dlsym(libc, "__close");
   libc_closedir = dlsym(libc, "closedir");
+  libc_rewinddir = dlsym(libc, "rewinddir");
   libc_read = dlsym(libc, "read");
   libc_write = dlsym(libc, "write");
   libc_pread = dlsym(libc, "pread");

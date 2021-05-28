@@ -35,7 +35,6 @@ struct SEA_DIR
     char **dirnames;
     int curr_index;
     int total_dp;
-    int *fds;
 };
 
 // need to convert to C struct

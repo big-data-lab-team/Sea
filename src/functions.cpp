@@ -307,7 +307,7 @@ extern "C"
             strcat(fdloc, "/");
             strcat(fdloc, afd);
 
-            struct stat sb;
+            //struct stat sb;
             char linkname[PATH_MAX];
             ssize_t r;
 
@@ -369,15 +369,13 @@ extern "C"
 
                 if (sea_conf.parsed == true && sea_conf.n_sources > 1)
                 {
-                    char mountpath[PATH_MAX];
-                    char fdloc[PATH_MAX];
-                    char afd[10];
-                    int mount_match = 0;
-                    int source_match = 0;
+                    //char mountpath[PATH_MAX];
+                    //char fdloc[PATH_MAX];
+                    //char afd[10];
                     initialize_sea_if_necessary();
 
-                    mount_match = sea_getpath(abspath, passpath, 0, 0);
-                    source_match = sea_getpath(abspath, mountpath, 1);
+                    sea_getpath(abspath, passpath, 0, 0);
+                    // source_match = sea_getpath(abspath, mountpath, 1);
 
                     log_msg(DEBUG, "openat: passpath is %s", passpath);
                     int main_fd = ((funcptr_openat)libc_openat)(dirfd, passpath, flags);
@@ -434,7 +432,6 @@ extern "C"
             sd->issea = 0;
             sd->dirnames = (char **)malloc(sizeof(char *) * sea_conf.n_sources * PATH_MAX);
             sd->other_dirp = (DIR **)malloc(sizeof(DIR *) * sea_conf.n_sources - 1);
-            sd->fds = (int *)malloc(sizeof(int) * sea_conf.n_sources);
 
             initialize_sea_if_necessary();
             int mount_match = sea_getpath(pathname, passpath, 0, 0);
@@ -450,7 +447,6 @@ extern "C"
                 if (sd->dirp == NULL)
                     return sd->dirp;
 
-                sd->fds[0] = ((funcptr_dirfd)libc_dirfd)(sd->dirp);
                 sd->total_dp = 1;
                 return (DIR *)sd;
             }
@@ -468,7 +464,6 @@ extern "C"
             if (sd->dirp == NULL)
                 return sd->dirp;
 
-            sd->fds[0] = ((funcptr_dirfd)libc_dirfd)(sd->dirp);
             log_msg(INFO, "opened directory %s with fd %d", passpath, dirfd((DIR *)sd));
 
             sd->dirnames[0] = strdup(passpath);
@@ -480,7 +475,6 @@ extern "C"
                 log_msg(INFO, "opening other directory %s", passpath);
                 sd->other_dirp[i - 1] = ((funcptr_opendir)libc_opendir)(strdup(passpath));
                 sd->dirnames[i] = strdup(passpath);
-                sd->fds[i] = ((funcptr_dirfd)libc_dirfd)(sd->other_dirp[i - 1]);
                 log_msg(INFO, "opened other mount directory %s at other_dirp index %d", passpath, i - 1);
                 log_msg(DEBUG, "other_dirp at index %d is null %d", i - 1, sd->other_dirp[i - 1] == NULL);
             }
@@ -520,20 +514,16 @@ extern "C"
             sd->curr_index = 0;
             sd->dirnames = (char **)malloc(sizeof(char *) * sea_conf.n_sources * PATH_MAX);
             sd->other_dirp = (DIR **)malloc(sizeof(DIR *) * sea_conf.n_sources - 1);
-            sd->fds = (int *)malloc(sizeof(int) * sea_conf.n_sources);
 
             log_msg(INFO, "fdopendir: mount_match - %d ; source_match %d", mount_match, source_match);
             if (mount_match == 0 && source_match == 0)
             {
-
-                sd->issea = 0;
                 sd->dirp = ((funcptr_fdopendir)libc_fdopendir)(fd);
 
                 if (sd->dirp == NULL)
                     return sd->dirp;
 
                 sd->dirnames[0] = strdup(passpath);
-                sd->fds[0] = fd;
                 sd->total_dp = 1;
 
                 log_msg(INFO, "fdopendir: directory not in Sea %d %s", fd, sd->dirnames[0]);
@@ -561,7 +551,6 @@ extern "C"
                 sea_getpath(mountpath, passpath, 0, i);
                 sd->other_dirp[i - 1] = ((funcptr_opendir)libc_opendir)(strdup(passpath));
                 sd->dirnames[i] = strdup(passpath);
-                sd->fds[i] = ((funcptr_dirfd)libc_dirfd)(sd->other_dirp[i - 1]);
                 log_msg(INFO, "fdopendir: opened other mount directory %s at other_dirp index %d", passpath, i - 1);
                 log_msg(DEBUG, "fdopendir: other_dirp at index %d is null %d", i - 1, sd->other_dirp[i - 1] == NULL);
             }
@@ -703,7 +692,7 @@ extern "C"
 
             if (sd->issea)
             {
-                for (int i = 1; i < sea_conf.n_sources; ++i)
+                for (int i = 1; i < sd->total_dp; ++i)
                 {
                     ((funcptr_closedir)libc_closedir)(sd->other_dirp[i - 1]);
                 }
@@ -716,6 +705,34 @@ extern "C"
         }
         log_msg(INFO, "closedir");
         return ((funcptr_closedir)libc_closedir)(dirp);
+    }
+
+    void rewinddir(DIR *dirp)
+    {
+        initialize_passthrough_if_necessary();
+
+        log_msg(INFO, "rewinddir");
+        config sea_conf = get_sea_config();
+
+        if (sea_conf.parsed == true && sea_conf.n_sources > 1)
+        {
+            initialize_sea_if_necessary();
+            SEA_DIR *sd = (SEA_DIR *)dirp;
+
+            if (sd->issea)
+            {
+                for (int i = 1; i < sd->total_dp; ++i)
+                {
+                    ((funcptr_rewinddir)libc_rewinddir)(sd->other_dirp[i - 1]);
+                }
+            }
+
+            ((funcptr_rewinddir)libc_rewinddir)(sd->dirp);
+        }
+        else
+        {
+            ((funcptr_rewinddir)libc_rewinddir)(dirp);
+        }
     }
 
     ssize_t read(int fd, void *buf, size_t count)
