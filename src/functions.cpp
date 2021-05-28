@@ -711,10 +711,6 @@ extern "C"
             delete sd;
             return ret;
         }
-        else
-        {
-            return ((funcptr_closedir)libc_closedir)(dirp);
-        }
         log_msg(INFO, "closedir");
         return ((funcptr_closedir)libc_closedir)(dirp);
     }
