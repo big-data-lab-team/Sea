@@ -706,17 +706,6 @@ extern "C"
                 }
             }
 
-            int fd = dirfd(dirp);
-
-            char fdloc[PATH_MAX];
-            char afd[10];
-            sprintf(afd, "%d", fd);
-
-            strcpy(fdloc, fdpath);
-            strcat(fdloc, "/");
-            strcat(fdloc, afd);
-
-            ((funcptr_remove)libc_remove)(fdloc);
             int ret = 0;
             ret = ((funcptr_closedir)libc_closedir)(sd->dirp);
             delete sd;
