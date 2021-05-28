@@ -43,7 +43,7 @@
         config sea_conf = get_sea_config();                                                                                             \
         initialize_passthrough_if_necessary();                                                                                          \
                                                                                                                                         \
-        log_msg(INFO, "readdir%s: passthrough initialized", #VERSION, #VERSION);                                                        \
+        log_msg(INFO, "readdir%s: passthrough initialized", #VERSION);                                                                  \
         if (sea_conf.parsed == true && sea_conf.n_sources > 1)                                                                          \
         {                                                                                                                               \
             initialize_sea_if_necessary();                                                                                              \
@@ -295,7 +295,7 @@ extern "C"
     int get_dirpath(const char *pathname, char *dirpath, int fd)
     {
         // check if seadir if we read relative to dirfd
-        if (pathname != NULL && pathname[0] != '/' && fd != AT_FDCWD)
+        if ((pathname == NULL || pathname[0] != '/') && fd != AT_FDCWD)
         {
             log_msg(DEBUG, "get_dirpath: pathname %s", pathname);
 
@@ -496,7 +496,7 @@ extern "C"
     DIR *fdopendir(int fd)
     {
         initialize_passthrough_if_necessary();
-        log_msg(INFO, "fdopendir");
+        log_msg(INFO, "fdopendir %d", fd);
 
         struct config sea_conf;
         sea_conf = get_sea_config();
@@ -509,46 +509,42 @@ extern "C"
         get_dirpath(NULL, abspath, fd);
         log_msg(INFO, "fdopendir: obtained directory path %s", abspath);
 
-        initialize_sea_if_necessary();
-        int mount_match = sea_getpath(abspath, passpath, 0, 0);
-        int source_match = sea_getpath(abspath, mountpath, 1);
-
-        log_msg(INFO, "fdopendir: mount_match - %d ; source_match %d", mount_match, source_match);
         //file is not in Sea mount
-        if (mount_match == 0 && source_match == 0)
+        if (sea_conf.parsed == true && sea_conf.n_sources > 1)
         {
-            if (sea_conf.parsed == true && sea_conf.n_sources > 1)
-            {
-                SEA_DIR *sd = new SEA_DIR;
-                sd->issea = 0;
-                sd->dirnames = (char **)malloc(sizeof(char *) * PATH_MAX);
-                sd->other_dirp = (DIR **)malloc(sizeof(DIR *) * sea_conf.n_sources - 1);
-                sd->fds = (int *)malloc(sizeof(int) * sea_conf.n_sources);
-                sd->dirp = ((funcptr_fdopendir)libc_fdopendir)(fd);
-                sd->dirnames[0] = NULL;
-                log_msg(INFO, "fdopendir: directory not in Sea %d %s", fd, sd->dirnames[0]);
-                return (DIR *)sd;
-            }
-            else
-            {
-                log_msg(INFO, "fdopendir: not in Sea %d", fd);
-                return ((funcptr_fdopendir)libc_fdopendir)(fd);
-            }
-        }
-        else
-        {
-            log_msg(INFO, "fdopendir: is a Sea dir %d", fd);
-
-            if (mount_match)
-                strcpy(mountpath, passpath);
+            initialize_sea_if_necessary();
+            int mount_match = sea_getpath(abspath, passpath, 0, 0);
+            int source_match = sea_getpath(abspath, mountpath, 1);
 
             SEA_DIR *sd = new SEA_DIR;
             sd->curr_index = 0;
-            sd->issea = 1;
             sd->dirnames = (char **)malloc(sizeof(char *) * sea_conf.n_sources * PATH_MAX);
-            sd->fds = (int *)malloc(sizeof(int) * sea_conf.n_sources);
             sd->other_dirp = (DIR **)malloc(sizeof(DIR *) * sea_conf.n_sources - 1);
+            sd->fds = (int *)malloc(sizeof(int) * sea_conf.n_sources);
 
+            log_msg(INFO, "fdopendir: mount_match - %d ; source_match %d", mount_match, source_match);
+            if (mount_match == 0 && source_match == 0)
+            {
+
+                sd->issea = 0;
+                sd->dirp = ((funcptr_fdopendir)libc_fdopendir)(fd);
+
+                if (sd->dirp == NULL)
+                    return sd->dirp;
+
+                sd->dirnames[0] = strdup(passpath);
+                sd->fds[0] = fd;
+                sd->total_dp = 1;
+
+                log_msg(INFO, "fdopendir: directory not in Sea %d %s", fd, sd->dirnames[0]);
+                return (DIR *)sd;
+            }
+            if (mount_match)
+                strcpy(mountpath, passpath);
+
+            log_msg(INFO, "fdopendir: is a Sea dir %d", fd);
+
+            sd->issea = 1;
             sd->dirp = ((funcptr_fdopendir)libc_fdopendir)(fd);
 
             if (sd->dirp == NULL)
@@ -570,7 +566,14 @@ extern "C"
                 log_msg(DEBUG, "fdopendir: other_dirp at index %d is null %d", i - 1, sd->other_dirp[i - 1] == NULL);
             }
 
+            sd->total_dp = sea_conf.n_sources;
+
             return (DIR *)sd;
+        }
+        else
+        {
+            log_msg(INFO, "fdopendir: not in Sea %d", fd);
+            return ((funcptr_fdopendir)libc_fdopendir)(fd);
         }
     }
 
