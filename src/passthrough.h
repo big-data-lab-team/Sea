@@ -33,6 +33,10 @@ typedef DIR *(*funcptr_opendir)(const char *);
 typedef DIR *(*funcptr_fdopendir)(int);
 typedef int (*funcptr_scandir)(const char *dir, struct dirent ***namelist, int (*selector)(const struct dirent *), int (*cmp)(const struct dirent **, const struct dirent **));
 typedef int (*funcptr_scandir64)(const char *dir, struct dirent64 ***namelist, int (*selector)(const struct dirent64 *), int (*cmp)(const struct dirent64 **, const struct dirent64 **));
+typedef int (*funcptr_scandirat)(int dfd, const char *dir, struct dirent ***namelist, int (*select)(const struct dirent *), int (*cmp)(const struct dirent **, const struct dirent **));
+typedef int (*funcptr_scandirat64)(int dfd, const char *dir, struct dirent64 ***namelist,
+                                   int (*select)(const struct dirent64 *),
+                                   int (*cmp)(const struct dirent64 **, const struct dirent64 **));
 typedef int (*funcptr_close)(int);
 typedef int (*funcptr_closedir)(DIR *);
 
@@ -158,6 +162,8 @@ extern void *libc_opendir;
 extern void *libc_fdopendir;
 extern void *libc_scandir;
 extern void *libc_scandir64;
+extern void *libc_scandirat;
+extern void *libc_scandirat64;
 extern void *libc_close;
 extern void *libc___close;
 extern void *libc_closedir;
