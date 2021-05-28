@@ -91,6 +91,8 @@
             log_msg(INFO, "readdir%s: attempting to read %s", #VERSION, d->d_name);                                                     \
         else if (d != NULL && errno)                                                                                                    \
             log_msg(ERROR, "readdir%s: failed to read null dir %d", #VERSION, errno);                                                   \
+        else if (d == NULL)                                                                                                             \
+            log_msg(DEBUG, "readdir%s: returning null", #VERSION);                                                                      \
                                                                                                                                         \
         log_msg(INFO, "readdir%s: readdir%s ended", #VERSION, #VERSION);                                                                \
         return d;                                                                                                                       \
@@ -617,6 +619,7 @@ extern "C"
                 int (*filter)(const struct dirent *),
                 int (*compar)(const struct dirent **, const struct dirent **))
     {
+        log_msg(INFO, "scandir");
         char passpath[PATH_MAX];
         init_path("scandir", dirp, passpath, 0);
         return ((funcptr_scandir)libc_scandir)(passpath, namelist, filter, compar);
@@ -626,6 +629,7 @@ extern "C"
                   int (*select)(const struct dirent64 *),
                   int (*cmp)(const struct dirent64 **, const struct dirent64 **))
     {
+        log_msg(INFO, "scandir64");
         char passpath[PATH_MAX];
         init_path("scandir64", dirp, passpath, 0);
         return ((funcptr_scandir64)libc_scandir64)(passpath, namelist, select, cmp);
@@ -636,6 +640,7 @@ extern "C"
                   int (*select)(const struct dirent *),
                   int (*cmp)(const struct dirent **, const struct dirent **))
     {
+        log_msg(INFO, "scandirat");
         initialize_passthrough_if_necessary();
         log_msg(INFO, "scandirat test");
         return 0;
@@ -646,6 +651,7 @@ extern "C"
                     int (*select)(const struct dirent64 *),
                     int (*cmp)(const struct dirent64 **, const struct dirent64 **))
     {
+        log_msg(INFO, "scandirat");
         initialize_passthrough_if_necessary();
         log_msg(INFO, "scandirat64 test");
         return 0;
@@ -930,8 +936,8 @@ extern "C"
                 {
                     char mountpath[PATH_MAX];
                     initialize_sea_if_necessary();
-                    int mount_match = sea_getpath(pathname, passpath, 0, 0);
-                    int source_match = sea_getpath(pathname, mountpath, 1);
+                    int mount_match = sea_getpath(abspath, passpath, 0, 0);
+                    int source_match = sea_getpath(abspath, mountpath, 1);
 
                     // if not a directory within the mountpoint or the source directories, return just the current dir
                     if (mount_match == 0 && source_match == 0)
@@ -941,7 +947,7 @@ extern "C"
                     }
 
                     if (mount_match)
-                        strcpy(mountpath, pathname);
+                        strcpy(mountpath, abspath);
 
                     int ret = 0;
                     ret = ((funcptr_unlinkat)libc_unlinkat)(dirfd, passpath, flags);
@@ -962,6 +968,7 @@ extern "C"
     // fix and remove all relevant directories
     int rmdir(const char *pathname)
     {
+        log_msg(INFO, "rmdir");
         char passpath[PATH_MAX];
         init_path("rmdir", pathname, passpath, 0);
         return ((funcptr_rmdir)libc_rmdir)(passpath);
