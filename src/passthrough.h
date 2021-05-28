@@ -39,6 +39,7 @@ typedef int (*funcptr_scandirat64)(int dfd, const char *dir, struct dirent64 ***
                                    int (*cmp)(const struct dirent64 **, const struct dirent64 **));
 typedef int (*funcptr_close)(int);
 typedef int (*funcptr_closedir)(DIR *);
+typedef void (*funcptr_rewinddir)(DIR *);
 
 typedef ssize_t (*funcptr_read)(int, void *, size_t);
 typedef ssize_t (*funcptr_write)(int, const void *, size_t);
@@ -167,6 +168,7 @@ extern void *libc_scandirat64;
 extern void *libc_close;
 extern void *libc___close;
 extern void *libc_closedir;
+extern void *libc_rewinddir;
 extern void *libc_pread;
 extern void *libc_pwrite;
 extern void *libc_read;
