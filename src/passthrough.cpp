@@ -181,11 +181,22 @@ FILE *xtreemfs_stdout()
 */
 char *make_file_name_canonical(char const *file_path)
 {
-  log_msg(INFO, "In make_file_name_canonical %s", file_path);
-  if (!strcmp(file_path, "") || file_path == NULL || strstr(file_path, "\n"))
+  if (file_path == NULL)
   {
-    return (char *)file_path;
+    log_msg(INFO, "In make_file_name_canonical NULL");
+    return NULL;
   }
+  else if (!strcmp(file_path, ""))
+  {
+    log_msg(INFO, "In make_file_name_canonical ''");
+    return strdup("");
+  }
+  else if (strstr(file_path, "\n"))
+  {
+    log_msg(INFO, "In make_file_name_canonical '\\n'");
+    return strdup("\n");
+  }
+  log_msg(INFO, "In make_file_name_canonical %s", file_path);
 
   char *canonical_file_path = NULL;
   unsigned int file_path_len = strlen(file_path);
@@ -394,7 +405,8 @@ int pass_getpath(const char *oldpath, char passpath[PATH_MAX], int masked_path, 
         break;
     }
   }
-
+  if (canonical != NULL)
+    free(canonical);
   if (passpath == NULL)
     return 0;
 

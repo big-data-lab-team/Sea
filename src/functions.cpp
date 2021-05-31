@@ -428,9 +428,9 @@ extern "C"
 
         if (sea_conf.parsed == true && sea_conf.n_sources > 1)
         {
-            SEA_DIR *sd = new SEA_DIR;
+            SEA_DIR *sd = (SEA_DIR *)malloc(sizeof(SEA_DIR));
             sd->issea = 0;
-            sd->dirnames = (char **)malloc(sizeof(char *) * sea_conf.n_sources * PATH_MAX);
+            sd->dirnames = (char **)malloc(sizeof(char *) * sea_conf.n_sources);
             sd->other_dirp = (DIR **)malloc(sizeof(DIR *) * sea_conf.n_sources - 1);
 
             initialize_sea_if_necessary();
@@ -441,7 +441,7 @@ extern "C"
             if (mount_match == 0 && source_match == 0)
             {
                 log_msg(DEBUG, "opendir: %s not within Sea mount", passpath);
-                sd->dirnames[0] = passpath;
+                sd->dirnames[0] = strdup(passpath);
                 sd->dirp = ((funcptr_opendir)libc_opendir)(passpath);
 
                 if (sd->dirp == NULL)
@@ -510,9 +510,9 @@ extern "C"
             int mount_match = sea_getpath(abspath, passpath, 0, 0);
             int source_match = sea_getpath(abspath, mountpath, 1);
 
-            SEA_DIR *sd = new SEA_DIR;
+            SEA_DIR *sd = (SEA_DIR *)malloc(sizeof(SEA_DIR));
             sd->curr_index = 0;
-            sd->dirnames = (char **)malloc(sizeof(char *) * sea_conf.n_sources * PATH_MAX);
+            sd->dirnames = (char **)malloc(sizeof(char *) * sea_conf.n_sources);
             sd->other_dirp = (DIR **)malloc(sizeof(DIR *) * sea_conf.n_sources - 1);
 
             log_msg(INFO, "fdopendir: mount_match - %d ; source_match %d", mount_match, source_match);
@@ -690,17 +690,22 @@ extern "C"
             initialize_sea_if_necessary();
             SEA_DIR *sd = (SEA_DIR *)dirp;
 
+            free(sd->dirnames[0]);
             if (sd->issea)
             {
                 for (int i = 1; i < sd->total_dp; ++i)
                 {
                     ((funcptr_closedir)libc_closedir)(sd->other_dirp[i - 1]);
+                    free(sd->dirnames[i]);
                 }
+                free(sd->dirnames);
+                free(sd->other_dirp);
             }
 
             int ret = 0;
             ret = ((funcptr_closedir)libc_closedir)(sd->dirp);
-            delete sd;
+
+            free(sd);
             return ret;
         }
         log_msg(INFO, "closedir");
