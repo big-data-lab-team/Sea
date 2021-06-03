@@ -131,6 +131,20 @@ TEST(Passthrough, GetRealPath)
     pass_getpath(oldpath_2, passpath, 1);
     strcpy(rp, oldpath_2);
     ASSERT_STREQ(passpath, rp);
+
+    int match;
+    // test source path without masking
+    char *oldpath_3 = (char *)malloc(PATH_MAX * sizeof(char *));
+    ((funcptr_realpath)libc_realpath)("source_1", oldpath_3);
+    match = pass_getpath(oldpath_3, passpath, 0);
+    strcpy(rp, oldpath_3);
+    ASSERT_STREQ(passpath, rp);
+    ASSERT_EQ(match, 0);
+
+    // test non mount path with masking
+    match = pass_getpath(oldpath_3, passpath, 1);
+    strcpy(rp, oldpath_3);
+    ASSERT_EQ(match, 1);
 }
 
 //TODO: Also check error values
@@ -144,7 +158,10 @@ TEST(Sea, OpenDir)
 
     DIR *rdp = opendir(regdir);
     EXPECT_TRUE(rdp != NULL);
-    ((funcptr_closedir)libc_closedir)(rdp);
+    EXPECT_TRUE(((SEA_DIR *)rdp)->dirp != NULL);
+    //printf("is null %d\n", ((SEA_DIR *)rdp)->dirp != NULL);
+    //((funcptr_closedir)libc_closedir)((DIR *)((SEA_DIR *)rdp)->dirp);
+    closedir(rdp);
 
     // Test if subdir in path outside of Sea can be opened
     char regsd[PATH_MAX];
@@ -153,7 +170,8 @@ TEST(Sea, OpenDir)
 
     DIR *rsdp = opendir(regsd);
     EXPECT_TRUE(rsdp != NULL);
-    ((funcptr_closedir)libc_closedir)(rsdp);
+    closedir(rsdp);
+    //((funcptr_closedir)libc_closedir)(((SEA_DIR *)rsdp)->dirp);
 
     // Test if Sea mount point can be opened
     char *seadir = "mount";
@@ -165,7 +183,8 @@ TEST(Sea, OpenDir)
     if (seadp->dirp == NULL)
         printf("%s is NULL\n", seadp->dirnames[0]);
 
-    close_seadir(seadp);
+    //close_seadir(seadp);
+    closedir(sdp);
 
     // Test if subdir in sea can be opened
     char seasd[PATH_MAX];
@@ -176,10 +195,11 @@ TEST(Sea, OpenDir)
     EXPECT_TRUE(sdp != NULL);
 
     SEA_DIR *seasdp = (SEA_DIR *)ssdirp;
-    close_seadir(seasdp);
+    //close_seadir(seasdp);
+    closedir(ssdirp);
 
-    free(seadp);
-    free(seasdp);
+    //free(seadp);
+    //free(seasdp);
 
     // Check that a directory which does not exist fails
     char *fakedir = "mount/fkdir";
@@ -190,6 +210,8 @@ TEST(Sea, OpenDir)
 
 TEST(Sea, ReadDir)
 {
+
+    initialize_sea_if_necessary();
     // Test nonseadir
     char *regdir = "newdir";
     struct dirent *entry;
@@ -203,7 +225,8 @@ TEST(Sea, ReadDir)
     {
         found_files.insert(entry->d_name);
     }
-    ((funcptr_closedir)libc_closedir)(rd);
+    closedir(rd);
+    //((funcptr_closedir)libc_closedir)(rd);
 
     ASSERT_EQ(reg_files, found_files);
 
@@ -216,7 +239,8 @@ TEST(Sea, ReadDir)
     {
         found_files.insert(entry64->d_name);
     }
-    ((funcptr_closedir)libc_closedir)(rd);
+    closedir(rd);
+    //((funcptr_closedir)libc_closedir)(rd);
 
     ASSERT_EQ(reg_files, found_files);
 
@@ -228,11 +252,13 @@ TEST(Sea, ReadDir)
     char *seadir = "mount";
     DIR *sdp = opendir(seadir);
 
+    SEA_DIR *sd = (SEA_DIR *)sdp;
     while ((entry = readdir(sdp)))
     {
         found_files.insert(entry->d_name);
     }
-    close_seadir((SEA_DIR *)sdp);
+    closedir(sdp);
+    //close_seadir((SEA_DIR *)sdp);
     ASSERT_EQ(sea_files, found_files);
 
     //64bit
@@ -243,7 +269,8 @@ TEST(Sea, ReadDir)
     {
         found_files.insert(entry64->d_name);
     }
-    close_seadir((SEA_DIR *)sdp);
+    closedir(sdp);
+    //close_seadir((SEA_DIR *)sdp);
     ASSERT_EQ(sea_files, found_files);
 
     // Test sea subdirectory
@@ -258,7 +285,8 @@ TEST(Sea, ReadDir)
     {
         found_files.insert(entry->d_name);
     }
-    close_seadir((SEA_DIR *)sdp);
+    closedir(sdp);
+    //close_seadir((SEA_DIR *)sdp);
     ASSERT_EQ(subdir_files, found_files);
 
     //64bit
@@ -269,7 +297,8 @@ TEST(Sea, ReadDir)
     {
         found_files.insert(entry64->d_name);
     }
-    close_seadir((SEA_DIR *)sdp);
+    closedir(sdp);
+    //close_seadir((SEA_DIR *)sdp);
     ASSERT_EQ(subdir_files, found_files);
 }
 
