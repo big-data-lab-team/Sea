@@ -125,8 +125,7 @@ void parse_config()
     {
         std::vector<char> source_vec(all_sources.at(i).begin(), all_sources.at(i).end());
         source_vec.push_back('\0');
-        sea_config.source_mounts[i] = (char *)malloc(sizeof(char) * PATH_MAX);
-        sea_config.source_mounts[i] = strndup(&source_vec[0], PATH_MAX);
+        sea_config.source_mounts[i] = strndup(source_vec.data(), PATH_MAX);
     }
     if ((sea_config.mount_dir = (char *)iniparser_getstring(config_dict, "sea:mount_dir", NULL)) == 0)
     {

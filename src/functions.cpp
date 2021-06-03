@@ -35,13 +35,13 @@
 #define DEFINE_READDIR(VERSION, TYPE)                                                                                                   \
     struct TYPE *readdir##VERSION(DIR *dirp)                                                                                            \
     {                                                                                                                                   \
+        initialize_passthrough_if_necessary();                                                                                          \
         struct TYPE *d;                                                                                                                 \
         d = NULL;                                                                                                                       \
                                                                                                                                         \
         log_msg(INFO, "readdir%s: readdir%s started", #VERSION, #VERSION);                                                              \
         errno = 0;                                                                                                                      \
         config sea_conf = get_sea_config();                                                                                             \
-        initialize_passthrough_if_necessary();                                                                                          \
                                                                                                                                         \
         log_msg(INFO, "readdir%s: passthrough initialized", #VERSION);                                                                  \
         if (sea_conf.parsed == true && sea_conf.n_sources > 1)                                                                          \
@@ -426,6 +426,7 @@ extern "C"
         struct config sea_conf;
         sea_conf = get_sea_config();
 
+        //printf("parsed %d nsource %d\n", sea_conf.parsed, sea_conf.n_sources);
         if (sea_conf.parsed == true && sea_conf.n_sources > 1)
         {
             SEA_DIR *sd = (SEA_DIR *)malloc(sizeof(SEA_DIR));
@@ -438,8 +439,9 @@ extern "C"
             int source_match = sea_getpath(pathname, mountpath, 1);
 
             // if not a directory within the mountpoint or the source directories, don't need to create a SEA_DIR struct.
-            if (mount_match == 0 && source_match == 0)
+            if (mount_match == 0)
             {
+                //printf("not in sea mount");
                 log_msg(DEBUG, "opendir: %s not within Sea mount", passpath);
                 sd->dirnames[0] = strdup(passpath);
                 sd->dirp = ((funcptr_opendir)libc_opendir)(passpath);
@@ -452,7 +454,32 @@ extern "C"
             }
 
             if (mount_match)
+            {
+                //printf("a mount match\n");
+                // char *match;
+                // char *seapath = strdup(pathname);
+
+                // int len = strlen(pathname);
+
+                // for (int i = 0; i < sea_conf.n_sources; ++i)
+                // {
+                //     if ((match = strstr(seapath, sea_conf.source_mounts[i])))
+                //     {
+
+                //         if (match != NULL && match[0] != '\0' && match[0] == '/')
+                //         {
+                //             printf("source mount %s seapath %s\n", sea_conf.source_mounts[i], seapath);
+                //             seapath = strdup(sea_conf.source_mounts[0]);
+                //             *match = '\0';
+                //             strcat(seapath, match + len);
+                //             break;
+                //         }
+                //     }
+                // }
+
                 strcpy(mountpath, pathname);
+                //printf("new path %s\n", mountpath);
+            }
 
             sd->curr_index = 0;
             sd->issea = 1;
