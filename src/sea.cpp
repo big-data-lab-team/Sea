@@ -13,10 +13,7 @@
 
 int sea_internal;
 
-std::set<std::string> sea_files;
-
 // need to convert to C structs
-std::map<int, SEA_FD *> seafd;
 const char *fdpath = "/proc/self/fd";
 /**
  * Getter for the sea_internal global variable
@@ -171,82 +168,68 @@ int sea_getpath(const char *oldpath, char passpath[PATH_MAX], int masked_path, i
     return match;
 }
 
-// // obtained from : https://codeforwin.org/2018/03/c-program-to-list-all-files-in-a-directory-recursively.html
-// // modified to populate vector
-// /**
-//  * Populate a set with all files and directories located within a given source mount.
-//  * Directories which do not exist in all source mounts are created in all the mounts.
-//  *
-//  * @param basePath the root directory to start adding paths from
-//  * @param sea_lvl the index of the basePath's parent source mount
-//  * @param sea_config the sea configuration struct
-//  * @param sea_paths the reference to a set where paths will be appended to
-//  *
-//  */
-// void populateFileSet(char *basePath, int sea_lvl, struct config sea_config, std::set<std::string> &sea_paths)
-// {
-//     log_msg(DEBUG, "test0");
-//     char path[PATH_MAX];
-//     struct dirent *dp;
-//     DIR *dir = ((funcptr_opendir)libc_opendir)(basePath);
+/**
+ * Directories which do not exist in all source mounts are created in all the mounts.
+ *
+ * @param basePath the root directory to start adding paths from
+ * @param sea_lvl the index of the basePath's parent source mount
+ * @param sea_config the sea configuration struct
+ *
+ */
+void mirrorSourceDirs(char *basePath, int sea_lvl, struct config sea_config)
+{
+    log_msg(DEBUG, "mirrorSourceDirs: Attempting to mirror directories");
+    char path[PATH_MAX];
+    struct dirent *dp;
+    DIR *dir = ((funcptr_opendir)libc_opendir)(basePath);
 
-//     //SEA_DIR *sd = (SEA_DIR *)tmpdir;
-//     //DIR *dir = sd->dirp;
+    // Unable to open directory stream
+    if (!dir)
+        return;
 
-//     // Unable to open directory stream
-//     if (!dir)
-//         return;
+    while ((dp = ((funcptr_readdir)libc_readdir)(dir)) != NULL)
+    {
 
-//     log_msg(DEBUG, "test1");
+        // Construct new path from our base path
+        strcpy(path, basePath);
 
-//     while ((dp = ((funcptr_readdir)libc_readdir)(dir)) != NULL)
-//     {
+        strcat(path, "/");
+        strcat(path, dp->d_name);
 
-//         // Construct new path from our base path
-//         strcpy(path, basePath);
+        if (strcmp(dp->d_name, ".") != 0 && strcmp(dp->d_name, "..") != 0)
+        {
+            if (dp->d_type == DT_DIR)
+            {
+                struct stat buf;
+                if (((funcptr___xstat)libc___xstat)(_STAT_VER_LINUX, path, &buf) == 0)
+                {
 
-//         strcat(path, "/");
-//         strcat(path, dp->d_name);
-//         std::string fp(path, 0, PATH_MAX);
+                    for (int i = 0; i < sea_config.n_sources; ++i)
+                    {
+                        if (i != sea_lvl)
+                        {
+                            char dir_to_create[PATH_MAX];
 
-//         sea_paths.insert(fp);
+                            strcpy(dir_to_create, sea_config.source_mounts[i]);
+                            strcat(dir_to_create, "/");
+                            strcat(dir_to_create, dp->d_name);
 
-//         if (strcmp(dp->d_name, ".") != 0 && strcmp(dp->d_name, "..") != 0)
-//         {
-//             if (dp->d_type == DT_DIR)
-//             {
-//                 struct stat buf;
-//                 if (((funcptr___xstat)libc___xstat)(_STAT_VER_LINUX, path, &buf) == 0)
-//                 {
-
-//                     for (int i = 0; i < sea_config.n_sources; ++i)
-//                     {
-//                         if (i != sea_lvl)
-//                         {
-//                             char dir_to_create[PATH_MAX];
-
-//                             strcpy(dir_to_create, sea_config.source_mounts[i]);
-//                             strcat(dir_to_create, "/");
-//                             strcat(dir_to_create, dp->d_name);
-
-//                             std::string dirp(dir_to_create, 0, PATH_MAX);
-
-//                             sea_paths.insert(dirp);
-//                             sea_paths.insert(dirp + "/..");
-//                             sea_paths.insert(dirp + "/.");
-
-//                             //TODO: add error handling here
-//                             ((funcptr_mkdir)libc_mkdir)(dir_to_create, buf.st_mode);
-//                         }
-//                     }
-//                 }
-//             }
-//             populateFileSet(path, sea_lvl, sea_config, sea_paths);
-//         }
-//     }
-//     log_msg(DEBUG, "test2");
-//     ((funcptr_closedir)libc_closedir)(dir);
-// }
+                            //TODO: add error handling here
+                            log_msg(INFO, "mirrorSourceDirs: Creating dir %s", dir_to_create);
+                            ((funcptr_mkdir)libc_mkdir)(dir_to_create, buf.st_mode);
+                            // don't care if directory already exists
+                            if (errno == EEXIST)
+                                errno = 0;
+                        }
+                    }
+                }
+            }
+            mirrorSourceDirs(path, sea_lvl, sea_config);
+        }
+    }
+    log_msg(DEBUG, "mirrorSourceDirs: Completed");
+    ((funcptr_closedir)libc_closedir)(dir);
+}
 
 /**
  * Populate the sea_files set with all the directories and paths located within the
@@ -255,20 +238,13 @@ int sea_getpath(const char *oldpath, char passpath[PATH_MAX], int masked_path, i
  */
 void initialize_sea()
 {
-    //printf("test\n");
-    //sea_files.clear();
-    //sea_internal = 0;
-    // seafd.clear();
-    // struct config sea_config = get_sea_config();
+    struct config sea_config = get_sea_config();
 
-    // for (int i = 0; i < sea_config.n_sources; i++)
-    // {
-    //     populateFileSet(sea_config.source_mounts[i], i, sea_config, sea_files);
-    //     //printf("sources %s\n", sea_config.source_mounts[i]);
-    // }
-    // for (auto it = sea_files.begin(); it != sea_files.end(); ++it)
-    //     printf("seafiles %s\n", it->c_str());
-    // printf("done\n");
+    for (int i = 0; i < sea_config.n_sources; i++)
+    {
+        mirrorSourceDirs(sea_config.source_mounts[i], i, sea_config);
+        //printf("sources %s\n", sea_config.source_mounts[i]);
+    }
 }
 
 static pthread_once_t sea_initialized = PTHREAD_ONCE_INIT;
@@ -281,7 +257,4 @@ static pthread_once_t sea_initialized = PTHREAD_ONCE_INIT;
 void initialize_sea_if_necessary()
 {
     pthread_once(&sea_initialized, initialize_sea);
-
-    if (seafd.size() == 0)
-        initialize_sea();
 }

@@ -19,7 +19,6 @@ extern int sea_internal;
 int set_internal();
 int get_internal();
 int unset_internal();
-extern std::set<std::string> sea_files;
 int sea_checkpath(const char *path);
 int sea_getpath(const char *oldpath, char passpath[PATH_MAX], int masked_path);
 int sea_getpath(const char *oldpath, char passpath[PATH_MAX], int masked_path, int source_id);
@@ -36,15 +35,5 @@ struct SEA_DIR
     int curr_index;
     int total_dp;
 };
-
-// need to convert to C struct
-struct SEA_FD
-{
-    std::vector<int> fd;
-    std::vector<char *> dirnames;
-};
-
-// need to convert to C struct
-extern std::map<int, SEA_FD *> seafd;
 
 #endif
