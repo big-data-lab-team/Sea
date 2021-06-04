@@ -178,7 +178,7 @@ int sea_getpath(const char *oldpath, char passpath[PATH_MAX], int masked_path, i
  */
 void mirrorSourceDirs(char *basePath, int sea_lvl, struct config sea_config)
 {
-    log_msg(DEBUG, "mirrorSourceDirs: Attempting to mirror directories");
+    log_msg(DEBUG, "mirrorSourceDirs: Attempting to mirror directories at %s", basePath);
     char path[PATH_MAX];
     struct dirent *dp;
     DIR *dir = ((funcptr_opendir)libc_opendir)(basePath);
@@ -211,9 +211,27 @@ void mirrorSourceDirs(char *basePath, int sea_lvl, struct config sea_config)
                             char dir_to_create[PATH_MAX];
 
                             strcpy(dir_to_create, sea_config.source_mounts[i]);
+
+                            char *match;
+                            int len = strlen(sea_config.source_mounts[sea_lvl]);
+                            char *tmp = strdup(basePath);
+
+                            if ((match = strstr(tmp, sea_config.source_mounts[sea_lvl])))
+                            {
+                                if (match != NULL && match[0] != '\0')
+                                {
+                                    //printf("match\n");
+                                    *match = '\0';
+                                    strcat(dir_to_create, match + len);
+                                }
+                                //printf("match %d %s\n", match == NULL, dir_to_create);
+                            }
+                            free(tmp);
+
                             strcat(dir_to_create, "/");
                             strcat(dir_to_create, dp->d_name);
 
+                            //printf("dir to create %s %s %s\n", dir_to_create, basePath, sea_config.source_mounts[sea_lvl]);
                             //TODO: add error handling here
                             log_msg(INFO, "mirrorSourceDirs: Creating dir %s", dir_to_create);
                             ((funcptr_mkdir)libc_mkdir)(dir_to_create, buf.st_mode);

@@ -4,32 +4,32 @@
 #include "config.h"
 #include <stdlib.h>
 
-#define DEFINE_SEAREADNEXT(VERSION, TYPE)                                                                                                                        \
-    struct TYPE *sea_readnext##VERSION(struct TYPE *d, config sea_conf, SEA_DIR *sd)                                                                             \
-    {                                                                                                                                                            \
-        log_msg(DEBUG, "sea_readnext%s: D is NULL %d Current index %d %d", #VERSION, d == NULL, sd->curr_index - 1, sd->other_dirp[sd->curr_index - 1] == NULL); \
-        d = ((funcptr_readdir##VERSION)libc_readdir##VERSION)(sd->other_dirp[sd->curr_index - 1]);                                                               \
-        log_msg(DEBUG, "sea_readnext%s: done reading", #VERSION);                                                                                                \
-                                                                                                                                                                 \
-        if (d == NULL)                                                                                                                                           \
-        {                                                                                                                                                        \
-            log_msg(DEBUG, "sea_readnext%s: recently read d is NULL %d", #VERSION, d == NULL);                                                                   \
-            while (d == NULL && sd->curr_index + 1 < sd->total_dp)                                                                                               \
-            {                                                                                                                                                    \
-                sd->curr_index++;                                                                                                                                \
-                d = ((funcptr_readdir##VERSION)libc_readdir##VERSION)(sd->other_dirp[sd->curr_index - 1]);                                                       \
-            }                                                                                                                                                    \
-        }                                                                                                                                                        \
-        if (d != NULL)                                                                                                                                           \
-        {                                                                                                                                                        \
-            log_msg(DEBUG, "sea_readnext%s: read entry %s", #VERSION, d->d_name);                                                                                \
-            if (sd->curr_index > 0 && d->d_type == DT_DIR)                                                                                                       \
-            {                                                                                                                                                    \
-                log_msg(DEBUG, "sea_readnext%s: Curr dir is a directory, reading next inode.", #VERSION);                                                        \
-                d = sea_readnext##VERSION(d, sea_conf, sd);                                                                                                      \
-            }                                                                                                                                                    \
-        }                                                                                                                                                        \
-        return d;                                                                                                                                                \
+#define DEFINE_SEAREADNEXT(VERSION, TYPE)                                                                                                          \
+    struct TYPE *sea_readnext##VERSION(struct TYPE *d, config sea_conf, SEA_DIR *sd)                                                               \
+    {                                                                                                                                              \
+        log_msg(DEBUG, "sea_readnext%s: D is NULL %d Current index %d %s", #VERSION, d == NULL, sd->curr_index - 1, sd->dirnames[sd->curr_index]); \
+        d = ((funcptr_readdir##VERSION)libc_readdir##VERSION)(sd->other_dirp[sd->curr_index - 1]);                                                 \
+        log_msg(DEBUG, "sea_readnext%s: done reading", #VERSION);                                                                                  \
+                                                                                                                                                   \
+        if (d == NULL)                                                                                                                             \
+        {                                                                                                                                          \
+            log_msg(DEBUG, "sea_readnext%s: recently read d is NULL %d", #VERSION, d == NULL);                                                     \
+            while (d == NULL && sd->curr_index + 1 < sd->total_dp)                                                                                 \
+            {                                                                                                                                      \
+                sd->curr_index++;                                                                                                                  \
+                d = ((funcptr_readdir##VERSION)libc_readdir##VERSION)(sd->other_dirp[sd->curr_index - 1]);                                         \
+            }                                                                                                                                      \
+        }                                                                                                                                          \
+        if (d != NULL)                                                                                                                             \
+        {                                                                                                                                          \
+            log_msg(DEBUG, "sea_readnext%s: read entry %s", #VERSION, d->d_name);                                                                  \
+            if (sd->curr_index > 0 && d->d_type == DT_DIR)                                                                                         \
+            {                                                                                                                                      \
+                log_msg(DEBUG, "sea_readnext%s: Curr dir is a directory, reading next inode.", #VERSION);                                          \
+                d = sea_readnext##VERSION(d, sea_conf, sd);                                                                                        \
+            }                                                                                                                                      \
+        }                                                                                                                                          \
+        return d;                                                                                                                                  \
     }
 
 #define DEFINE_READDIR(VERSION, TYPE)                                                                                                   \
@@ -436,7 +436,7 @@ extern "C"
 
             initialize_sea_if_necessary();
             int mount_match = sea_getpath(pathname, passpath, 0, 0);
-            int source_match = sea_getpath(pathname, mountpath, 1);
+            //int source_match = sea_getpath(pathname, mountpath, 1);
 
             // if not a directory within the mountpoint or the source directories, don't need to create a SEA_DIR struct.
             if (mount_match == 0)
@@ -969,9 +969,10 @@ extern "C"
                     char mountpath[PATH_MAX];
                     initialize_sea_if_necessary();
                     int mount_match = sea_getpath(abspath, passpath, 0, 0);
+                    int source_match = sea_getpath(passpath, mountpath, 1);
 
                     // if not a directory within the mountpoint or the source directories, return just the current dir
-                    if (mount_match == 0)
+                    if (mount_match == 0 && source_match == 0)
                     {
 
                         return ((funcptr_unlinkat)libc_unlinkat)(dirfd, passpath, flags);
@@ -1026,7 +1027,7 @@ extern "C"
 
             int ret = 0;
             ret = ((funcptr_rmdir)libc_rmdir)(passpath);
-            for (int i = 0; i < sea_conf.n_sources; i++)
+            for (int i = 1; i < sea_conf.n_sources; i++)
             {
                 passpath[0] = '\0';
                 sea_getpath(mountpath, passpath, 0, i);
