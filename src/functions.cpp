@@ -969,10 +969,9 @@ extern "C"
                     char mountpath[PATH_MAX];
                     initialize_sea_if_necessary();
                     int mount_match = sea_getpath(abspath, passpath, 0, 0);
-                    int source_match = sea_getpath(abspath, mountpath, 1);
 
                     // if not a directory within the mountpoint or the source directories, return just the current dir
-                    if (mount_match == 0 && source_match == 0)
+                    if (mount_match == 0)
                     {
 
                         return ((funcptr_unlinkat)libc_unlinkat)(dirfd, passpath, flags);
@@ -1000,9 +999,42 @@ extern "C"
     // fix and remove all relevant directories
     int rmdir(const char *pathname)
     {
-        log_msg(INFO, "rmdir");
+        initialize_passthrough_if_necessary();
         char passpath[PATH_MAX];
+        char abspath[PATH_MAX];
+
         init_path("rmdir", pathname, passpath, 0);
+
+        struct config sea_conf;
+        sea_conf = get_sea_config();
+
+        if (sea_conf.parsed == true && sea_conf.n_sources > 1)
+        {
+            char mountpath[PATH_MAX];
+            initialize_sea_if_necessary();
+            int mount_match = sea_getpath(pathname, passpath, 0, 0);
+
+            // if not a directory within the mountpoint or the source directories, return just the current dir
+            if (mount_match == 0)
+            {
+
+                return ((funcptr_rmdir)libc_rmdir)(passpath);
+            }
+
+            if (mount_match)
+                strcpy(mountpath, pathname);
+
+            int ret = 0;
+            ret = ((funcptr_rmdir)libc_rmdir)(passpath);
+            for (int i = 0; i < sea_conf.n_sources; i++)
+            {
+                passpath[0] = '\0';
+                sea_getpath(mountpath, passpath, 0, i);
+                log_msg(INFO, "rmdir: removing other directory %s", passpath);
+                ret = ((funcptr_rmdir)libc_rmdir)(passpath);
+            }
+            return ret;
+        }
         return ((funcptr_rmdir)libc_rmdir)(passpath);
     }
 
