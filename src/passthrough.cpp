@@ -198,7 +198,7 @@ char *make_file_name_canonical(char const *file_path)
   }
   log_msg(INFO, "In make_file_name_canonical %s", file_path);
 
-  char *canonical_file_path = NULL;
+  char *canonical_file_path = (char *)malloc(sizeof(char) * PATH_MAX);
   unsigned int file_path_len = strlen(file_path);
 
   if (file_path_len > 0)
@@ -410,8 +410,8 @@ int pass_getpath(const char *oldpath, char passpath[PATH_MAX], int masked_path, 
   //       break;
   //   }
   // }
-  if (canonical != NULL)
-    free(canonical);
+  //if (canonical != NULL)
+  //  free(canonical);
   if (passpath == NULL)
     return 0;
 
