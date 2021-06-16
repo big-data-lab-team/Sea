@@ -24,7 +24,7 @@ or
 In order to successfully run Sea alongside your application, you will need to provide some details in an `.ini` file called `sea.ini`.
 The following are the properties of the file:
 - `mount_dir`: This is the folder your application will directly interact with to access files in Sea. It is the "view" to Sea.
-- `n_sources`: The number of source directories in your file system. Source directories are the directories that you would like Sea to use in order
+- `n_levels`: The number of source directory levels in your file system. Source directories are the directories that you would like Sea to use in order
                to speed up computation (e.g. tmpfs directories, local disk and Lustre)
 - `source_<X>` : The path of the source. `<x>` is a digit representing at which level of the hierarchy this file system should be found at (starts at 0 - top).
                  For instance, a tmpfs path should likely be at `source_0` and a Lustre path should be found at the bottom of the hierarchy (e.g. `source_2`
@@ -40,7 +40,7 @@ An example configuration file may look like:
 ```                                                   
 [Sea]                                                                  
 mount_dir = /lustre/seamount ;                                    
-n_sources = 3 ;                                                        
+n_levels = 3 ;                                                        
 source_0 = /dev/shm/seasource ;                                           
 source_1 = /localscratch/seasource ;                                         
 source_2 = /lustre/seasource ;                                    
@@ -54,6 +54,10 @@ n_threads = 16 ;
 
 Sea relies on a file called `.sea_flushlist` to determine which files need to be be flushed from the upper-level sources to the bottom-level source directory.
 Exact filenames need not be provided and regex is accepted (can be thought or as similar to a `.gitignore`!). All filepaths resolved by the regex specified in the flushlist file will be flushed and evicted whenever possible.
+
+Conversly, to free up space on storage, a `.sea_evictlist` files can be populated to contain files set for removal. Like the `.sea_flushlist`, this is a newline separated list of regex patterns.
+
+Files that are listed in both the `.sea_evictlist` and `.sea_flushlist` are moved to the base source level filesystem (e.g. source_2 in the case above).
 
 
 ### Program execution
