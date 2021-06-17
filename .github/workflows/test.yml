@@ -20,12 +20,8 @@ jobs:
     steps:
       - name: Check out repository code
         uses: actions/checkout@v2
-      - name: Install dependencies
-        - run: |
-           sudo apt update -y 
-        - run: apt install -y make gcc g++ git file libmagic-dev python python3 libiniparser1 libiniparser-dev cmake libgtest-dev valgrind
-        - run: cp /usr/include/iniparser/*.h /usr/include/
-      - name: compile sea
-        run: |
-           (cd ${{ github.workspace }} && ls && make)
+      - run: sudo apt update -y 
+      - run: apt install -y make gcc g++ git file libmagic-dev python python3 libiniparser1 libiniparser-dev cmake libgtest-dev valgrind
+      - run: cp /usr/include/iniparser/*.h /usr/include/
+      - run: (cd ${{ github.workspace }} && ls && make)
 
