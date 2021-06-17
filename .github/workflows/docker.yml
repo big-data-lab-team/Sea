@@ -4,12 +4,15 @@ name: Docker Tests
 jobs:
   install-docker:
     runs-on: ubuntu-20.04
-    name: Install Docker
+    name: Build Docker image
     steps:
       - run: docker --version
       - name: Check out repository code
         uses: actions/checkout@v2
-      - run: DOCKERFILE=tests/docker/Dockerfile.centos8 && TAGNAME=centos8 && (cd ${{ github.workspace }} && docker build tests/docker -f ${DOCKERFILE} -t imagetest:${TAGNAME})
+      - run: DOCKERFILE=tests/docker/Dockerfile.centos8 && TAGNAME=centos8 && cd ${{ github.workspace }} && docker build tests/docker -f ${DOCKERFILE} -t imagetest:${TAGNAME}
+      - run: docker run --rm -v $PWD:$PWD -w $PWD imagetest:${TAGNAME} make clean
+      - run: docker run --rm -v $PWD:$PWD -w $PWD imagetest:${TAGNAME} make test debug_opts="-g -ggdb --coverage -fprofile-arcs -ftest-coverage"
+      - run: docker run --rm -v $PWD:$PWD -w $PWD imagetest:${TAGNAME} bats tests/tests.bats
+      - run: docker run --rm -v $PWD:$PWD -w $PWD -e SEA_HOME=$PWD imagetest:${TAGNAME} tests/test_custom
 
-    
 
