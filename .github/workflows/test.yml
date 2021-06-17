@@ -18,6 +18,8 @@ jobs:
   test-sea:
     runs-on: ubuntu-latest
     steps:
-      - run: ls ${{ github.workspace }}
-      - run: (cd ${{ github.workspace }} && ls && make)
+      - run: |
+           ls ${{ github.workspace }}
+      - run: |
+           (cd ${{ github.workspace }} && ls && make)
 
