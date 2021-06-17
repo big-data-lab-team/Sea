@@ -1,4 +1,5 @@
-# Sea ![Tests](https://github.com/github/docs/actions/workflows/test.yml/badge.svg) [![codecov](https://codecov.io/gh/ValHayot/Sea/branch/master/graph/badge.svg)](https://codecov.io/gh/ValHayot/Sea)
+# Sea [![Tests](https://github.com/big-data-lab-team/Sea/actions/workflows/test.yml/badge.svg)](https://github.com/big-data-lab-team/Sea/actions)
+      [![codecov](https://codecov.io/gh/big-data-lab-team/Sea/branch/master/graph/badge.svg)](https://codecov.io/gh/big-data-lab-team/Sea)
 
 ![Sea logo](https://docs.google.com/drawings/d/e/2PACX-1vRasSXkeh1LjZuON2KRt1Yy0cgUyUEMPhAxqPiHKMD4-slBpeNzMXoBlWoHBhl9zWfI_dUrLTfsNKSj/pub?w=156&h=149)
 
