@@ -85,7 +85,6 @@ our tests.
 
 | coreutils version | Used in | Status in Sea |
 | :------------- | :----------: | -----------: |
-
 | 8.4            | CentOS 6     | WORKS |
 | 8.22           | CentOS 7     | FAILS |
 | 8.25           | Ubuntu Xenial | WORKS|
