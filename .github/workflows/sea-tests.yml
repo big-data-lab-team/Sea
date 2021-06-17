@@ -7,7 +7,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os-name: [xenial, bionic, centos7, centos8, fedora32, fedora34]
+        os-name: [xenial, bionic, centos7, centos8, fedora32, fedora33, fedora34]
     name: Test in ${{ matrix.os-name }}
     steps:
       - run: docker --version
