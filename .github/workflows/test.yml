@@ -18,9 +18,9 @@ jobs:
   test-sea:
     runs-on: ubuntu-latest
     steps:
-      - name: list files
+      - name: List files in the repository
         run: |
-           ls ${{ github.workspace }}
+          ls ${{ github.workspace }}
       - name: compile sea
         run: |
            (cd ${{ github.workspace }} && ls && make)
