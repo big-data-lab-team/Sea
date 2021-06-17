@@ -79,8 +79,18 @@ LD_PRELOAD=passthrough.so <myactualprogram>
 
 ### Troubleshooting
 
-The following `coreutils` versions don't work with Sea because they do direct system 
-calls instead of calling glibc versions: 8.22 (default in CentOS 7), 8.30 (default in CentOS 8).
+Some `coreutils` versions don't work with Sea because they do direct system 
+calls instead of calling glibc versions. The following table summarizes 
+our tests.
 
-`coreutils` versions 8.4 (CentOS 6), 8.25 (Ubuntu Xenial) and 8.31 (Fedora 30) work. The Docker files 
-used in the Sea test cases show how to install specific `coreutils` versions from source.
+| coreutils version | Used in | Status in Sea |
+| :------------- | :----------: | -----------: |
+
+| 8.4            | CentOS 6     | WORKS |
+| 8.22           | CentOS 7     | FAILS |
+| 8.25           | Ubuntu Xenial | WORKS|
+| 8.30           | CentOS 8     | FAILS |
+| 8.31           | Fedora 30    | WORKS |
+
+The Docker files 
+used in the test cases show how to install specific `coreutils` versions from source.
