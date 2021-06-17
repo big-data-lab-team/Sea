@@ -1,7 +1,7 @@
 name: GitHub Actions Demo
 on: [push]
 jobs:
-  Test Sea:
+  Test-Sea:
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository code
@@ -10,7 +10,7 @@ jobs:
       - run: sudo apt install -y make gcc g++ git file libmagic-dev python python3 libiniparser1 libiniparser-dev cmake libgtest-dev valgrind bats
       - run: sudo cp /usr/include/iniparser/*.h /usr/include/
       - run: (cd ${{ github.workspace }} && ls && make && make test debug_opts="-g -ggdb --coverage -fprofile-arcs -ftest-coverage")
-      - run: sudo useradd --no-log-init -r tmpu
+      - run: useradd --no-log-init -r tmpu
       - run: bats tests/tests.bats
       - run: tests/test_custom
 
