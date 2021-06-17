@@ -12,5 +12,5 @@ jobs:
       - run: (cd ${{ github.workspace }} && ls && make && make test debug_opts="-g -ggdb --coverage -fprofile-arcs -ftest-coverage")
       - run: sudo useradd --no-log-init -r tmpu
       # - run: bats tests/tests.bats 
-      - run: tests/test_custom
+      - run: SEA_HOME=$PWD tests/test_custom
 
