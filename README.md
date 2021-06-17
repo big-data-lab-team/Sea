@@ -1,4 +1,4 @@
-# Sea [![Tests](https://github.com/big-data-lab-team/Sea/actions/workflows/test.yml/badge.svg)](https://github.com/big-data-lab-team/Sea/actions) [![codecov](https://codecov.io/gh/big-data-lab-team/Sea/branch/master/graph/badge.svg)](https://codecov.io/gh/big-data-lab-team/Sea)
+# Sea [![Tests](https://github.com/big-data-lab-team/Sea/actions/workflows/sea-tests.yml/badge.svg)](https://github.com/big-data-lab-team/Sea/actions) [![codecov](https://codecov.io/gh/big-data-lab-team/Sea/branch/master/graph/badge.svg)](https://codecov.io/gh/big-data-lab-team/Sea)
 
 ![Sea logo](https://docs.google.com/drawings/d/e/2PACX-1vRasSXkeh1LjZuON2KRt1Yy0cgUyUEMPhAxqPiHKMD4-slBpeNzMXoBlWoHBhl9zWfI_dUrLTfsNKSj/pub?w=156&h=149)
 
@@ -79,7 +79,17 @@ LD_PRELOAD=passthrough.so <myactualprogram>
 
 ### Troubleshooting
 
-The following `coreutils` versions don't work with Sea because they do direct system 
-calls instead of calling glibc versions: 8.22 (default in CentOS 7), 8.30 (default in CentOS 8).
-`coreutils` versions 8.4 (CentOS 6), 8.25 (Ubuntu Bionic) and 8.31 (Fedora 30) work. The Docker files 
-used in the Sea test cases show how to install specific `coreutils` versions from source.
+Some `coreutils` versions don't work with Sea because they do direct system 
+calls instead of calling glibc versions. The following table summarizes 
+our tests.
+
+| coreutils version | Used in | Status in Sea |
+| :------------- | :----------: | -----------: |
+| 8.4            | CentOS 6     | WORKS |
+| 8.22           | CentOS 7     | FAILS |
+| 8.25           | Ubuntu Xenial | WORKS|
+| 8.30           | CentOS 8     | FAILS |
+| 8.31           | Fedora 30    | WORKS |
+
+The Docker files 
+used in the test cases show how to install specific `coreutils` versions from source.
