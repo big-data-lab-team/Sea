@@ -1,5 +1,6 @@
-# Sea [![Build Status](https://travis-ci.com/ValHayot/Sea.svg?branch=master)](https://travis-ci.com/ValHayot/Sea) [![codecov](https://codecov.io/gh/ValHayot/Sea/branch/master/graph/badge.svg)](https://codecov.io/gh/ValHayot/Sea)
-![Sea logo](https://lh3.googleusercontent.com/_QD6PrqDMG50G8crgmnIa75jB3I4xnX1cREsHU-aQ0eTqAwBn4UoJ-NFwmVS6Q2xEXFqT2nQCNuhBf64NpuqDErX20Fd6iEKPAI1prmr)
+# Sea [![Tests](https://github.com/big-data-lab-team/Sea/actions/workflows/test.yml/badge.svg)](https://github.com/big-data-lab-team/Sea/actions) [![codecov](https://codecov.io/gh/big-data-lab-team/Sea/branch/master/graph/badge.svg)](https://codecov.io/gh/big-data-lab-team/Sea)
+
+![Sea logo](https://docs.google.com/drawings/d/e/2PACX-1vRasSXkeh1LjZuON2KRt1Yy0cgUyUEMPhAxqPiHKMD4-slBpeNzMXoBlWoHBhl9zWfI_dUrLTfsNKSj/pub?w=156&h=149)
 
 
 Sea can provide the speed up of [Apache Spark](http://spark.apache.org) but with no instrumentation.
