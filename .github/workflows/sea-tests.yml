@@ -7,7 +7,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os-name: [centos8, bionic, centos7, centos6, fedora32, xenial]
+        os-name: [centos8, bionic, centos7, fedora32, xenial]
     name: Test in ${{ matrix.os-name }}
     steps:
       - run: docker --version
@@ -18,6 +18,6 @@ jobs:
       - run: docker run --rm -v $PWD:$PWD -w $PWD imagetest:${{ matrix.os-name }} make clean
       - run: docker run --rm -v $PWD:$PWD -w $PWD imagetest:${{ matrix.os-name }} make test debug_opts="-g -ggdb --coverage -fprofile-arcs -ftest-coverage"
       - run: docker run --rm -v $PWD:$PWD -w $PWD imagetest:${{ matrix.os-name }} bats tests/tests.bats
-      - run: docker run --rm -v $PWD:$PWD -w $PWD -e SEA_HOME=$PWD imagetest:${{ matrix.os-name }} tests/test_custom
+      - run: docker run --rm -v $PWD:$PWD -w $PWD -e SEA_HOME=$PWD -e LD_PRELOAD=$PWD/build/sea.so imagetest:${{ matrix.os-name }} tests/test_custom
 
 
