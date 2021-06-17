@@ -7,6 +7,8 @@ jobs:
     name: Install Docker
     steps:
       - run: docker --version
+      - run: DOCKERFILE=tests/docker/Dockerfile.centos8 && TAGNAME=centos8 &&\
+             cd ${{ github.workspace }} && docker build tests/docker -f ${DOCKERFILE} -t imagetest:${TAGNAME}
 
     
 
