@@ -5,8 +5,9 @@ jobs:
   install-docker:
     runs-on: ubuntu-20.04
     strategy:
+      fail-fast: false
       matrix:
-        os-name: [xenial, centos8] #, bionic, centos7, centos6, fedora32, xenial]
+        os-name: [centos8, bionic, centos7, centos6, fedora32, xenial]
     name: Test in ${{ matrix.os-name }}
     steps:
       - run: docker --version
