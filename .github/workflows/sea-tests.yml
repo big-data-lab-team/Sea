@@ -13,6 +13,8 @@ jobs:
       - run: docker --version
       - name: Git checkout
         uses: actions/checkout@v2
+      - name: setup tmate session
+        uses: mxschmitt/action-tmate@v3
       - run: cd ${{ github.workspace }}
       - run: docker build tests/docker -f tests/docker/Dockerfile.${{ matrix.os-name }} -t imagetest:${{ matrix.os-name }}
       - run: docker run --rm -v $PWD:$PWD -w $PWD imagetest:${{ matrix.os-name }} make clean
