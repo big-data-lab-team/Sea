@@ -12,12 +12,11 @@ jobs:
       - run: docker --version
       - name: Git checkout
         uses: actions/checkout@v2
-      - run: DOCKERFILE=tests/docker/Dockerfile.${{ matrix.os-name }} && TAGNAME=${{ matrix.os-name }}
       - run: cd ${{ github.workspace }}
-      - run: docker build tests/docker -f ${DOCKERFILE} -t imagetest:${TAGNAME}
-      - run: docker run --rm -v $PWD:$PWD -w $PWD imagetest:${TAGNAME} make clean
-      - run: docker run --rm -v $PWD:$PWD -w $PWD imagetest:${TAGNAME} make test debug_opts="-g -ggdb --coverage -fprofile-arcs -ftest-coverage"
-      - run: docker run --rm -v $PWD:$PWD -w $PWD imagetest:${TAGNAME} bats tests/tests.bats
-      - run: docker run --rm -v $PWD:$PWD -w $PWD -e SEA_HOME=$PWD imagetest:${TAGNAME} tests/test_custom
+      - run: docker build tests/docker -f tests/docker/Dockerfile.${{ matrix.os-name }} -t imagetest:${{ matrix.os-name }}
+      - run: docker run --rm -v $PWD:$PWD -w $PWD imagetest:${{ matrix.os-name }} make clean
+      - run: docker run --rm -v $PWD:$PWD -w $PWD imagetest:${{ matrix.os-name }} make test debug_opts="-g -ggdb --coverage -fprofile-arcs -ftest-coverage"
+      - run: docker run --rm -v $PWD:$PWD -w $PWD imagetest:${{ matrix.os-name }} bats tests/tests.bats
+      - run: docker run --rm -v $PWD:$PWD -w $PWD -e SEA_HOME=$PWD imagetest:${{ matrix.os-name }} tests/test_custom
 
 
