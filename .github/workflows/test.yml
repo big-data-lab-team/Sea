@@ -19,9 +19,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: list files
-         run: |
+        run: |
            ls ${{ github.workspace }}
       - name: compile sea
-         run: |
+        run: |
            (cd ${{ github.workspace }} && ls && make)
 
