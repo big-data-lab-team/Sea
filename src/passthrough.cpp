@@ -66,6 +66,7 @@ void *libc_dirfd;
 void *libc_access;
 void *libc_faccessat;
 void *libc_stat;
+void *libc_statx;
 void *libc_fstat;
 void *libc_fstatat;
 void *libc_lstat;
@@ -471,6 +472,7 @@ void initialize_functions()
   libc_access = dlsym(libc, "access");
   libc_faccessat = dlsym(libc, "faccessat");
   libc_stat = dlsym(libc, "stat");
+  libc_statx = dlsym(libc, "statx");
   libc_lstat = dlsym(libc, "lstat");
   libc_lstat64 = dlsym(libc, "lstat64");
   libc_fstat = dlsym(libc, "fstat");
