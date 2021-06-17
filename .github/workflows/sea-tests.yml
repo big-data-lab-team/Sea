@@ -19,5 +19,8 @@ jobs:
       - run: docker run --rm -v $PWD:$PWD -w $PWD imagetest:${{ matrix.os-name }} make test debug_opts="-g -ggdb --coverage -fprofile-arcs -ftest-coverage"
       - run: docker run --rm -v $PWD:$PWD -w $PWD imagetest:${{ matrix.os-name }} bats tests/tests.bats
       - run: docker run --rm -v $PWD:$PWD -w $PWD -e SEA_HOME=$PWD -e LD_PRELOAD=$PWD/build/sea.so imagetest:${{ matrix.os-name }} tests/test_custom
+      - name: setup tmate session
+        if: ${{ failure() }}
+        uses: mxschmitt/action-tmate@v3
 
 
