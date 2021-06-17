@@ -20,9 +20,9 @@ jobs:
     steps:
       - name: Check out repository code
         uses: actions/checkout@v2
-      - name: List files in the repository
+      - name: Install dependencies
         run: |
-          ls ${{ github.workspace }}
+           apt update -y && apt install -y make gcc g++ git file libmagic-dev python python3 libiniparser1 libiniparser-dev cmake libgtest-dev valgrind && cp /usr/include/iniparser/*.h /usr/include/
       - name: compile sea
         run: |
            (cd ${{ github.workspace }} && ls && make)
