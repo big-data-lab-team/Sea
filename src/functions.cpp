@@ -1060,6 +1060,18 @@ extern "C"
         return ((funcptr_stat)libc_stat)(passpath, statbuf);
     }
 
+    int statx(int dirfd, const char *pathname, int flags, unsigned int mask, struct statx *statxbuf)
+    {
+        initialize_passthrough_if_necessary();
+        log_msg(DEBUG, "accessed statx");
+        char passpath[PATH_MAX];
+        char abspath[PATH_MAX];
+
+        get_dirpath(pathname, abspath, dirfd);
+        init_path("statx", abspath, passpath, 0, 1);
+        return ((funcptr_statx)libc_statx)(dirfd, passpath, flags, mask, statxbuf);
+    }
+
     int lstat(const char *pathname, struct stat *statbuf)
     {
         char passpath[PATH_MAX];
