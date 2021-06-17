@@ -1,4 +1,5 @@
 on: [push]
+name: Docker Tests
 
 jobs:
   hello_world_job:
@@ -7,7 +8,7 @@ jobs:
     steps:
       - name: Hello world action step
         id: hello
-        uses: glatard/Sea-1/.github/actions/docker
+        uses: glatard/Sea-1/.github/actions/docker@v1
         with:
           who-to-greet: 'Mona the Octocat'
       # Use the output from the `hello` step
