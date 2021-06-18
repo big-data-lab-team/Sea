@@ -10,6 +10,7 @@
 #include <sys/statvfs.h>
 #include <sys/types.h>
 #include <utime.h>
+#include <unistd.h>
 
 int sea_internal;
 
@@ -55,25 +56,7 @@ int unset_internal()
  */
 int sea_checkpath(const char *path)
 {
-    struct stat buf;
-
-    errno = 0;
-    //printf("checkpath %s\n", path);
-    set_internal();
-    int ret = 0;
-    if ((ret = __xstat(_STAT_VER_LINUX, path, &buf)) != 0)
-    {
-        //printf("errno %d\n", errno);
-        unset_internal();
-        return 0;
-    }
-
-    struct utimbuf times;
-    times.actime = time(0);
-    times.modtime = buf.st_mtime;
-    utime(path, &times);
-    unset_internal();
-    return 1;
+    return (access(path, F_OK) == 0);
 }
 
 /**
