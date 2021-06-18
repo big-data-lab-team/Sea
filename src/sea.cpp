@@ -11,7 +11,6 @@
 #include <sys/types.h>
 #include <utime.h>
 #include <unistd.h>
-#include <sys/stat.h>
 
 int sea_internal;
 
