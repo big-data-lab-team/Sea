@@ -211,7 +211,7 @@ char *make_file_name_canonical(char const *file_path)
     }
     canonical_file_path = ((funcptr_realpath)libc_realpath)(file_path, NULL);
 
-    if (canonical_file_path == NULL) //&& (errno == ENOENT || errno == ENOTDIR))
+    if (canonical_file_path == NULL && (errno == ENOENT || errno == ENOTDIR))
     {
       // The file was not found. Back up to a segment which exists,
       // and append the remainder of the path to it.
