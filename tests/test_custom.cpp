@@ -322,8 +322,8 @@ int main(int argc, char **argv)
     ::testing::InitGoogleTest(&argc, argv);
 
     initialize_passthrough_if_necessary();
-    ((funcptr_mkdir)libc_mkdir)("newdir", 0766);
-    ((funcptr_mkdir)libc_mkdir)("newdir/subdir", 0766);
+    ((funcptr_mkdir)libc_mkdir)("newdir", 0777);
+    ((funcptr_mkdir)libc_mkdir)("newdir/subdir", 0777);
 
     return RUN_ALL_TESTS();
 }
