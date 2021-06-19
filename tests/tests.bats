@@ -7,14 +7,17 @@ MOUNT="$PWD/mount"
 SOURCE_1="$PWD/source_1"
 
 @test "test" {
+    levels=1
     load setup
     # careful, test is a bash internal
     bash -c "test -d ${MOUNT}/subdir"
     bash -c "test -f ${MOUNT}/file_in_source.txt"
     bash -c "test -f ${MOUNT}/subdir/file_in_subdir.txt"
+    load unset
 }
 
 @test "ls" {
+    levels=1
     load setup
     for x in "${MOUNT} ${MOUNT}/file_in_source.txt ${MOUNT}/subdir ${MOUNT}/subdir/file_in_subdir.txt"
     do
@@ -28,7 +31,17 @@ SOURCE_1="$PWD/source_1"
     echo $a
 }
 
+@test "ls-singlesource" {
+    levels=0
+    load setup
+    a=$(ls ${MOUNT})
+    load unset
+    e=$(ls ${SOURCE})
+    [[ $a == $e ]]
+}
+
 @test "mkdir" {
+    levels=1
     load setup
     mkdir ${MOUNT}/dir
     mkdir -p ${MOUNT}/subdir/a/b/c
@@ -38,6 +51,7 @@ SOURCE_1="$PWD/source_1"
 }
 
 @test "rm" {
+    levels=1
     load setup
     rm ${MOUNT}/file_in_source.txt
     rm ${MOUNT}/subdir/file_in_subdir.txt
@@ -46,6 +60,7 @@ SOURCE_1="$PWD/source_1"
     [ ! -f ${SOURCE}/subdir/file_in_subdir.txt ]
 }
 @test "rmdir" {
+    levels=1
     load setup
     mkdir -p ${MOUNT}/subdir/test1/test2
     rm -rf ${MOUNT}/subdir
@@ -54,6 +69,7 @@ SOURCE_1="$PWD/source_1"
 }
 
 @test "cp" {
+    levels=1
     load setup
     ls mount/
     cp a.txt ${MOUNT}
@@ -64,6 +80,7 @@ SOURCE_1="$PWD/source_1"
 }
 
 @test "mv" {
+    levels=1
     load setup
     mv a.txt ${MOUNT}
     mv ${MOUNT}/a.txt ${MOUNT}/subdir/a.txt
@@ -73,6 +90,7 @@ SOURCE_1="$PWD/source_1"
 }
 
 @test "dd" {
+    levels=1
     load setup
     dd if=/dev/random of=${MOUNT}/file count=3
     load unset
@@ -80,6 +98,7 @@ SOURCE_1="$PWD/source_1"
 }
 
 @test "rm -rf" {
+    levels=1
     load setup
     rm -rf ${MOUNT}/subdir
     load unset
@@ -88,30 +107,37 @@ SOURCE_1="$PWD/source_1"
 }
 
 @test "md5sum" {
+    levels=1
     load setup
     m=$(md5sum ${MOUNT}/file_in_source.txt)
     [[ "$m" == *"3b5d5c3712955042212316173ccf37be"* ]]
     m=$(md5sum ${MOUNT}/subdir/file_in_subdir.txt)
     [[ "$m" == *"60b725f10c9c85c70d97880dfe8191b3"* ]]
+    load unset
 
 }
 
 @test "find" {
+    levels=1
     load setup
     f=$(find ${MOUNT} -name file_in_subdir.txt)
     [[ "$f" == *"mount/subdir/file_in_subdir.txt" ]]
     f=$(find ${MOUNT} -name file_in_source.txt)
     [[ "$f" == *"mount/file_in_source.txt" ]]
+    load unset
 }
 
 @test "grep" {
+    levels=1
     load setup
     grep b ${MOUNT}/file_in_source.txt
     grep a ${MOUNT}/subdir/file_in_subdir.txt
     grep "seafile" ${MOUNT}/file_in_mem.txt
+    load unset
 }
 
 @test "file" {
+    levels=1
     load setup
     f=$(file mount/file_in_source.txt)
     [[ "$f" == "mount/file_in_source.txt: ASCII text" ]]
@@ -119,9 +145,11 @@ SOURCE_1="$PWD/source_1"
     [[ "$f" == "mount/subdir/file_in_subdir.txt: ASCII text" ]]
     f=$(file mount/file_in_mem.txt)
     [[ "$f" == "mount/file_in_mem.txt: ASCII text" ]]
+    load unset
 }
 
 @test "tar" {
+    levels=1
     load setup
     tar cvzf ${MOUNT}/foo.tar ${MOUNT}/file_in_source.txt
     tar cvzf ${MOUNT}/bar.tar ${MOUNT}/subdir/file_in_subdir.txt
@@ -133,21 +161,26 @@ SOURCE_1="$PWD/source_1"
 }
 
 @test "read python2" {
+    levels=1
     load setup
     python2 tests/read.py ${MOUNT}/file_in_source.txt
     python2 tests/read.py ${MOUNT}/subdir/file_in_subdir.txt
     python2 tests/read.py ${MOUNT}/file_in_mem.txt
+    load unset
 }
 
 @test "read python3" {
+    levels=1
     type python3 || skip "Python 3 is not installed"
     load setup
     python3 tests/read.py ${MOUNT}/file_in_source.txt
     python3 tests/read.py ${MOUNT}/subdir/file_in_subdir.txt
     python3 tests/read.py ${MOUNT}/file_in_mem.txt
+    load unset
 }
 
 @test "write python2" {
+    levels=1
     load setup
     python2 tests/write.py ${MOUNT}/hello.txt
     python2 tests/write.py ${MOUNT}/subdir/hello.txt
@@ -157,6 +190,7 @@ SOURCE_1="$PWD/source_1"
 }
 
 @test "write python3" {
+    levels=1
     type python3 || skip "Python 3 is not installed"
     load setup
     python3 tests/write.py ${MOUNT}/hello.txt
@@ -166,69 +200,90 @@ SOURCE_1="$PWD/source_1"
 }
 
 @test "chown" {
+    levels=1
     id -u tmpu || skip "User tmpu not found"
     load setup
     a=$(chown tmpu:tmpu ${MOUNT}/file_in_source.txt)
     chown -R tmpu:tmpu ${MOUNT}/subdir
+    load unset
 }
 
 @test "chmod" {
+    levels=1
     load setup
     chmod 600 ${MOUNT}/file_in_source.txt
     chmod -R g-rwx ${MOUNT}/subdir
+    load unset
 }
 
 @test "cd" {
+    levels=1
     load setup
     out=$(cd ${MOUNT};ls)
     echo $out
     [[ $out == bin[[:space:]]complex_file.txt[[:space:]]file_in_mem.txt[[:space:]]file_in_source.txt[[:space:]]subdir ]]
+    load unset
 }
 
 @test "which" {
+    levels=1
     load setup
     bash -c "which ${MOUNT}/bin/hello.sh"
+    load unset
 }
 
 @test ">" {
+    levels=1
     load setup
     bash -c "echo \"echo\" > ${MOUNT}/subdir/echo.txt"
     a=$(cat ${SOURCE}/subdir/echo.txt)
     [[ "$a" == "echo" ]]
+    load unset
 }
 
 @test "<" {
+    levels=1
     load setup
     a=$(bash -c "bash < ${MOUNT}/bin/hello.sh")
     [[ "$a" == "hello" ]]
+    load unset
 }
 
 @test "awk" {
+    levels=1
     load setup
     a=$(awk '$1=="a" {print $2}' ${MOUNT}/complex_file.txt)
     [[ "$a" == "b" ]]
+    load unset
 }
 
 @test "sed" {
+    levels=1
     load setup
     sed -i s,b,a,g ${MOUNT}/file_in_source.txt
     a=$(cat ${MOUNT}/file_in_source.txt) # this also tests cat :)
     [[ "$a" == "a" ]]
+    load unset
 }
 
 @test "cut" {
+    levels=1
     load setup
     a=$(cut -f 2 -d " " ${MOUNT}/complex_file.txt)
     [[ "$a" == "b" ]]
+    load unset
 }
 
 @test "unlink" {
+    levels=1
     load setup
     unlink ${MOUNT}/file_in_source.txt
     unlink ${MOUNT}/subdir/file_in_subdir.txt
+    load unset
 }
 
 @test "access time" {
+    levels=1
     load setup
     before=$(ls -lu ${SOURCE}/file_in_source.txt)
     # ensure at least 1 minute has changed
@@ -236,6 +291,6 @@ SOURCE_1="$PWD/source_1"
     after=$(ls -lu ${MOUNT}/file_in_source.txt)
 
     [[ $before != $after ]] || echo "Before $before After $after"
-    
+    load unset
 }
 
