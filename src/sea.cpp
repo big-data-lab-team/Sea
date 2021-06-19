@@ -16,37 +16,6 @@ int sea_internal;
 
 // need to convert to C structs
 const char *fdpath = "/proc/self/fd";
-/**
- * Getter for the sea_internal global variable
- *
- * @return the value of sea_internal
- */
-int get_internal()
-{
-    return sea_internal;
-}
-
-/**
- * Setter for the sea_internal global variable. Always sets it to 1.
- *
- * @return the value of sea_internal
- */
-int set_internal()
-{
-    sea_internal = 1;
-    return sea_internal;
-}
-
-/**
- * Unsets the sea_internal global variable (i.e. sets it to 0).
- *
- * @return the value of sea_internal
- */
-int unset_internal()
-{
-    sea_internal = 0;
-    return sea_internal;
-}
 
 /**
  * Checks if path exists by performing an __xstat
@@ -56,7 +25,7 @@ int unset_internal()
  */
 int sea_checkpath(const char *path)
 {
-    return (access(path, F_OK) == 0);
+    return (((funcptr_access)libc_access)(path, F_OK) == 0);
 }
 
 /**
@@ -130,13 +99,11 @@ int sea_getpath(const char *oldpath, char passpath[PATH_MAX], int masked_path, i
     {
         for (int i = 0; i < sea_config.n_sources; ++i)
         {
-            set_internal();
             struct statvfs buf;
             int ret;
-            if ((ret = statvfs(sea_config.source_mounts[i], &buf) == 0) && (buf.f_bavail * buf.f_bsize > sea_config.max_fs * sea_config.n_threads))
+            if ((ret = ((funcptr_statvfs)libc_statvfs)(sea_config.source_mounts[i], &buf) == 0) && (buf.f_bavail * buf.f_bsize > sea_config.max_fs * sea_config.n_threads))
             {
                 match = pass_getpath(oldpath, passpath, masked_path, i);
-                unset_internal();
                 return match;
             }
         }
@@ -203,18 +170,15 @@ void mirrorSourceDirs(char *basePath, int sea_lvl, struct config sea_config)
                             {
                                 if (match != NULL && match[0] != '\0')
                                 {
-                                    //printf("match\n");
                                     *match = '\0';
                                     strcat(dir_to_create, match + len);
                                 }
-                                //printf("match %d %s\n", match == NULL, dir_to_create);
                             }
                             free(tmp);
 
                             strcat(dir_to_create, "/");
                             strcat(dir_to_create, dp->d_name);
 
-                            //printf("dir to create %s %s %s\n", dir_to_create, basePath, sea_config.source_mounts[sea_lvl]);
                             //TODO: add error handling here
                             log_msg(INFO, "mirrorSourceDirs: Creating dir %s", dir_to_create);
                             ((funcptr_mkdir)libc_mkdir)(dir_to_create, buf.st_mode);

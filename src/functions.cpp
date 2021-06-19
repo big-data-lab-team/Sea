@@ -116,34 +116,27 @@ DEFINE_READDIR(64, dirent64);
 void init_path(const char *function, const char *path, char passpath[PATH_MAX], int masked, int nomatch)
 {
     initialize_passthrough_if_necessary();
-    log_msg(DEBUG, "init_path");
+    log_msg(DEBUG, "init_path: function - %s path - %s", function, path);
     int match = 0;
     passpath[0] = '\0';
 
-    if (!get_internal())
+    log_msg(INFO, "Entering %s with path: %s", function, path);
+
+    struct config sea_conf = get_sea_config();
+    if (sea_conf.parsed == true && sea_conf.n_sources > 1)
     {
-        log_msg(INFO, "Entering %s with path: %s", function, path);
-
-        struct config sea_conf = get_sea_config();
-        if (sea_conf.parsed == true && sea_conf.n_sources > 1)
-        {
-            initialize_sea_if_necessary();
-            match = sea_getpath(path, passpath, masked);
-        }
-        else
-            match = pass_getpath(path, passpath, masked);
-
-        if (match == 0 && nomatch)
-        {
-            strcpy(passpath, path);
-        }
-
-        log_msg(INFO, "Completing %s with updated path  %s", function, passpath);
+        initialize_sea_if_necessary();
+        match = sea_getpath(path, passpath, masked);
     }
     else
+        match = pass_getpath(path, passpath, masked);
+
+    if (match == 0 && nomatch)
     {
         strcpy(passpath, path);
     }
+
+    log_msg(INFO, "Completing %s with updated path  %s", function, passpath);
 }
 
 /**
@@ -176,36 +169,28 @@ void init_twopaths(const char *function, const char *oldpath, const char *newpat
 {
     initialize_passthrough_if_necessary();
 
-    if (!get_internal())
+    log_msg(INFO, "Entering %s with paths: %s %s", function, oldpath, newpath);
+    struct config sea_conf = get_sea_config();
+    int match_old = 0;
+    int match_new = 0;
+    if (sea_conf.parsed == true && sea_conf.n_sources > 1)
     {
-        log_msg(INFO, "Entering %s with paths: %s %s", function, oldpath, newpath);
-        struct config sea_conf = get_sea_config();
-        int match_old = 0;
-        int match_new = 0;
-        if (sea_conf.parsed == true && sea_conf.n_sources > 1)
-        {
-            initialize_sea_if_necessary();
-            match_old = sea_getpath(oldpath, oldpasspath, 0);
-            match_new = sea_getpath(newpath, newpasspath, 0);
-        }
-        else
-        {
-            match_old = pass_getpath(oldpath, oldpasspath, 0);
-            match_new = pass_getpath(newpath, newpasspath, 0);
-        }
-
-        if (match_old == 0 && nomatch)
-            strcpy(oldpasspath, oldpath);
-        if (match_new == 0 && nomatch)
-            strcpy(newpasspath, newpath);
-
-        log_msg(INFO, "Completing %s with updated paths %s %s", function, oldpasspath, newpasspath);
+        initialize_sea_if_necessary();
+        match_old = sea_getpath(oldpath, oldpasspath, 0);
+        match_new = sea_getpath(newpath, newpasspath, 0);
     }
     else
     {
-        strcpy(oldpasspath, oldpath);
-        strcpy(newpasspath, newpath);
+        match_old = pass_getpath(oldpath, oldpasspath, 0);
+        match_new = pass_getpath(newpath, newpasspath, 0);
     }
+
+    if (match_old == 0 && nomatch)
+        strcpy(oldpasspath, oldpath);
+    if (match_new == 0 && nomatch)
+        strcpy(newpasspath, newpath);
+
+    log_msg(INFO, "Completing %s with updated paths %s %s", function, oldpasspath, newpasspath);
 }
 
 extern "C"
@@ -455,30 +440,7 @@ extern "C"
 
             if (mount_match)
             {
-                //printf("a mount match\n");
-                // char *match;
-                // char *seapath = strdup(pathname);
-
-                // int len = strlen(pathname);
-
-                // for (int i = 0; i < sea_conf.n_sources; ++i)
-                // {
-                //     if ((match = strstr(seapath, sea_conf.source_mounts[i])))
-                //     {
-
-                //         if (match != NULL && match[0] != '\0' && match[0] == '/')
-                //         {
-                //             printf("source mount %s seapath %s\n", sea_conf.source_mounts[i], seapath);
-                //             seapath = strdup(sea_conf.source_mounts[0]);
-                //             *match = '\0';
-                //             strcat(seapath, match + len);
-                //             break;
-                //         }
-                //     }
-                // }
-
                 strcpy(mountpath, pathname);
-                //printf("new path %s\n", mountpath);
             }
 
             sd->curr_index = 0;
@@ -593,6 +555,7 @@ extern "C"
         }
     }
 
+    // TODO: all the following opendir functions are just aliases to opendir. Need to fix
     DIR *__opendir(const char *pathname)
     {
         char passpath[PATH_MAX];
@@ -627,12 +590,12 @@ extern "C"
         return ((funcptr_opendir)libc_opendir)(passpath);
     }
 
-    static DIR *__opendir_common(int fd, const char *name, int flags)
-    {
-        char passpath[PATH_MAX];
-        init_path("__opendir_common", name, passpath, 0);
-        return ((funcptr_opendir)libc_opendir)(passpath);
-    }
+    // static DIR *__opendir_common(int fd, const char *name, int flags)
+    // {
+    //     char passpath[PATH_MAX];
+    //     init_path("__opendir_common", name, passpath, 0);
+    //     return ((funcptr_opendir)libc_opendir)(passpath);
+    // }
 
     int scandir(const char *dirp, struct dirent ***namelist,
                 int (*filter)(const struct dirent *),
@@ -1002,7 +965,6 @@ extern "C"
     {
         initialize_passthrough_if_necessary();
         char passpath[PATH_MAX];
-        char abspath[PATH_MAX];
 
         init_path("rmdir", pathname, passpath, 0);
 
