@@ -32,6 +32,8 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           fail_ci_if_error: true
+          gcov_executable: docker run --rm -v $PWD:$PWD -w $PWD imagetest:bionic gcov
+          gcov_args: "-abcfu"
       - name: setup tmate session
         if: ${{ failure() && github.event_name == 'workflow_dispatch' && github.event.inputs.debug_enabled == 'true' }}
         uses: mxschmitt/action-tmate@v3
