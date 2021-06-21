@@ -44,7 +44,7 @@
         config sea_conf = get_sea_config();                                                                                             \
                                                                                                                                         \
         log_msg(INFO, "readdir%s: passthrough initialized", #VERSION);                                                                  \
-        if (sea_conf.parsed == true && sea_conf.n_sources > 1)                                                                          \
+        if (sea_conf.parsed == true)                                                                                                    \
         {                                                                                                                               \
             initialize_sea_if_necessary();                                                                                              \
             log_msg(INFO, "readdir%s: sea initialized", #VERSION, #VERSION);                                                            \
@@ -123,7 +123,7 @@ void init_path(const char *function, const char *path, char passpath[PATH_MAX], 
     log_msg(INFO, "Entering %s with path: %s", function, path);
 
     struct config sea_conf = get_sea_config();
-    if (sea_conf.parsed == true && sea_conf.n_sources > 1)
+    if (sea_conf.parsed == true)
     {
         initialize_sea_if_necessary();
         match = sea_getpath(path, passpath, masked);
@@ -173,7 +173,7 @@ void init_twopaths(const char *function, const char *oldpath, const char *newpat
     struct config sea_conf = get_sea_config();
     int match_old = 0;
     int match_new = 0;
-    if (sea_conf.parsed == true && sea_conf.n_sources > 1)
+    if (sea_conf.parsed == true)
     {
         initialize_sea_if_necessary();
         match_old = sea_getpath(oldpath, oldpasspath, 0);
@@ -352,7 +352,7 @@ extern "C"
                 struct config sea_conf;
                 sea_conf = get_sea_config();
 
-                if (sea_conf.parsed == true && sea_conf.n_sources > 1)
+                if (sea_conf.parsed == true)
                 {
                     //char mountpath[PATH_MAX];
                     //char fdloc[PATH_MAX];
@@ -412,7 +412,7 @@ extern "C"
         sea_conf = get_sea_config();
 
         //printf("parsed %d nsource %d\n", sea_conf.parsed, sea_conf.n_sources);
-        if (sea_conf.parsed == true && sea_conf.n_sources > 1)
+        if (sea_conf.parsed == true)
         {
             SEA_DIR *sd = (SEA_DIR *)malloc(sizeof(SEA_DIR));
             sd->issea = 0;
@@ -492,8 +492,8 @@ extern "C"
         get_dirpath(NULL, abspath, fd);
         log_msg(INFO, "fdopendir: obtained directory path %s", abspath);
 
-        //file is not in Sea mount
-        if (sea_conf.parsed == true && sea_conf.n_sources > 1)
+        //check if file is in Sea mount
+        if (sea_conf.parsed == true)
         {
             initialize_sea_if_necessary();
             int mount_match = sea_getpath(abspath, passpath, 0, 0);
@@ -675,7 +675,7 @@ extern "C"
 
         config sea_conf = get_sea_config();
 
-        if (sea_conf.parsed == true && sea_conf.n_sources > 1)
+        if (sea_conf.parsed == true)
         {
             initialize_sea_if_necessary();
             SEA_DIR *sd = (SEA_DIR *)dirp;
@@ -709,7 +709,7 @@ extern "C"
         log_msg(INFO, "rewinddir");
         config sea_conf = get_sea_config();
 
-        if (sea_conf.parsed == true && sea_conf.n_sources > 1)
+        if (sea_conf.parsed == true)
         {
             initialize_sea_if_necessary();
             SEA_DIR *sd = (SEA_DIR *)dirp;
@@ -791,7 +791,7 @@ extern "C"
 
         config sea_conf = get_sea_config();
 
-        if (sea_conf.parsed && sea_conf.n_sources > 1)
+        if (sea_conf.parsed)
         {
             initialize_sea_if_necessary();
             int mount_match = sea_getpath(pathname, passpath, 0, 0);
@@ -838,7 +838,7 @@ extern "C"
         initialize_passthrough_if_necessary();
         config sea_conf = get_sea_config();
 
-        if (sea_conf.parsed && sea_conf.n_sources > 1)
+        if (sea_conf.parsed)
         {
             initialize_sea_if_necessary();
 
@@ -927,7 +927,7 @@ extern "C"
                 struct config sea_conf;
                 sea_conf = get_sea_config();
 
-                if (sea_conf.parsed == true && sea_conf.n_sources > 1)
+                if (sea_conf.parsed == true)
                 {
                     char mountpath[PATH_MAX];
                     initialize_sea_if_necessary();
@@ -971,7 +971,7 @@ extern "C"
         struct config sea_conf;
         sea_conf = get_sea_config();
 
-        if (sea_conf.parsed == true && sea_conf.n_sources > 1)
+        if (sea_conf.parsed == true)
         {
             char mountpath[PATH_MAX];
             initialize_sea_if_necessary();

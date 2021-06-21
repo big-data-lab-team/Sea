@@ -44,5 +44,5 @@ echo "#!/bin/bash" > ${SOURCE}/bin/hello.sh
 echo "echo \"hello\"" > ${SOURCE}/bin/hello.sh
 chmod +x ${SOURCE}/bin/hello.sh
 export SEA_HOME=$PWD
-gen_conf 1
+gen_conf ${levels}
 export LD_PRELOAD=${PWD}/build/sea.so

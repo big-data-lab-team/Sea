@@ -211,7 +211,7 @@ char *make_file_name_canonical(char const *file_path)
     }
     canonical_file_path = ((funcptr_realpath)libc_realpath)(file_path, NULL);
 
-    if (canonical_file_path == NULL) //&& (errno == ENOENT || errno == ENOTDIR))
+    if (canonical_file_path == NULL && (errno == ENOENT || errno == ENOTDIR))
     {
       // The file was not found. Back up to a segment which exists,
       // and append the remainder of the path to it.
@@ -248,7 +248,9 @@ char *make_file_name_canonical(char const *file_path)
             // to a canonical form of the existing path.
             char *combined_file_path = (char *)malloc(strlen(canonical_file_path) + strlen(file_path_copy + char_idx + 1) + 2);
             strcpy(combined_file_path, canonical_file_path);
-            strcat(combined_file_path, "/");
+
+            if (combined_file_path[strlen(combined_file_path) - 1] != '/')
+              strcat(combined_file_path, "/");
             strcat(combined_file_path, file_path_copy + char_idx + 1);
             free(canonical_file_path);
             canonical_file_path = combined_file_path;
