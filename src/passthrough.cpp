@@ -406,15 +406,24 @@ int pass_getpath(const char *oldpath, char passpath[PATH_MAX], int masked_path, 
   {
     get_pass_canonical(path, passpath, mount_dir, sea_config.source_mounts[sea_lvl], masked_path);
   }
+
   match_found = check_if_seapath(path, canonical, passpath);
 
   // check if there's a match with a source if no matches found and sea_lvl was specified
-  if (sea_lvl >= 0 && match_found == 0)
+  if ((sea_lvl >= 0 || masked_path == 1) && match_found == 0)
   {
     for (int i = 0; i < sea_config.n_sources; i++)
     {
       passpath[0] = '\0';
-      get_pass_canonical(path, passpath, sea_config.source_mounts[i], sea_config.source_mounts[sea_lvl], masked_path);
+
+      if (masked_path == 0)
+      {
+        get_pass_canonical(path, passpath, sea_config.source_mounts[i], sea_config.source_mounts[sea_lvl], masked_path);
+      }
+      else
+      {
+        get_pass_canonical(path, passpath, mount_dir, sea_config.source_mounts[i], masked_path);
+      }
       match_found = check_if_seapath(path, canonical, passpath);
 
       if (match_found == 1)
