@@ -401,24 +401,24 @@ int pass_getpath(const char *oldpath, char passpath[PATH_MAX], int masked_path, 
   get_pass_canonical(path, passpath, mount_dir, sea_config.source_mounts[sea_lvl], masked_path);
   match_found = check_if_seapath(path, canonical, passpath);
 
-  // check if there's a match with a source if no matches found
-  // if (match_found == 0)
-  // {
-  //   for (int i = 0; i < sea_config.n_sources; i++)
-  //   {
-  //     get_pass_canonical(path, passpath, sea_config.source_mounts[i], sea_config.source_mounts[sea_lvl], masked_path);
-  //     match_found = check_if_seapath(path, canonical, passpath);
+  // check if there's a match with a source if no matches found and sea_lvl was specified
+  if (sea_lvl != -1 && match_found == 0)
+  {
+    for (int i = 0; i < sea_config.n_sources; i++)
+    {
+      get_pass_canonical(path, passpath, sea_config.source_mounts[i], sea_config.source_mounts[sea_lvl], masked_path);
+      match_found = check_if_seapath(path, canonical, passpath);
 
-  //     if (match_found == 1)
-  //       break;
-  //   }
-  // }
+      if (match_found == 1)
+        break;
+    }
+  }
   //if (canonical != NULL)
   //  free(canonical);
   if (passpath == NULL)
     return 0;
 
-  //printf("sea_lvl=%d  :   old fn %s ---> new fn %s\n", sea_lvl, oldpath, passpath);
+  //printf("sea_lvl=%d  :   old fn %s ---> new fn %s %s\n", sea_lvl, oldpath, passpath, path);
   log_msg(INFO, "sea_lvl=%d  :   old fn %s ---> new fn %s", sea_lvl, oldpath, passpath);
   return match_found;
 }

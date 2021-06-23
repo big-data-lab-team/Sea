@@ -15,7 +15,22 @@ gen_conf() {
         log_file = ${SEA_HOME}/sea.log ;
         max_fs = 1048576 ;
 DOC
+    elif [[ $1 == 2 ]]
+    then
+        SEA_LOG_FILE=${SEA_HOME}/sea.log
+        cat > ${SEA_HOME}/sea.ini << DOC
+        # Sea configuration
+        [Sea]
+        mount_dir = MOUNT ;
+        n_levels = 2 ;
+        source_0 = SOURCE ;
+        source_1 = SOURCE_1 ;
+        log_level = 3 ; # 4 crashes tests
+        log_file = SEA_LOG_FILE ;
+        max_fs = 1048576 ;
+DOC
     else
+
         cat > ${SEA_HOME}/sea.ini << DOC
         # Sea configuration
         [Sea]

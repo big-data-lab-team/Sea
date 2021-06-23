@@ -805,9 +805,9 @@ extern "C"
             {
                 passpath[0] = '\0';
                 sea_getpath(pathname, passpath, 0, i);
-                log_msg(INFO, "creating directory %s", passpath);
+                log_msg(INFO, "mkdir: creating directory %s", passpath);
                 int fd = ((funcptr_mkdir)libc_mkdir)(passpath, mode);
-                log_msg(INFO, "created directory %s with fd %d %d", passpath, fd, i);
+                log_msg(INFO, "mkdir: created directory %s with fd %d %d", passpath, fd, i);
 
                 if (i == sea_conf.n_sources - 1)
                     return fd;
@@ -946,7 +946,7 @@ extern "C"
 
                     int ret = 0;
                     ret = ((funcptr_unlinkat)libc_unlinkat)(dirfd, passpath, flags);
-                    for (int i = 0; i < sea_conf.n_sources; i++)
+                    for (int i = 1; i < sea_conf.n_sources; i++)
                     {
                         passpath[0] = '\0';
                         sea_getpath(mountpath, passpath, 0, i);
@@ -1010,8 +1010,12 @@ extern "C"
 
     int faccessat(int dirfd, const char *pathname, int mode, int flags)
     {
+        initialize_passthrough_if_necessary();
         char passpath[PATH_MAX];
-        init_path("faccessat", pathname, passpath, 0, 1);
+        char abspath[PATH_MAX];
+
+        get_dirpath(pathname, abspath, dirfd);
+        init_path("faccessat", abspath, passpath, 0, 1);
         return ((funcptr_faccessat)libc_faccessat)(dirfd, passpath, mode, flags);
     }
 
