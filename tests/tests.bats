@@ -244,7 +244,7 @@ export SOURCE_1="$PWD/source_1"
 }
 
 @test "read python3" {
-    for levels in {1..2}
+    for levels in {1..3}
     do
         type python3 || skip "Python 3 is not installed"
         load setup
