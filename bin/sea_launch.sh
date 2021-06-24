@@ -21,7 +21,7 @@ ${curr_dir}/sea_flusher.sh &
 pid=$!
 echo "flusher pid" ${pid}
 
-#trap 'trap - SIGTERM && kill $pid' SIGINT SIGTERM EXIT
+trap 'trap - SIGTERM && kill $pid' SIGINT SIGTERM #EXIT
 
 echo "Launching script $1"
 bash $1
