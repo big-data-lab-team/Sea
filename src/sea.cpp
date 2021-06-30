@@ -174,13 +174,12 @@ void mirrorSourceDirs(char *basePath, int sea_lvl, struct config sea_config)
                                     strcat(dir_to_create, match + len);
                                 }
                             }
-                            free(tmp);
 
                             strcat(dir_to_create, "/");
                             strcat(dir_to_create, dp->d_name);
 
                             //TODO: add error handling here
-                            log_msg(INFO, "mirrorSourceDirs: Creating dir %s", dir_to_create);
+                            log_msg(INFO, "mirrorSourceDirs: Creating dir %s %d", dir_to_create, buf.st_mode);
                             ((funcptr_mkdir)libc_mkdir)(dir_to_create, buf.st_mode);
                             // don't care if directory already exists
                             if (errno == EEXIST)

@@ -36,38 +36,36 @@ fe_old () {
 
         # Check if file older
         if [ $TIMEDIFF -ge $OLDTIME ]; then
-            echo "$task $f to $base_source"
+            subpath=$f
 
-            # some string formatting
-            if [[ "$flist" != "" ]]
-            then
-                flist+=" "
+            for s in "${sources_arr[@]}"
+            do
+                if [[ $f == *$s* ]]
+                then
+                    subpath=${subpath#$s}
+                    break
+                fi
+            done
+
+            echo "$task $f to ${base_source}${subpath}"
+            # makedirectory in case it does not exist
+            mkdir -p $(dirname ${base_source}${subpath})
+            # if we have some files that older that OLDTIME, flush/evict them
+            # process each image individually (as opposed to all at once)
+            if [[ $task == "mv" ]]
+            then 
+                mv $f ${base_source}${subpath} || true
+            elif [[ $task == "cp" ]]
+            then 
+                cp $f ${base_source}${subpath} || true
+            elif [[ $task == "rm" ]]
+            then 
+                rm  $f || true
             fi
-
-            flist+=$f
            
         fi
     done
 
-    # if we have some files that older that OLDTIME, flush/evict them
-    if [[ ${flist} != "" ]]
-    then
-
-        # process each image individually (as opposed to all at once)
-        if [[ $task == "mv" ]]
-        then 
-            mv $flist ${base_source} || true
-        elif [[ $task == "cp" ]]
-        then 
-            cp $flist ${base_source} || true
-        elif [[ $task == "rm" ]]
-        then 
-            rm $flist || true
-        fi
-
-        # wait for all images to be processed
-        #wait
-    fi
 }
 
 
@@ -76,7 +74,7 @@ get_rgx () {
     SOURCE=$1
     FILE=$2
     rgx=""
-
+    
     if [ -f $FILE ]
     then
         while IFS="" read -r re || [ -n "$re" ]
@@ -91,7 +89,7 @@ get_rgx () {
         done < $FILE
 
     fi
-    echo $rgx
+    echo ${rgx}
 }
 
 flush () {
@@ -147,10 +145,10 @@ flush () {
             then
                 flush_files+=" "
             fi
-            flush_files+=$(echo $all_files | grep -Eo $rgx || true)
+            flush_files+=$(echo $all_files | tr " " "\n" | grep -Eo $rgx) # || true)
         done
         #echo "re_flush $re_flush"
-        #echo "flush_files $flush_files"
+        #echo "flush_files ${flush_files}"
 
         # if .sea_evictlist file contains regex
         for rgx in $re_evict
@@ -159,7 +157,7 @@ flush () {
             then
                 evict_files+=" "
             fi
-            evict_files+=$(echo $all_files | grep -Eo $rgx || true)
+            evict_files+=$(echo $all_files | tr " " "\n" | grep -Eo $rgx || true)
         done
 
         tmp_flush=""
@@ -269,6 +267,12 @@ get_sources () {
     do
         source_lvl=$(cat ${conf_file} | grep "^\s*source_$i" | cut -d "=" -f 2 | tr -d ' ;')
         IFS=',' read -ra curr_sources <<< "$source_lvl"
+
+        if [ ! -d ${curr_sources[@]} ]
+        then
+            sourcevar="\$${curr_sources[@]}"
+            curr_sources=$(eval echo "${sourcevar}")
+        fi
 
         sources_arr+=(${curr_sources[@]})
 

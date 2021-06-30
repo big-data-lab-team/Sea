@@ -326,4 +326,5 @@ int main(int argc, char **argv)
     ((funcptr_mkdir)libc_mkdir)("newdir/subdir", 0777);
 
     return RUN_ALL_TESTS();
+    ((funcptr_mkdir)libc_mkdir)("newdir", 0777);
 }
