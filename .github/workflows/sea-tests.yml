@@ -20,15 +20,15 @@ jobs:
     name: Test in ${{ matrix.os-name }}
     steps:
       - run: echo IMAGE_ACTOR=$(echo ${{ github.actor }} | tr '[:upper:]' '[:lower:]') >> $GITHUB_ENV
+      - run: docker --version
+      - name: Git checkout
+        uses: actions/checkout@v2
       - name: Log in to the Container registry
-        uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
+        uses: docker/login-action@v1
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      - run: docker --version
-      - name: Git checkout
-        uses: actions/checkout@v2
       - run: cd ${{ github.workspace }}
       - run: docker run --rm -v $PWD:$PWD -w $PWD ghcr.oi/${{ env.IMAGE_ACTOR }}/sea-${{ matrix.os-name }}:master cp /libsea/build/*.so $PWD/build
       - run: docker run --rm -v $PWD:$PWD -w $PWD ghcr.oi/${{ env.IMAGE_ACTOR }}/sea-${{ matrix.os-name }}:master bats tests/tests.bats
