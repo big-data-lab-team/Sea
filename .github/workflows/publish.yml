@@ -13,8 +13,9 @@ env:
 jobs:
   build-and-push-image:
     runs-on: ubuntu-latest
-    matrix:
-      os-name: [xenial, bionic, focal, centos7, centos8, fedora32, fedora33, fedora34]
+    strategy:
+      matrix:
+        os-name: [xenial, bionic, focal, centos7, centos8, fedora32, fedora33, fedora34]
     permissions:
       contents: read
       packages: write
