@@ -30,7 +30,7 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - run: cd ${{ github.workspace }}
-      - run: docker run --rm -v $PWD:$PWD -w $PWD ${{ env.REGISTRY }}/${{ env.IMAGE_ACTOR }}/sea-${{ matrix.os-name }}:master cp /libsea/build/sea.so $PWD/build
+      - run: docker run --rm -v $PWD:$PWD -w $PWD ${{ env.REGISTRY }}/${{ env.IMAGE_ACTOR }}/sea-${{ matrix.os-name }}:master cp -r /libsea/build/* $PWD/build
       - run: docker run --rm -v $PWD:$PWD -w $PWD ${{ env.REGISTRY }}/${{ env.IMAGE_ACTOR }}/sea-${{ matrix.os-name }}:master cp /libsea/tests/test_custom $PWD/tests/test_custom
       - run: docker run --rm -v $PWD:$PWD -w $PWD ${{ env.REGISTRY }}/${{ env.IMAGE_ACTOR }}/sea-${{ matrix.os-name }}:master bats tests/tests.bats
       - run: docker run --rm -v $PWD:$PWD -w $PWD ${{ env.REGISTRY }}/${{ env.IMAGE_ACTOR }}/sea-${{ matrix.os-name }}:master bash -c "MOUNT=$PWD/mount SOURCE=$PWD/source SOURCE_1=$PWD/source_1 levels=1 bash tests/setup.bash"
@@ -39,7 +39,7 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           fail_ci_if_error: true
-          gcov_executable: docker run --rm -v $PWD:$PWD -w $PWD imagetest:${{ matrix.os-name }} gcov -abcfu build
+          gcov_executable: docker run --rm -v $PWD:$PWD -w $PWD ${{ env.REGISTRY }}/${{ env.IMAGE_ACTOR }}/sea-${{ matrix.os-name }}:master gcov -abcfu build
       - name: setup tmate session
         if: ${{ failure() && github.event_name == 'workflow_dispatch' && github.event.inputs.debug_enabled == 'true' }}
         uses: mxschmitt/action-tmate@v3
