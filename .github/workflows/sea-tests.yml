@@ -23,9 +23,9 @@ jobs:
       - name: Git checkout
         uses: actions/checkout@v2
       - run: cd ${{ github.workspace }}
-      - run: docker run --rm -v $PWD:$PWD -w $PWD ghcr.oi/${{ github.actor }}/:sea-${{ matrix.os-name }} cp /libsea/build/*.so $PWD/build
-      - run: docker run --rm -v $PWD:$PWD -w $PWD ghcr.oi/${{ github.actor }}/:sea-${{ matrix.os-name }} bats tests/tests.bats
-      - run: docker run --rm -v $PWD:$PWD -w $PWD ghcr.oi/${{ github.actor }}/:sea-${{ matrix.os-name }} bash -c "MOUNT=$PWD/mount SOURCE=$PWD/source SOURCE_1=$PWD/source_1 levels=1 bash tests/setup.bash"
+      - run: docker run --rm -v $PWD:$PWD -w $PWD ghcr.oi/${{ github.actor }}/sea-${{ matrix.os-name }}:master cp /libsea/build/*.so $PWD/build
+      - run: docker run --rm -v $PWD:$PWD -w $PWD ghcr.oi/${{ github.actor }}/sea-${{ matrix.os-name }}:master bats tests/tests.bats
+      - run: docker run --rm -v $PWD:$PWD -w $PWD ghcr.oi/${{ github.actor }}/sea-${{ matrix.os-name }}:master bash -c "MOUNT=$PWD/mount SOURCE=$PWD/source SOURCE_1=$PWD/source_1 levels=1 bash tests/setup.bash"
       - run: docker run --rm -v $PWD:$PWD -w $PWD -e SEA_HOME=$PWD -e LD_PRELOAD=$PWD/build/sea.so ghcr.oi/${{ github.actor }}/:sea-${{ matrix.os-name }} tests/test_custom
       - uses: codecov/codecov-action@v1
         with:
