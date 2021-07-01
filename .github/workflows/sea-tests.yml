@@ -30,10 +30,10 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - run: cd ${{ github.workspace }}
-      - run: docker run --rm -v $PWD:$PWD -w $PWD ghcr.oi/${{ env.IMAGE_ACTOR }}/sea-${{ matrix.os-name }}:master cp /libsea/build/*.so $PWD/build
-      - run: docker run --rm -v $PWD:$PWD -w $PWD ghcr.oi/${{ env.IMAGE_ACTOR }}/sea-${{ matrix.os-name }}:master bats tests/tests.bats
-      - run: docker run --rm -v $PWD:$PWD -w $PWD ghcr.oi/${{ env.IMAGE_ACTOR }}/sea-${{ matrix.os-name }}:master bash -c "MOUNT=$PWD/mount SOURCE=$PWD/source SOURCE_1=$PWD/source_1 levels=1 bash tests/setup.bash"
-      - run: docker run --rm -v $PWD:$PWD -w $PWD -e SEA_HOME=$PWD -e LD_PRELOAD=$PWD/build/sea.so ghcr.oi/${{ github.actor }}/:sea-${{ matrix.os-name }} tests/test_custom
+      - run: docker run --rm -v $PWD:$PWD -w $PWD ${{ env.REGISTRY }}/${{ env.IMAGE_ACTOR }}/sea-${{ matrix.os-name }}:master cp /libsea/build/*.so $PWD/build
+      - run: docker run --rm -v $PWD:$PWD -w $PWD ${{ env.REGISTRY }}/${{ env.IMAGE_ACTOR }}/sea-${{ matrix.os-name }}:master bats tests/tests.bats
+      - run: docker run --rm -v $PWD:$PWD -w $PWD ${{ env.REGISTRY }}/${{ env.IMAGE_ACTOR }}/sea-${{ matrix.os-name }}:master bash -c "MOUNT=$PWD/mount SOURCE=$PWD/source SOURCE_1=$PWD/source_1 levels=1 bash tests/setup.bash"
+      - run: docker run --rm -v $PWD:$PWD -w $PWD -e SEA_HOME=$PWD -e LD_PRELOAD=$PWD/build/sea.so ${{ env.REGISTRY }}/${{ env.IMAGE_ACTOR }}/sea-${{ matrix.os-name }} tests/test_custom
       - uses: codecov/codecov-action@v1
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
