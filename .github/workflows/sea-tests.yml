@@ -23,7 +23,7 @@ jobs:
       - name: Git checkout
         uses: actions/checkout@v2
       - run: cd ${{ github.workspace }}
-      - run: docker build tests/docker -f containers/base/Dockerfile.${{ matrix.os-name }} -t imagetest:${{ matrix.os-name }}
+      - run: docker build containers/base -f containers/base/Dockerfile.${{ matrix.os-name }} -t imagetest:${{ matrix.os-name }}
       - run: docker run --rm -v $PWD:$PWD -w $PWD imagetest:${{ matrix.os-name }} make clean
       - run: docker run --rm -v $PWD:$PWD -w $PWD imagetest:${{ matrix.os-name }} make test debug_opts="-g -ggdb --coverage -fprofile-arcs -ftest-coverage"
       - run: docker run --rm -v $PWD:$PWD -w $PWD imagetest:${{ matrix.os-name }} bats tests/tests.bats
