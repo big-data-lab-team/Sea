@@ -51,6 +51,7 @@ jobs:
     permissions:
       contents: read
       packages: write
+      pull-requests: read
 
     steps:
       - name: Checkout repository
@@ -88,6 +89,7 @@ jobs:
     permissions:
       contents: read
       packages: write
+      pull-requests: read
 
     steps:
       - name: Checkout repository
