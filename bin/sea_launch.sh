@@ -23,8 +23,8 @@ echo "flusher pid" ${pid}
 
 trap 'trap - SIGTERM && kill $pid' SIGINT SIGTERM #EXIT
 
-echo "Launching script $1"
-bash $1
+echo "Launching script $@"
+bash $@
 echo "killing flush" && kill $pid
 
 wait $pid

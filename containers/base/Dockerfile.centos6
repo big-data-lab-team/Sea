@@ -1,4 +1,4 @@
-from centos:6
+FROM centos:6
 
 RUN useradd --no-log-init -r tmpu
 
@@ -9,3 +9,7 @@ RUN yum update -y && yum install -y make gcc gcc-c++ git file file-devel python 
 RUN yum install -y epel-release && yum install -y gtest gtest-devel
 
 RUN git clone https://github.com/bats-core/bats-core.git && cd bats-core && ./install.sh /usr/local
+
+RUN mkdir /libsea
+ADD . /libsea
+RUN cd /libsea && make clean && make
