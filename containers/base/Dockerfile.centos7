@@ -19,4 +19,4 @@ RUN git clone https://github.com/coreutils/coreutils.git && cd coreutils \
 
 RUN mkdir /libsea
 ADD . /libsea
-RUN cd /libsea && make clean && make test debug_opts="-g -ggdb --coverage -fprofile-arcs -ftest-coverage"
+RUN cd /libsea && make clean && make

@@ -9,6 +9,6 @@ RUN git clone https://github.com/bats-core/bats-core.git && cd bats-core && ./in
 
 RUN mkdir /libsea
 ADD . /libsea
-RUN cd /libsea && make clean && make test debug_opts="-g -ggdb --coverage -fprofile-arcs -ftest-coverage"
+RUN cd /libsea && make clean && make
 
 

@@ -1,0 +1,119 @@
+name: Test Sea and publish dockerfiles
+
+on:
+  push:
+  workflow_dispatch:
+    inputs:
+      debug_enabled:
+        description: 'Run the build with tmate debugging enabled (https://github.com/marketplace/actions/debugging-with-tmate)'     
+        required: false
+        default: "false"
+env:
+  REGISTRY: ghcr.io
+jobs:
+  run-tests:
+    runs-on: ubuntu-20.04
+    strategy:
+      fail-fast: false
+      matrix:
+        os-name: [xenial, bionic, focal, centos7, centos8, fedora32, fedora33, fedora34]
+    name: Test in ${{ matrix.os-name }}
+    steps:
+      - run: echo IMAGE_ACTOR=$(echo ${{ github.actor }} | tr '[:upper:]' '[:lower:]') >> $GITHUB_ENV
+      - run: docker --version
+      - name: Git checkout
+        uses: actions/checkout@v2
+      - name: Log in to the Container registry
+        uses: docker/login-action@v1
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - run: cd ${{ github.workspace }}
+            - run: docker build tests/docker -f tests/docker/Dockerfile.${{ matrix.os-name }} -t imagetest:${{ matrix.os-name }}
+      - run: docker run --rm -v $PWD:$PWD -W $PWD imagetest:${{ matrix.os-name }} make test debug_opts="-g -ggdb --coverage -fprofile-arcs -ftest-coverage"
+      - run: docker run --rm -v $PWD:$PWD -w $PWD imagetest:${{ matrix.os-name }} bats tests/tests.bats
+      - run: docker run --rm -v $PWD:$PWD -w $PWD imagetest:${{ matrix.os-name }} bash -c "MOUNT=$PWD/mount SOURCE=$PWD/source SOURCE_1=$PWD/source_1 levels=1 bash tests/setup.bash"
+      - run: docker run --rm -v $PWD:$PWD -w $PWD -e SEA_HOME=$PWD -e LD_PRELOAD=$PWD/build/sea.so imagetest:${{ matrix.os-name }} tests/test_custom
+
+      - uses: codecov/codecov-action@v1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          fail_ci_if_error: true
+          gcov_executable: docker run --rm -v $PWD:/libsea -w /libsea ${{ env.REGISTRY }}/${{ env.IMAGE_ACTOR }}/sea-${{ matrix.os-name }}:master gcov -abcfu build
+      - name: setup tmate session
+        if: ${{ failure() && github.event_name == 'workflow_dispatch' && github.event.inputs.debug_enabled == 'true' }}
+        uses: mxschmitt/action-tmate@v3
+
+  build-and-push-base-image:
+    needs: run-tests
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os-name: [ xenial, bionic, focal, centos7, centos8, fedora32, fedora33, fedora34 ]
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@v1
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata (tags, labels) for Docker -  Base images
+        id: meta
+        uses: docker/metadata-action@v3
+        with:
+          images: ${{ env.REGISTRY }}/${{ github.actor }}/sea-${{ matrix.os-name }}
+
+      - name: Build and push Docker image - Base images
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          file: containers/base/Dockerfile.${{ matrix.os-name }}
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+
+  build-and-push-application-image:
+    needs: [ run-tests, build-and-push-base-image ]
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        application: [ fmriprep ]
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@v1
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Extract metadata (tags, labels) for Docker - Application images
+        id: meta
+        uses: docker/metadata-action@v3
+        with:
+          images: ${{ env.REGISTRY }}/${{ github.actor }}/sea-${{ matrix.application }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          file: containers/applications/Dockerfile.${{ matrix.application }}
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+
+
