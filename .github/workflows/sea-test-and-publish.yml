@@ -22,7 +22,6 @@ jobs:
         os-name: [xenial, bionic, focal, centos7, centos8, fedora32, fedora33, fedora34]
     name: Test in ${{ matrix.os-name }}
     steps:
-      - run: echo IMAGE_ACTOR=$(echo ${{ github.repository_owner }} | tr '[:upper:]' '[:lower:]') >> $GITHUB_ENV
       - run: docker --version
       - name: Git checkout
         uses: actions/checkout@v2
@@ -43,6 +42,7 @@ jobs:
         uses: mxschmitt/action-tmate@v3
 
   build-and-push-base-image:
+    if: github.event_name != 'pull_request'
     needs: run-tests
     runs-on: ubuntu-latest
     strategy:
@@ -51,7 +51,6 @@ jobs:
     permissions:
       contents: read
       packages: write
-      pull-requests: read
 
     steps:
       - name: Checkout repository
@@ -81,6 +80,7 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
 
   build-and-push-application-image:
+    if: github.event_name != 'pull_request'
     needs: [ run-tests, build-and-push-base-image ]
     runs-on: ubuntu-latest
     strategy:
@@ -89,7 +89,6 @@ jobs:
     permissions:
       contents: read
       packages: write
-      pull-requests: read
 
     steps:
       - name: Checkout repository
