@@ -34,7 +34,7 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           fail_ci_if_error: true
-          gcov_executable: docker run --rm -v $PWD:/libsea -w /libsea ${{ env.REGISTRY }}/${{ env.IMAGE_ACTOR }}/sea-${{ matrix.os-name }}:master gcov -abcfu build
+          gcov_executable: docker run --rm -v $PWD:$PWD -w $PWD imagetest:${{ matrix.os-name }} gcov -abcfu build
       - name: setup tmate session
         if: ${{ failure() && github.event_name == 'workflow_dispatch' && github.event.inputs.debug_enabled == 'true' }}
         uses: mxschmitt/action-tmate@v3
@@ -74,6 +74,8 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=registry,ref=${{ steps.meta.outputs.labels }}:${{ steps.meta.outputs.tags }}
+          cache-to: type=inline
 
   build-and-push-application-image:
     needs: [ run-tests, build-and-push-base-image ]
@@ -109,5 +111,7 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=registry,ref=${{ steps.meta.outputs.labels }}:${{ steps.meta.outputs.tags }}
+          cache-to: type=inline
 
 
