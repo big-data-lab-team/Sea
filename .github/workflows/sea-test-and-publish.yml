@@ -74,11 +74,10 @@ jobs:
         with:
           context: .
           file: containers/base/Dockerfile.${{ matrix.os-name }}
+          pull: true
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=registry,ref=${{ steps.meta.outputs.tags }}
-          cache-to: type=inline
 
   build-and-push-application-image:
     needs: [ run-tests, build-and-push-base-image ]
@@ -111,10 +110,9 @@ jobs:
         with:
           context: .
           file: containers/applications/Dockerfile.${{ matrix.application }}
+          pull: true
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=registry,ref=${{ steps.meta.outputs.tags }}
-          cache-to: type=inline
 
 
