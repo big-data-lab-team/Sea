@@ -2,6 +2,10 @@ name: Test Sea and publish dockerfiles
 
 on:
   push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
   workflow_dispatch:
     inputs:
       debug_enabled:
