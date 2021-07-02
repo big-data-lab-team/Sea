@@ -33,7 +33,7 @@ jobs:
       - run: docker run --rm -v $PWD:$PWD -w $PWD ${{ env.REGISTRY }}/${{ env.IMAGE_ACTOR }}/sea-${{ matrix.os-name }}:master bash -c "cp -r /libsea/build/* $PWD/build"
       - run: docker run --rm -v $PWD:$PWD -w $PWD ${{ env.REGISTRY }}/${{ env.IMAGE_ACTOR }}/sea-${{ matrix.os-name }}:master cp /libsea/tests/test_custom $PWD/tests/test_custom
       - run: docker run --rm -v $PWD:/libsea -w /libsea ${{ env.REGISTRY }}/${{ env.IMAGE_ACTOR }}/sea-${{ matrix.os-name }}:master bats tests/tests.bats
-      - run: docker run --rm -v $PWD:/libsea -w /libsea ${{ env.REGISTRY }}/${{ env.IMAGE_ACTOR }}/sea-${{ matrix.os-name }}:master bash -c "MOUNT=$PWD/mount SOURCE=$PWD/source SOURCE_1=$PWD/source_1 levels=1 bash tests/setup.bash"
+      - run: docker run --rm -v $PWD:/libsea -w /libsea ${{ env.REGISTRY }}/${{ env.IMAGE_ACTOR }}/sea-${{ matrix.os-name }}:master bash -c "MOUNT=/libsea/mount SOURCE=/libsea/source SOURCE_1=$PWD/source_1 levels=1 bash tests/setup.bash"
       - run: docker run --rm -v $PWD:/libsea -w /libsea -e SEA_HOME=/libsea -e LD_PRELOAD=/libsea/build/sea.so ${{ env.REGISTRY }}/${{ env.IMAGE_ACTOR }}/sea-${{ matrix.os-name }}:master tests/test_custom
 
       - uses: codecov/codecov-action@v1
