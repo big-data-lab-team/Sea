@@ -30,7 +30,7 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - run: cd ${{ github.workspace }}
-      - run: docker build tests/docker -f containers/base/Dockerfile.${{ matrix.os-name }} -t imagetest:${{ matrix.os-name }}
+      - run: docker build containers/base -f containers/base/Dockerfile.${{ matrix.os-name }} -t imagetest:${{ matrix.os-name }}
       - run: docker run --rm -v $PWD:$PWD -W $PWD imagetest:${{ matrix.os-name }} make test debug_opts="-g -ggdb --coverage -fprofile-arcs -ftest-coverage"
       - run: docker run --rm -v $PWD:$PWD -w $PWD imagetest:${{ matrix.os-name }} bats tests/tests.bats
       - run: docker run --rm -v $PWD:$PWD -w $PWD imagetest:${{ matrix.os-name }} bash -c "MOUNT=$PWD/mount SOURCE=$PWD/source SOURCE_1=$PWD/source_1 levels=1 bash tests/setup.bash"
