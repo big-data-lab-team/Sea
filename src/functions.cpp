@@ -821,8 +821,44 @@ extern "C"
 
     int mkdirat(int dirfd, const char *pathname, mode_t mode)
     {
+        initialize_passthrough_if_necessary();
         char passpath[PATH_MAX];
-        init_path("mkdirat", pathname, passpath, 0);
+        char abspath[PATH_MAX];
+
+        get_dirpath(pathname, abspath, dirfd);
+        init_path("mkdirat", abspath, passpath, 0, 1);
+
+        struct config sea_conf;
+        sea_conf = get_sea_config();
+
+        if (sea_conf.parsed == true)
+        {
+            char mountpath[PATH_MAX];
+            initialize_sea_if_necessary();
+            int mount_match = sea_getpath(abspath, passpath, 0, 0);
+            int source_match = sea_getpath(passpath, mountpath, 1);
+
+            // if not a directory within the mountpoint or the source directories, return just the current dir
+            if (mount_match == 0 && source_match == 0)
+            {
+
+                return ((funcptr_mkdirat)libc_mkdirat)(dirfd, passpath, mode);
+            }
+
+            if (mount_match)
+                strcpy(mountpath, abspath);
+
+            int ret = 0;
+            ret = ((funcptr_mkdirat)libc_mkdirat)(dirfd, passpath, mode);
+            for (int i = 1; i < sea_conf.n_sources; i++)
+            {
+                passpath[0] = '\0';
+                sea_getpath(mountpath, passpath, 0, i);
+                log_msg(INFO, "mkdirat: creating other directory %s", passpath);
+                ret = ((funcptr_mkdirat)libc_mkdirat)(dirfd, strdup(passpath), mode);
+            }
+            return ret;
+        }
         return ((funcptr_mkdirat)libc_mkdirat)(dirfd, passpath, mode);
     }
 
@@ -1428,7 +1464,17 @@ extern "C"
         init_twopaths("symlink", oldname, newname, old_passpath, new_passpath, 0);
         return ((funcptr_symlink)libc_symlink)(old_passpath, new_passpath);
     }
+    int symlinkat(const char *oldpath, int newdirfd, const char *newpath)
+    {
+        initialize_passthrough_if_necessary();
+        char new_passpath[PATH_MAX];
+        char new_abspath[PATH_MAX];
+        char old_passpath[PATH_MAX];
 
+        get_dirpath(newpath, new_abspath, newdirfd);
+        init_twopaths("symlinkat", oldpath, new_abspath, old_passpath, new_passpath, 0);
+        return ((funcptr_symlinkat)libc_symlinkat)(old_passpath, newdirfd, new_passpath);
+    }
     ssize_t readlink(const char *filename, char *buffer, size_t size)
     {
         char passpath[PATH_MAX];
