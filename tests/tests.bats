@@ -406,6 +406,25 @@ export SOURCE_1="$PWD/source_1"
     done
 }
 
+@test "rmtree" {
+
+    type python3 || skip "Python 3 is not installed"
+    mkdir -p actualdir
+    touch actualdir/a.txt
+    mkdir -p actualdir/d
+    for levels in {1..3}
+    do
+        load setup
+        mkdir -p ${SOURCE}/symdir
+        ln -s actualdir/a.txt ${SOURCE}/symdir/a.txt 
+        ln -s actualdir/d ${SOURCE}/symdir/d
+        python3 tests/rmtree.py ${MOUNT}/symdir
+        [ ! -d ${MOUNT}/symdir ]
+        load unset
+    done
+
+}
+
 @test "access time" {
     for levels in {1..3}
     do
@@ -419,4 +438,3 @@ export SOURCE_1="$PWD/source_1"
         load unset
     done
 }
-
