@@ -4,6 +4,7 @@ gen_conf() {
 
     if [[ $1 == 1 ]]
     then
+        echo "Test with 2 mounts" 
         cat > ${SEA_HOME}/sea.ini << DOC
         # Sea configuration
         [Sea]
@@ -17,7 +18,7 @@ gen_conf() {
 DOC
     elif [[ $1 == 2 ]]
     then
-        SEA_LOG_FILE=${SEA_HOME}/sea.log
+        echo "Test with environment variable ${SEA_LOG_FILE}"
         cat > ${SEA_HOME}/sea.ini << DOC
         # Sea configuration
         [Sea]
@@ -30,6 +31,7 @@ DOC
         max_fs = 1048576 ;
 DOC
     else
+        echo "Test with a single mount"
 
         cat > ${SEA_HOME}/sea.ini << DOC
         # Sea configuration

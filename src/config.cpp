@@ -150,8 +150,8 @@ void parse_config()
 
     if (mount_env != NULL)
     {
-        sea_config.mount_dir[0] = '\0';
-        strcpy(sea_config.mount_dir, mount_env);
+        free(sea_config.mount_dir);
+        sea_config.mount_dir = strdup(mount_env);
     }
 
     if ((sea_config.log_file = (char *)iniparser_getstring(config_dict, "sea:log_file", NULL)) == 0)
@@ -165,9 +165,10 @@ void parse_config()
 
     if (sea_logenv != NULL)
     {
-        sea_config.log_file[0] = '\0';
-        strcpy(sea_config.log_file, sea_logenv);
+        free(sea_config.log_file);
+        sea_config.log_file = strdup(sea_logenv);
     }
+
     if ((sea_config.max_fs = atol((char *)iniparser_getstring(config_dict, "sea:max_fs", NULL))) == 0)
     {
         printf("Missing max_fs in config file %s\n", config_file);

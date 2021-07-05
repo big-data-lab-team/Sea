@@ -131,6 +131,7 @@ typedef char *(*funcptr_basename)(const char *);
 typedef char *(*funcptr_bindtextdomain)(const char *, const char *);
 
 typedef int (*funcptr_symlink)(const char *, const char *);
+typedef int (*funcptr_symlinkat)(const char *oldpath, int newdirfd, const char *newpath);
 typedef ssize_t (*funcptr_readlink)(const char *, char *, size_t);
 typedef int (*funcptr_nftw)(const char *, int (*)(const char *, const struct stat *, int, struct FTW *),
                             int, int);
@@ -259,6 +260,7 @@ extern void *libc_basename;
 extern void *libc_bindtextdomain;
 
 extern void *libc_symlink;
+extern void *libc_symlinkat;
 extern void *libc_readlink;
 extern void *libc_nftw;
 extern void *libc_ftw;

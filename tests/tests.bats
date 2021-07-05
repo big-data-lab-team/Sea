@@ -5,7 +5,7 @@
 export SOURCE="$PWD/source"
 export MOUNT="$PWD/mount"
 export SOURCE_1="$PWD/source_1"
-
+export SEA_LOG_FILE="${PWD}/sea.log"
 @test "test" {
     for levels in {1..3}
     do
@@ -406,6 +406,53 @@ export SOURCE_1="$PWD/source_1"
     done
 }
 
+@test "rmtree" {
+
+    type python3 || skip "Python 3 is not installed"
+    mkdir -p actualdir
+    touch actualdir/a.txt
+    mkdir -p actualdir/d
+    for levels in {1..3}
+    do
+        load setup
+        mkdir -p ${SOURCE}/symdir
+        ln -s actualdir/a.txt ${SOURCE}/symdir/a.txt 
+        ln -s actualdir/d ${SOURCE}/symdir/d
+        python3 tests/rmtree.py ${MOUNT}/symdir
+        [ ! -d ${MOUNT}/symdir ]
+        load unset
+    done
+}
+
+@test "mkdirat" {
+    for levels in {1..3}
+    do
+        load setup
+        rm -rf ${MOUNT}/symdir
+        mkdir -p ${MOUNT}/symdir
+        load unset
+        test -d ${SOURCE}/symdir
+
+        if [[ levels < 3 ]]
+        then
+            test -d ${SOURCE_1}/symdir
+        fi
+    done
+
+}
+
+@test "symlink" {
+    for levels in {1..3}
+    do
+        load setup
+        mkdir -p ${MOUNT}/symdir
+        ln -s actualdir/a.txt ${MOUNT}/symdir/a.txt 
+        ln -s ${MOUNT}/file_in_mem.txt ${MOUNT}/symdir/b.txt
+        load unset
+    done
+
+}
+
 @test "access time" {
     for levels in {1..3}
     do
@@ -419,4 +466,3 @@ export SOURCE_1="$PWD/source_1"
         load unset
     done
 }
-

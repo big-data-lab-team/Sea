@@ -130,6 +130,7 @@ void *libc_basename;
 void *libc_bindtextdomain;
 
 void *libc_symlink;
+void *libc_symlinkat;
 void *libc_readlink;
 void *libc_nftw;
 void *libc_ftw;
@@ -556,6 +557,7 @@ void initialize_functions()
   libc_bindtextdomain = dlsym(libc, "bindtextdomain");
 
   libc_symlink = dlsym(libc, "symlink");
+  libc_symlinkat = dlsym(libc, "symlinkat");
   libc_readlink = dlsym(libc, "readlink");
   libc_nftw = dlsym(libc, "nftw");
   libc_ftw = dlsym(libc, "ftw");
