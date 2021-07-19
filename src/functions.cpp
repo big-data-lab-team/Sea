@@ -46,7 +46,6 @@
         log_msg(INFO, "readdir%s: passthrough initialized", #VERSION);                                                                  \
         if (sea_conf.parsed == true)                                                                                                    \
         {                                                                                                                               \
-            initialize_sea_if_necessary();                                                                                              \
             log_msg(INFO, "readdir%s: sea initialized", #VERSION, #VERSION);                                                            \
                                                                                                                                         \
             SEA_DIR *sd = (SEA_DIR *)dirp;                                                                                              \
@@ -125,7 +124,6 @@ void init_path(const char *function, const char *path, char passpath[PATH_MAX], 
     struct config sea_conf = get_sea_config();
     if (sea_conf.parsed == true)
     {
-        initialize_sea_if_necessary();
         match = sea_getpath(path, passpath, masked);
     }
     else
@@ -175,7 +173,6 @@ void init_twopaths(const char *function, const char *oldpath, const char *newpat
     int match_new = 0;
     if (sea_conf.parsed == true)
     {
-        initialize_sea_if_necessary();
         match_old = sea_getpath(oldpath, oldpasspath, 0);
         match_new = sea_getpath(newpath, newpasspath, 0);
     }
@@ -354,11 +351,6 @@ extern "C"
 
                 if (sea_conf.parsed == true)
                 {
-                    //char mountpath[PATH_MAX];
-                    //char fdloc[PATH_MAX];
-                    //char afd[10];
-                    initialize_sea_if_necessary();
-
                     sea_getpath(abspath, passpath, 0, 0);
                     // source_match = sea_getpath(abspath, mountpath, 1);
 
@@ -419,7 +411,6 @@ extern "C"
             sd->dirnames = (char **)malloc(sizeof(char *) * sea_conf.n_sources);
             sd->other_dirp = (DIR **)malloc(sizeof(DIR *) * sea_conf.n_sources - 1);
 
-            initialize_sea_if_necessary();
             int mount_match = sea_getpath(pathname, passpath, 0, 0);
             //int source_match = sea_getpath(pathname, mountpath, 1);
 
@@ -495,7 +486,6 @@ extern "C"
         //check if file is in Sea mount
         if (sea_conf.parsed == true)
         {
-            initialize_sea_if_necessary();
             int mount_match = sea_getpath(abspath, passpath, 0, 0);
             int source_match = sea_getpath(abspath, mountpath, 1);
 
@@ -677,7 +667,6 @@ extern "C"
 
         if (sea_conf.parsed == true)
         {
-            initialize_sea_if_necessary();
             SEA_DIR *sd = (SEA_DIR *)dirp;
 
             free(sd->dirnames[0]);
@@ -711,7 +700,6 @@ extern "C"
 
         if (sea_conf.parsed == true)
         {
-            initialize_sea_if_necessary();
             SEA_DIR *sd = (SEA_DIR *)dirp;
 
             if (sd->issea)
@@ -793,7 +781,6 @@ extern "C"
 
         if (sea_conf.parsed)
         {
-            initialize_sea_if_necessary();
             int mount_match = sea_getpath(pathname, passpath, 0, 0);
             int source_match = sea_getpath(pathname, mountpath, 1);
 
@@ -834,7 +821,6 @@ extern "C"
         if (sea_conf.parsed == true)
         {
             char mountpath[PATH_MAX];
-            initialize_sea_if_necessary();
             int mount_match = sea_getpath(abspath, passpath, 0, 0);
             int source_match = sea_getpath(passpath, mountpath, 1);
 
@@ -876,8 +862,6 @@ extern "C"
 
         if (sea_conf.parsed)
         {
-            initialize_sea_if_necessary();
-
             SEA_DIR *sd = (SEA_DIR *)dirp;
             log_msg(DEBUG, "in dirfd4. returning %d", sd->dirp);
             return ((funcptr_dirfd)libc_dirfd)(sd->dirp);
@@ -901,7 +885,13 @@ extern "C"
     {
         char oldpasspath[PATH_MAX];
         char newpasspath[PATH_MAX];
-        init_twopaths("renameat", oldpath, newpath, oldpasspath, newpasspath, 0);
+
+        char oldabspath[PATH_MAX];
+        char newabspath[PATH_MAX];
+
+        get_dirpath(oldpath, oldabspath, olddirfd);
+        get_dirpath(newpath, newabspath, newdirfd);
+        init_twopaths("renameat", oldabspath, newabspath, oldpasspath, newpasspath, 0);
         return ((funcptr_renameat)libc_renameat)(olddirfd, oldpasspath, newdirfd, newpasspath);
     }
 
@@ -909,8 +899,15 @@ extern "C"
     {
         char oldpasspath[PATH_MAX];
         char newpasspath[PATH_MAX];
-        init_twopaths("renameat2", oldpath, newpath, oldpasspath, newpasspath, 0);
-        return ((funcptr_renameat2)libc_renameat2)(olddirfd, oldpasspath, newdirfd, newpasspath, flags);
+
+        char oldabspath[PATH_MAX];
+        char newabspath[PATH_MAX];
+
+        get_dirpath(oldpath, oldabspath, olddirfd);
+        get_dirpath(newpath, newabspath, newdirfd);
+        init_twopaths("renameat2", oldabspath, newabspath, oldpasspath, newpasspath, 0);
+        int res = ((funcptr_renameat2)libc_renameat2)(olddirfd, oldpasspath, newdirfd, newpasspath, flags);
+        return res;
     }
 
     int remove(const char *pathname)
@@ -966,7 +963,6 @@ extern "C"
                 if (sea_conf.parsed == true)
                 {
                     char mountpath[PATH_MAX];
-                    initialize_sea_if_necessary();
                     int mount_match = sea_getpath(abspath, passpath, 0, 0);
                     int source_match = sea_getpath(passpath, mountpath, 1);
 
@@ -1010,7 +1006,6 @@ extern "C"
         if (sea_conf.parsed == true)
         {
             char mountpath[PATH_MAX];
-            initialize_sea_if_necessary();
             int mount_match = sea_getpath(pathname, passpath, 0, 0);
 
             // if not a directory within the mountpoint or the source directories, return just the current dir
