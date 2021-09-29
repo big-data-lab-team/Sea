@@ -18,5 +18,3 @@ RUN echo "#!/bin/bash\n" \
 RUN chmod +x /bin/seafprep.sh
 
 ENTRYPOINT ["/bin/sea_launch.sh", "/bin/seafprep.sh"]
-
-

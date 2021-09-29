@@ -22,6 +22,7 @@ RUN printf '#!/bin/bash \n\
 	$@' > /bin/sea-app.sh
 RUN chmod +x /bin/sea-app.sh
 
+RUN apt update -y && apt-get -y install dc
 RUN source ${FSLDIR}/etc/fslconf/fsl.sh
 
 ENTRYPOINT ["/bin/sea_launch.sh", "/bin/sea-app.sh"]

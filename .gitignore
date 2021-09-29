@@ -3,6 +3,8 @@
 *.gcda
 *.gcno
 **/*.swp
+**/*.sif
+**/.*.*
 sea.ini
 sea.log
 build/*

@@ -85,7 +85,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        application: [ fmriprep ]
+        application: [ fmriprep, AFNI, fsl, HCP, SPM ]
     permissions:
       contents: read
       packages: write
