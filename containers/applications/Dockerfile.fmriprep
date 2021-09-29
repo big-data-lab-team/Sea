@@ -7,10 +7,12 @@ FROM nipreps/fmriprep:20.2.1
 RUN mkdir /sea
 COPY --from=sea /libsea/build/sea.so /sea/sea.so
 COPY --from=sea /libsea/bin/sea* /bin/
+COPY --from=sea /libsea/build/mirror /sea/mirror
 
 ENV SEA_HOME /sea
 
 RUN echo "#!/bin/bash\n" \
+	"/sea/mirror" \
 	"export LD_PRELOAD=/sea/sea.so\n" \
 	"fmriprep \$@" > /bin/seafprep.sh
 RUN chmod +x /bin/seafprep.sh
