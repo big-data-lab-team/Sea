@@ -1,0 +1,205 @@
+\documentclass[10pt,journal,compsoc]{IEEEtran}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{ulem}
+\usepackage{graphicx}
+\usepackage{rotating}
+\usepackage{setspace}
+\usepackage{longtable}
+\usepackage[binary-units=true]{siunitx}
+\usepackage{multirow}
+\usepackage{subcaption}
+\usepackage{algorithm}
+\usepackage{algorithmicx}
+\usepackage{algpseudocode}
+\usepackage{amsmath}
+
+\algnewcommand\algorithmicforeach{\textbf{for each}}
+\algdef{S}[FOR]{ForEach}[1]{\algorithmicforeach\ #1\ \algorithmicdo}
+\algblock{Input}{EndInput}
+\algnotext{EndInput}
+\algblock{Output}{EndOutput}
+\algnotext{EndOutput}
+\newcommand{\Desc}[2]{\State \makebox[2em][l]{#1}#2}
+\newcommand{\todo}[1]{\marginpar{\parbox{18mm}{\flushleft\tiny\color{red}\textbf{TODO}: #1}}}
+
+% benchmark on beluga, prefreesurfer with RUIS
+% use more than 64 subjects for prefreesurfer --> few 100 subjects
+% think more about how to benchmark I/O
+% try distributed jobs with Sea
+
+\begin{document}
+\title{Automated neuroimaging data management with the Sea filesystem}
+% remove neuroimaging and replace with scientific computing  add user-space, switch HPC to computing clusters
+
+\author{Val\'erie Hayot-Sasson and Tristan Glatard}
+
+% The paper headers
+\markboth{Journal of \LaTeX\ Class Files,~Vol.~14, No.~8, August~2015}%
+{Hayot-Sasson\MakeLowercase{\textit{et al.}}: Bare Demo of IEEEtran.cls for Computer Society Journals}
+\IEEEtitleabstractindextext{%
+\begin{abstract}
+    Neuroimaging open-data initiatives have led to the availability of large scientific datasets. These voluminous
+    datasets provide researchers with new insights into the human brain across diverse populations. Difficulties with
+    managing such large data has partially hindered the advancement of scientific studies analyzing these datasets. Many
+    software tools and strategies have emerged to facilitate the processing. Many open datasets have been stored on cloud storage
+    services, such as AWS, enabling rapid transfer of the data at a cost. Software tools such as Datalad has facilitated both the
+    sharing and versioning of data. Despite these advancements in-analysis data-management remains limited in neuroimaging workflows.
+
+    Neuroimaging workflows, particularly preprocessing ones, may lead to a magnification in output sizes due to <add reason>. They also produce
+    significant amounts of intermediary data due to being composed of a multitude of steps. 
+\end{abstract}
+}
+
+
+% make the title area
+\maketitle
+
+
+\IEEEdisplaynontitleabstractindextext
+\IEEEpeerreviewmaketitle
+
+
+
+\IEEEraisesectionheading{\section{Introduction}\label{sec:introduction}}
+\IEEEPARstart{}{}
+
+Neuroimaging datasets continue to grow in size resulting in new challenges related
+to data management. The current largest neuroimaging datasets, such as the Human Connectome Project (HCP)~\ref{HCP}
+and the UK Biobank~\ref{ukbiobank} reach up to Petabytes of data. Big Data in neuroimaging can be present in two formats: 1)
+very large files, such as those found in the BigBrain~\ref{bigbrain}, and 2) large datasets made up of very small files,
+such as those typically found in fMRI datasets. 
+
+When processing, large datasets can result in longer processing times even when compute resources are ample.
+This is a direct result of the underlying storage used by the applications to read and write data. Since large
+datasets require a significant amount of available storage space, more often than not, slower but larger storage is
+selected, resulting in longer data transfer times during processing. With the Sea filesystem, we aim to
+leverage all available storage in order to reduce overall data transfer time during pipeline execution.
+
+Many researchers rely on one of two systems to meet their storage and computing needs: 1) High Performance 
+Computing (HPC) clusters and 2) the cloud. Whereas the cloud simplifies data sharing and gives researchers
+access to a wide variety of infrastructures, HPC clusters are a cost-effective solution to accessing a wide
+array of resources for researchers. In this paper, we will focus on HPC processing.
+
+HPC systems rely on scalable network-based parallel filesystems (e.g. Lustre) for storage. While such file
+systems offer excellent performance, they are shared between all the users on the cluster. Meaning that users
+with data-intensive can effectively deteriorate the performance of the shared file system for all users on
+the cluster. Solutions for improving shared file system performance include throttling the data intensive workloads
+or recommending the use of Burst Buffers~\cite{bb} (e.g. reserving a compute node for storage or leveraging
+local compute storage during processing). The latter, however, requiring that the user manages their data to
+and from the Burst Buffer.
+
+Leveraging local storage to improve data intensive workload performance has long since existed in Big Data
+frameworks such as Apache Spark~\cite{spark} and Dask~\cite{dask}. While these frameworks have been used to
+process neuroimaging data~\cite{manypapers}, they remain seldom used as their require rewriting existing
+standard neuroimaging tools (e.g FSL, AFNI, SPM) for the framework. Although it is possible to use the
+tools within the Big Data frameworks, optimizations like in-memory computing would not be leveraged due to 
+the fact that neuroimaging tools are meant to be used as command-line tools and do not provide interfaces that 
+enable the data to be transferred in-memory.
+
+Frameworks used in neuroimaging, such as NiPype~\cite{nipype} and Joblib~\cite{joblib} instead focus on reducing compute times of workloads.
+This is because even with large datasets, neuroimaging data processing remains split between compute and data
+intensive components. Although these frameworks do not prohibit the use of intelligent data management, it is not directly integrated
+into the workflow. In order to give neuroimaging applications data management capabilities, the applications must interact with a
+file system that can do so.
+
+In order for a file system to be usable by the average researcher on an HPC system, they must be loadable without administrative
+privileges. Furthermore, as the applications are typically made to interact with POSIX-based file systems, the new file system must
+also be compliant to the format. One method to ensure that these conditions are met is by using the \texttt{LD\_PRELOAD} trick. This trick
+enables the interception of library calls by redefining them. 
+
+In this paper, we present Sea, a file system designed to automate data management of neuroimaging pipelines running on HPC systems.
+
+
+
+
+
+\section{Related Work}
+
+Put in intro.
+summary of computing landscape for neuroimaging.
+HCP, CBRAIN, nipype, joblib. sea can be used in all these contexts.
+
+
+\section{Materials and Methods}
+\subsection{Datasets}
+Functional magnetic resonance imaging datasets can vary greatly in total number
+of images and number of volumes within each image. To adequately capture the 
+diversity of datasets and when Sea could be pertinent, we selected three datasets of varying
+sizes: 1) OpenNeuro's ds001545 dataset~\cite{ds001545}, 2) the PREVENT-AD  dataset~\cite{preventad}, and
+3) the HCP dataset~\cite{hcp}. The ds001545 dataset is a total of 45.94~$GB$ (1778 files) and consists of data collected
+from 30 subjects in a single session. The PREVENT-AD dataset is a 255.0~$GB$ dataset (53061 files) consisting of data collected
+from 308 subjects. The HCP dataset is the largest of the three datasets at 85.4~$TB$ (x files) consisting of data collected from
+1113 subjects.
+
+%just for example run
+%dataset size, resolution, resolution of voxels
+%matrix size pixdim1X2
+%number of slices pixdim
+%number of volumes pixdim4
+%inplane resolution pixsize1x2
+%slice thickness pizsize3 in mm
+%repetition time pixsize4 in s
+
+%HCP resting state + x stats
+
+%# files written and output size, duration and memory consumption.
+\subsection{fMRI Preprocessing Pipelines}
+
+Similarly to datasets, preprocessing pipelines can also vary in duration as a result of methodological differences.
+Thus, we preprocessed each dataset using four standard preprocessing pipelines: FSL~\cite{fsl}, AFNI~\cite{AFNI},
+SPM~\cite{SPM}, fMRIPrep~\cite{fmriprep}. Table~\ref{tb1} provides an reference of the differences in computation and data-intensivity
+of the different pipelines on a single subject of the ds001545 dataset.
+
+Each tool was set to only run the preprocessing pipeline. Scripts used to execute each pipeline can be found at~\ref{github.com}.
+For the FSL preprocessing pipeline, the default settings were maintained with the exception of slice-timing correction (interleaved),
+intensity normalization and non-linear registration to standard space.
+
+%% Add SPM here
+
+For AFNI preprocessing, the 
+
+%%{provide subject #/session#} of the ds001545 dataset.
+
+
+
+\subsection{Controls}
+\subsection{Infrastructure}
+
+\section{Results}
+
+
+\section{Discussion}
+talk about testing
+
+
+Flushing - rely on modification time
+\section{Conclusion}
+%
+
+
+\ifCLASSOPTIONcompsoc
+  % The Computer Society usually uses the plural form
+  \section*{Acknowledgments}
+\else
+  % regular IEEE prefers the singular form
+  \section*{Acknowledgment}
+\fi
+
+% Can use something like this to put references on a page
+% by themselves when using endfloat and the captionsoff option.
+\ifCLASSOPTIONcaptionsoff
+  \newpage
+\fi
+
+
+
+% biography section
+
+\begin{IEEEbiography}{Val\'erie Hayot-Sasson}
+\end{IEEEbiography}
+\begin{IEEEbiography}{Tristan Glatard}
+\end{IEEEbiography}
+\end{document}
+
+
