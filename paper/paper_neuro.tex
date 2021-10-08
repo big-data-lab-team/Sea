@@ -105,24 +105,70 @@ file system that can do so.
 
 In order for a file system to be usable by the average researcher on an HPC system, they must be loadable without administrative
 privileges. Furthermore, as the applications are typically made to interact with POSIX-based file systems, the new file system must
-also be compliant to the format. One method to ensure that these conditions are met is by using the \texttt{LD\_PRELOAD} trick. This trick
-enables the interception of library calls by redefining them. 
+also be compliant to the format. One method to ensure that these conditions are met is by using the \texttt{LD\_PRELOAD} trick. This trick is
+used to intercept select library calls and redefine their behaviour. It has been used in many projects and to create lightweight versions
+of filesystems~\cite{xtreemfs}. 
 
 In this paper, we present Sea, a file system designed to automate data management of neuroimaging pipelines running on HPC systems.
+The goal of Sea is to complement existing neuroimaging applications such that both efficient compute and data management can be achieved
+executed on HPC without significant user intervention. As a secondary goal, Sea aims to ensure the fair sharing of cluster usage
+by alleviating the impacts of heavy writers on the shared file systems as a whole. 
 
 
 
+% \section{Related Work}
 
-
-\section{Related Work}
-
-Put in intro.
-summary of computing landscape for neuroimaging.
-HCP, CBRAIN, nipype, joblib. sea can be used in all these contexts.
+% Put in intro.
+% summary of computing landscape for neuroimaging.
+% HCP, CBRAIN, nipype, joblib. sea can be used in all these contexts.
 
 
 \section{Materials and Methods}
-\subsection{Datasets}
+
+\subsection{The Sea filesystem}
+
+The Sea file system is an on-demand file system that leverages the \texttt{LD\_PRELOAD} trick to intercept POSIX file system (more specifically, glibc)
+calls on Linux systems. This enables Sea to redirect write calls aimed for a slower storage device to a faster device whenever
+possible. Similarly, when intercepting read calls, Sea can choose to read from a faster device if a copy is available on that device.
+Sea decides which storage location it can write to based on the detailed provided in an initialization file called \texttt{sea.ini}. 
+This file informs Sea of which locations it can use to read and write to, and well as their order of priority. An example of the initialization
+file can be seen in ~\ref{seaini}.
+
+As neuroimaging pipeline results are typically required post-processing and HPC compute-local resources are only accessible during the
+reserved duration, Sea provides functionality to flush and evict data to persistent shared storage. This is accomplished via a separate
+thread (known as the ``flusher'') that moves data from the caches to long-term storage. A separate thread is used, in this case, to avoid
+interrupting on going processing with data management operations.
+Users must inform Sea of files that need to be
+persisted to storage within a file called \texttt{.sea\_flushlist}, and temporary files which can be removed from cache within a file
+called the \texttt{.sea\_evictlist}. Both these files can be populated using regular expressions to denote the paths to flush and evict.
+If a file occurs in both the \texttt{.sea\_flushlist} and \texttt{.sea\_evictlist}, Sea will interpret this as a \texttt{move} operation
+and simply move the file from local to persistent storage rather than copying it. Files that will be reused by the application should only
+be flushed rather than flushed and evicted, as files can benefit from speedups related to reading from fast rather than slow storage.
+Sea currently also provides a rudimentary prefetch thread that can move files located within the Sea filesystem to the fastest available cache.
+To use Sea's prefetch capabilities, a file called \texttt{.sea\_prefetchlist} needs to be populated using regular expressions like the
+flushing and eviction files.
+
+To interact with the Sea file system, a mountpoint is used. The mountpoint is an empty directory that behaves as a view to
+all the files and directories stored within Sea. In order to keep track of the locations of the files within the mountpoint, Sea
+mirrors the file structure of each storage location across all storage locations. That means, it is generally advisable to provide
+empty storage locations for Sea to write to as the mirroring of large directories can take some time. When prefetching, it is
+best to provide Sea with a path that only points to that data the requires prefetching as mirroring the paths of full datasets may 
+extend processing time.
+
+Sea can easily be launched directly using the available containers on the GitHub registry, or can be compiled via source using Make.
+It requires a version of glibc greater than X. Once compiled, Sea can be executed using the `sea-app.sh' binary.
+
+\subsection{Performance analysis of Sea for neuroimaging}
+
+To determine the performance gain Sea brings to neuroimaging analyses, we must evaluate the value of Sea on a variety of neuroimaging
+applications. For our analysis, we selected different fMRI preprocessing applications as fMRI processing has some of the most
+well-established tools for neuroimaging and some of the largest datasets. Of course, different modalities an tools may result in
+vastly different data access patterns and compute times, we use fMRI prepreprocessing as our baseline for the benefits that can be
+obtained with Sea. 
+
+
+
+\subsubsection{Datasets}
 Functional magnetic resonance imaging datasets can vary greatly in total number
 of images and number of volumes within each image. To adequately capture the 
 diversity of datasets and when Sea could be pertinent, we selected three datasets of varying
@@ -144,7 +190,7 @@ from 308 subjects. The HCP dataset is the largest of the three datasets at 85.4~
 %HCP resting state + x stats
 
 %# files written and output size, duration and memory consumption.
-\subsection{fMRI Preprocessing Pipelines}
+\subsubsection{fMRI Preprocessing Pipelines}
 
 Similarly to datasets, preprocessing pipelines can also vary in duration as a result of methodological differences.
 Thus, we preprocessed each dataset using four standard preprocessing pipelines: FSL~\cite{fsl}, AFNI~\cite{AFNI},
@@ -157,7 +203,13 @@ intensity normalization and non-linear registration to standard space.
 
 %% Add SPM here
 
-For AFNI preprocessing, the 
+For AFNI preprocessing, the pipeline was configured to perform slice timing, alignment to Talaraich space, registration, smoothing
+and brain masking. While AFNI does have some parallelized components that can be controlled via environment variables, we chose to let 
+the pipeline use as much parallelism as required for its execution.
+
+We set fMRIPrep to run with \texttt{--fs-no-reconall} flag set and set the \texttt{--bids-database-dir} to a tmpfs location. 
+Furthermore, the seeds were fixed to ensure reproducible results. Unlike the other tools where only a single fMRI image was preprocessed
+per process, it was not possible to do so with fMRIPrep. Thus, fMRIPrep preprocessed entire subject directories at a time
 
 %%{provide subject #/session#} of the ds001545 dataset.
 
