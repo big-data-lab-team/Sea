@@ -20,6 +20,7 @@
 \algnotext{EndInput}
 \algblock{Output}{EndOutput}
 \algnotext{EndOutput}
+\newcommand{\tristan}[1]{\color{orange}\textbf{From Tristan:} #1\color{black}\xspace}
 \newcommand{\Desc}[2]{\State \makebox[2em][l]{#1}#2}
 \newcommand{\todo}[1]{\marginpar{\parbox{18mm}{\flushleft\tiny\color{red}\textbf{TODO}: #1}}}
 
@@ -46,7 +47,7 @@
     services, such as AWS, enabling rapid transfer of the data at a cost. Software tools such as Datalad has facilitated both the
     sharing and versioning of data. Despite these advancements in-analysis data-management remains limited in neuroimaging workflows.
 
-    Neuroimaging workflows, particularly preprocessing ones, may lead to a magnification in output sizes due to <add reason>. They also produce
+    Neuroimaging workflows, particularly preprocessing ones, may lead to a magnification in output sizes due to the presence of multiple intermediary processing steps. They also produce
     significant amounts of intermediary data due to being composed of a multitude of steps. 
 \end{abstract}
 }
@@ -83,7 +84,7 @@ array of resources for researchers. In this paper, we will focus on HPC processi
 
 HPC systems rely on scalable network-based parallel filesystems (e.g. Lustre) for storage. While such file
 systems offer excellent performance, they are shared between all the users on the cluster. Meaning that users
-with data-intensive can effectively deteriorate the performance of the shared file system for all users on
+with data-intensive analyses can effectively deteriorate the performance of the shared file system for all users on
 the cluster. Solutions for improving shared file system performance include throttling the data intensive workloads
 or recommending the use of Burst Buffers~\cite{bb} (e.g. reserving a compute node for storage or leveraging
 local compute storage during processing). The latter, however, requiring that the user manages their data to
@@ -134,7 +135,7 @@ Sea decides which storage location it can write to based on the detailed provide
 This file informs Sea of which locations it can use to read and write to, and well as their order of priority. An example of the initialization
 file can be seen in ~\ref{seaini}.
 
-As neuroimaging pipeline results are typically required post-processing and HPC compute-local resources are only accessible during the
+As neuroimaging pipeline results typically require post-processing and HPC compute-local resources are only accessible during the
 reserved duration, Sea provides functionality to flush and evict data to persistent shared storage. This is accomplished via a separate
 thread (known as the ``flusher'') that moves data from the caches to long-term storage. A separate thread is used, in this case, to avoid
 interrupting on going processing with data management operations.
