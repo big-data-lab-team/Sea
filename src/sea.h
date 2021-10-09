@@ -28,6 +28,7 @@ struct SEA_DIR
     char **dirnames;
     int curr_index;
     int total_dp;
+    std::set<std::string> seen_files; // bandaid solution to not listing duplicate files in mount
 };
 
 #endif

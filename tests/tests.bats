@@ -37,6 +37,18 @@ export SEA_LOG_FILE="${PWD}/sea.log"
     done
 }
 
+@test "ls duplicates" {
+    for levels in {1..3}
+    do
+        load setup
+        LD_PRELOAD="" cp ${SOURCE}/file_in_source.txt ${SOURCE_1}/file_in_source.txt
+        a=$(ls ${MOUNT})
+        [[ $(echo ${a} | grep -o "file_in_source.txt" | wc -l) == 1 ]]
+        load unset
+     done
+
+}
+
 @test "mkdir" {
     for levels in {1..3}
     do

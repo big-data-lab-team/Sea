@@ -10,8 +10,8 @@ gen_conf() {
         [Sea]
         mount_dir = ${MOUNT} ;
         n_levels = 2 ;
-        source_0 = ${SOURCE} ;
-        source_1 = ${SOURCE_1}
+        cache_0 = ${SOURCE} ;
+        cache_1 = ${SOURCE_1}
         log_level = 3 ; # 4 crashes tests
         log_file = ${SEA_HOME}/sea.log ;
         max_fs = 1048576 ;
@@ -24,8 +24,8 @@ DOC
         [Sea]
         mount_dir = MOUNT ;
         n_levels = 2 ;
-        source_0 = SOURCE ;
-        source_1 = SOURCE_1 ;
+        cache_0 = SOURCE ;
+        cache_1 = SOURCE_1 ;
         log_level = 3 ; # 4 crashes tests
         log_file = SEA_LOG_FILE ;
         max_fs = 1048576 ;
@@ -38,7 +38,7 @@ DOC
         [Sea]
         mount_dir = ${MOUNT} ;
         n_levels = 1 ;
-        source_0 = ${SOURCE} ;
+        cache_0 = ${SOURCE} ;
         log_level = 3 ; # 4 crashes tests
         log_file = ${SEA_HOME}/sea.log ;
         max_fs = 1048576 ;
@@ -62,4 +62,6 @@ echo "echo \"hello\"" > ${SOURCE}/bin/hello.sh
 chmod +x ${SOURCE}/bin/hello.sh
 export SEA_HOME=$PWD
 gen_conf ${levels}
+export LD_PROFILE_OUTPUT=${PWD}
+export LD_PROFILE=build/sea.so
 export LD_PRELOAD=${PWD}/build/sea.so

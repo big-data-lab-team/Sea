@@ -55,7 +55,7 @@ void create_config_file(char *config_file)
             "log_file = %s/sea.log ;\n"
             "log_level = 1 ; # DEBUG=4, INFO=3, WARNING=2, ERROR=1, NONE=0 (use <= 3 tests)\n"
             "n_levels = 1 ;\n"
-            "source_0 = %s/source ; # use absolute paths\n"
+            "cache_0 = %s/source ; # use absolute paths\n"
             "max_fs = 100"
             "\n",
             sea_home, sea_home, sea_home);
@@ -84,7 +84,7 @@ void parse_config()
     }
     if ((sea_config.n_levels = iniparser_getint(config_dict, "sea:n_levels", 0)) == 0)
     {
-        printf("Missing n_sources in config file %s\n", config_file);
+        printf("Missing n_caches in config file %s\n", config_file);
         exit(1);
     }
     std::vector<std::string> all_sources;
@@ -96,7 +96,7 @@ void parse_config()
     {
         std::vector<std::string> current_lvl;
         char source_name[15];
-        sprintf(source_name, "sea:source_%d", i);
+        sprintf(source_name, "sea:cache_%d", i);
         char *lvl_str;
         if ((lvl_str = (char *)iniparser_getstring(config_dict, source_name, NULL)) == 0)
         {

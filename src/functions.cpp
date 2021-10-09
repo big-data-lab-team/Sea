@@ -23,7 +23,7 @@
         if (d != NULL)                                                                                                                             \
         {                                                                                                                                          \
             log_msg(DEBUG, "sea_readnext%s: read entry %s", #VERSION, d->d_name);                                                                  \
-            if (sd->curr_index > 0 && d->d_type == DT_DIR)                                                                                         \
+            if (!sd->seen_files.insert(std::string(d->d_name)).second || (sd->curr_index > 0 && d->d_type == DT_DIR))                              \
             {                                                                                                                                      \
                 log_msg(DEBUG, "sea_readnext%s: Curr dir is a directory, reading next inode.", #VERSION);                                          \
                 d = sea_readnext##VERSION(d, sea_conf, sd);                                                                                        \
@@ -58,6 +58,11 @@
                 {                                                                                                                       \
                     log_msg(DEBUG, "readdir%s: reading sea dir current idx = %d", #VERSION, sd->curr_index);                            \
                     d = ((funcptr_readdir##VERSION)libc_readdir##VERSION)(sd->dirp);                                                    \
+                                                                                                                                        \
+                    if (d != NULL)                                                                                                      \
+                    {                                                                                                                   \
+                        sd->seen_files.insert(std::string(d->d_name));                                                                  \
+                    }                                                                                                                   \
                 }                                                                                                                       \
                                                                                                                                         \
                 log_msg(DEBUG, "readdir%s: curr_idx %d n_sources %d d NULL %d", #VERSION, sd->curr_index + 1, sd->total_dp, d == NULL); \
@@ -70,6 +75,10 @@
                     }                                                                                                                   \
                     log_msg(DEBUG, "readdir%s: launching sea_readnext %d %d", #VERSION, sd->curr_index, sd->total_dp);                  \
                     d = sea_readnext##VERSION(d, sea_conf, sd);                                                                         \
+                }                                                                                                                       \
+                if (d == NULL)                                                                                                          \
+                {                                                                                                                       \
+                    sd->seen_files.clear();                                                                                             \
                 }                                                                                                                       \
             }                                                                                                                           \
             else                                                                                                                        \
@@ -91,7 +100,9 @@
         else if (d != NULL && errno)                                                                                                    \
             log_msg(ERROR, "readdir%s: failed to read null dir %d", #VERSION, errno);                                                   \
         else if (d == NULL)                                                                                                             \
+        {                                                                                                                               \
             log_msg(DEBUG, "readdir%s: returning null", #VERSION);                                                                      \
+        }                                                                                                                               \
                                                                                                                                         \
         log_msg(INFO, "readdir%s: readdir%s ended", #VERSION, #VERSION);                                                                \
         return d;                                                                                                                       \
@@ -406,7 +417,7 @@ extern "C"
         //printf("parsed %d nsource %d\n", sea_conf.parsed, sea_conf.n_sources);
         if (sea_conf.parsed == true)
         {
-            SEA_DIR *sd = (SEA_DIR *)malloc(sizeof(SEA_DIR));
+            SEA_DIR *sd = new SEA_DIR; //(SEA_DIR *)malloc(sizeof(SEA_DIR) + sizeof(std::vector<std::string>));
             sd->issea = 0;
             sd->dirnames = (char **)malloc(sizeof(char *) * sea_conf.n_sources);
             sd->other_dirp = (DIR **)malloc(sizeof(DIR *) * sea_conf.n_sources - 1);
@@ -437,7 +448,7 @@ extern "C"
             sd->curr_index = 0;
             sd->issea = 1;
             // indicator for if list is empty
-            sd->other_dirp[0] = NULL;
+            //sd->other_dirp[0] = NULL;
             sd->total_dp = sea_conf.n_sources;
             sd->dirp = ((funcptr_opendir)libc_opendir)(passpath);
 
@@ -489,7 +500,7 @@ extern "C"
             int mount_match = sea_getpath(abspath, passpath, 0, 0);
             int source_match = sea_getpath(abspath, mountpath, 1);
 
-            SEA_DIR *sd = (SEA_DIR *)malloc(sizeof(SEA_DIR));
+            SEA_DIR *sd = new SEA_DIR; //(SEA_DIR *)malloc(sizeof(SEA_DIR));
             sd->curr_index = 0;
             sd->dirnames = (char **)malloc(sizeof(char *) * sea_conf.n_sources);
             sd->other_dirp = (DIR **)malloc(sizeof(DIR *) * sea_conf.n_sources - 1);
@@ -684,7 +695,7 @@ extern "C"
             int ret = 0;
             ret = ((funcptr_closedir)libc_closedir)(sd->dirp);
 
-            free(sd);
+            delete sd;
             return ret;
         }
         log_msg(INFO, "closedir");
