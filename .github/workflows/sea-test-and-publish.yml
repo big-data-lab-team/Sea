@@ -28,7 +28,7 @@ jobs:
       - run: cd ${{ github.workspace }}
       - run: docker build . -f containers/base/Dockerfile.${{ matrix.os-name }} -t imagetest:${{ matrix.os-name }}
       - run: docker run --rm -v $PWD:$PWD -w $PWD imagetest:${{ matrix.os-name }} make test debug_opts="-g -ggdb --coverage -fprofile-arcs -ftest-coverage"
-      - run: docker run --rm -v $PWD:$PWD -w $PWD imagetest:${{ matrix.os-name }} bats tests/tests.bats
+      - run: docker run --rm -v $PWD:$PWD -w $PWD imagetest:${{ matrix.os-name }} bats tests/tests.bats tests/test_flusher.bats tests/test_prefetch.bats
       - run: docker run --rm -v $PWD:$PWD -w $PWD imagetest:${{ matrix.os-name }} bash -c "MOUNT=$PWD/mount SOURCE=$PWD/source SOURCE_1=$PWD/source_1 levels=1 bash tests/setup.bash"
       - run: docker run --rm -v $PWD:$PWD -w $PWD -e SEA_HOME=$PWD -e LD_PRELOAD=$PWD/build/sea.so imagetest:${{ matrix.os-name }} tests/test_custom
 
