@@ -7,18 +7,14 @@ FROM afni/afni_make_build:latest
 USER root
 
 # copy sea binaries and shared object over
-RUN mkdir -p /sea/home
-COPY --from=sea /libsea/build/sea.so /sea/sea.so
-COPY --from=sea /libsea/bin/sea* /bin/
-COPY --from=sea /libsea/build/mirror /sea/mirror
+RUN mkdir -p /sea/build
+RUN mkdir -p /sea/bin
+
+COPY --from=sea /libsea/build/sea.so /sea/build/sea.so
+COPY --from=sea /libsea/bin/sea* /sea/bin/
+COPY --from=sea /libsea/build/mirror /sea/build/mirror
 COPY --from=sea /usr/lib/x86_64-linux-gnu/libiniparser.so.1 /usr/lib
 
-ENV SEA_HOME /sea/home
+ENV SEA_HOME /sea
 
-RUN printf '#!/bin/bash \n\
-	/sea/mirror \n\ 
-	export LD_PRELOAD=/sea/sea.so \n\
-	$@' > /bin/sea-app.sh
-RUN chmod +x /bin/sea-app.sh
-
-ENTRYPOINT ["/bin/sea_launch.sh", "/bin/sea-app.sh"]
+ENTRYPOINT ["/sea/bin/sea_launch.sh"] 
