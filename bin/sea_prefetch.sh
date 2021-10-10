@@ -37,31 +37,32 @@ prefetch () {
         re_prefetch="" # regex of files to prefetch
         prefetch_files="" # files to prefetch
         re_all="${base_source}/*" # regex representing all files in directory
-        all_files="$(find -L ${re_all} -type f,l 2> /dev/null || true)" # all files in source mounts
+        all_files="$(find -L ${re_all} -type f 2> /dev/null || true)" # all files in source mounts
+        all_files+="$(find -L ${re_all} -type l 2> /dev/null || true)" # all files in source mounts
         sources_str="" # string containing all source paths
 
         # load all potential regex from file (concatenate the regex to existing source mounts)
         # load rgx of files that need to be prefetched
-        if [[ $re_prefetch != "" ]]
+        if [[ "${re_prefetch}" != "" ]]
         then
             re_prefetch+=" "
         fi
-        re_prefetch+=$(get_rgx ${base_source} $prefetch_file)
+        re_prefetch+="$(get_rgx ${base_source} ${prefetch_file})"
 
         # if .sea_prefetchlist file contains regex
-        for rgx in $re_prefetch
+        for rgx in ${re_prefetch}
         do
-            if [[ $prefetch_files != "" ]]
+            if [[ "${prefetch_files}" != "" ]]
             then
                 prefetch_files+=" "
             fi
-            prefetch_files+=$(echo $all_files | tr " " "\n" | grep -Eo $rgx)
+            prefetch_files+=$(echo ${all_files} | tr " " "\n" | grep -Eo "${rgx}")
         done
 
         # check to see if there are any candidate files for flush/eviction and process them
-        if [[ $prefetch_files != "" ]]
+        if [[ "${prefetch_files}" != "" ]]
         then
-            for f in $prefetch_files
+            for f in ${prefetch_files}
             do
                 echo ${f} ${sources_arr[0]}
                 subpath=${f#${base_source}}

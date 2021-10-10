@@ -27,12 +27,12 @@ fe_old () {
     task=$3 # mv / cp / rm (depending on which list)
     flist="" # list containing files for flush/eviction
 
-    for f in $found_files
+    for f in ${found_files}
     do
         # code adapted from here https://stackoverflow.com/a/28341234
         # Get current and file times
         CURTIME=$(date +%s)
-        FILETIME=$(stat $f -c %Y || true && continue)
+        FILETIME=$(stat $f -c %Y || true)
 
         if [[ $FILETIME == "" ]]
         then
@@ -51,17 +51,19 @@ fe_old () {
                 if [[ $f == *$s* ]]
                 then
                     subpath=${subpath#$s}
+                    subpath=$(echo $subpath | sed 's/.*\//\//' )
                     break
                 fi
             done
 
             if [[ -f ${base_source}${subpath} ]]
             then
-                BASETIME=$(stat ${base_source}${subpath} -c %Y || true && continue)
+                BASETIME=$(stat ${base_source}${subpath} -c %Y || true)
+                BASETIME=$(stat ${base_source}${subpath} -c %Y || true)
 
                 if [[ $BASETIME != NULL ]]
                 then
-                    TIMEDIFF=$((${FILETIME} - ${BASETIME}))
+                    TDIFF=$((${FILETIME} - ${BASETIME}))
 
                     if [[ ${TIMEDIFF} == 0 ]]
                     then
@@ -137,55 +139,62 @@ flush () {
         for s in "${sources_arr[@]}"
         do
             # load rgx of files that need to be flushed
-            if [[ $re_flush != "" ]]
+            if [[ "${re_flush}" != "" ]]
             then
                 re_flush+=" "
             fi
-            re_flush+=$(get_rgx $s $flush_file)
+            re_flush+="$(get_rgx $s ${flush_file})"
 
             # do the same for files that need to be pinned
-            if [[ $re_evict != "" ]]
+            if [[ "${re_evict}" != "" ]]
             then
                 re_evict+=" "
             fi
-            re_evict+=$(get_rgx $s $evict_file)
+            re_evict+="$(get_rgx $s ${evict_file})"
 
-            if [[ $re_all != "" ]]
+            if [[ "${re_all}" != "" ]]
             then
                 re_all+=" "
             fi
-            re_all+=$s/*
+            re_all+="$s/*"
         done
 
-        for rgx in $re_all
+        for rgx in ${re_all}
         do
-            if [[ $all_files != "" ]]
+            if [[ ${all_files} != "" ]]
             then
                 all_files+=" "
             fi
-            all_files+=$(find -L ${rgx} -type f,l 2> /dev/null || true)
+            all_files+=$(find -L ${rgx} -type f 2> /dev/null || true)
+            all_files+=$(find -L ${rgx} -type l 2> /dev/null || true)
         done
 
         # if .sea_flushlist file contains regex
-        for rgx in $re_flush
+        for rgx in ${re_flush}
         do
-            if [[ $flush_files != "" ]]
+            if [[ ${flush_files} != "" ]]
             then
                 flush_files+=" "
             fi
-            flush_files+=$(echo $all_files | tr " " "\n" | grep -Eo $rgx) # || true)
+            flush_files+=$(echo ${all_files} | tr " " "\n" | grep -Eo ${rgx} || true)
         done
         #echo "re_flush $re_flush"
         #echo "flush_files ${flush_files}"
 
         # if .sea_evictlist file contains regex
-        for rgx in $re_evict
+        for rgx in ${re_evict}
         do
-            if [[ $evict_files != "" ]]
+            if [[ ${evict_files} != "" ]]
             then
                 evict_files+=" "
             fi
-            evict_files+=$(echo $all_files | tr " " "\n" | grep -Eo $rgx || true)
+
+            if [[ $(ls ${rgx} 2> /dev/null) == "" ]]
+            then
+                continue
+            fi
+
+            evict_files+=$(echo ${all_files} | tr " " "\n" | grep -Eo ${rgx})
         done
 
         tmp_flush=""
@@ -193,73 +202,69 @@ flush () {
 
         # find the files that only need to be flushed as well as those that need
         # to be flushed and evicted
-        for ff in $flush_files
+        for ff in ${flush_files}
         do
             match=0
-            for ef in $evict_files
+            for ef in ${evict_files}
             do
-                if [[ $ff == $ef ]]
+                if [[ ${ff} == ${ef} ]]
                 then
                     match=1
 
-                    if [[ $fe_files != "" ]]
+                    if [[ ${fe_files} != "" ]]
                     then
                         fe_files+=" "
                     fi
-                    fe_files+=$ff
+                    fe_files+=${ff}
                     break
                 fi
             done
             if [[ $match == 0 ]]
             then
-                if [[ $tmp_flush != "" ]]
+                if [[ ${tmp_flush} != "" ]]
                 then
                     tmp_flush+=" "
                 fi
-                tmp_flush+=$ff
+                tmp_flush+=${ff}
             fi
         done
 
         # find files that only need to be evicted
-        for ef in $evict_files
+        for ef in ${evict_files}
         do
             match=0
-            for fe in $fe_files
+            for fe in ${fe_files}
             do
-                if [[ $ef == $fe ]]
+                if [[ ${ef} == ${fe} ]]
                 then
                     match=1
                     break
                 fi
             done
-            if [[ $match == 0 ]]
+            if [[ ${match} == 0 ]]
             then
-                if [[ $tmp_evict != "" ]]
+                if [[ ${tmp_evict} != "" ]]
                 then
                     tmp_evict+=" "
                 fi
-                tmp_evict+=$ef
+                tmp_evict+=${ef}
             fi
         done
         #echo ${fe_files}
 
-        flush_files=$tmp_flush
-        evict_files=$tmp_evict
-
-        #echo "mv files $fe_files"
-        #echo "cp $flush_files"
-        #echo "rm $evict_files"
+        flush_files=${tmp_flush}
+        evict_files=${tmp_evict}
 
         # check to see if there are any candidate files for flush/eviction and process them
-        if [[ $fe_files != "" ]]
+        if [[ ${fe_files} != "" ]]
         then
             fe_old "${fe_files}" "$OLDTIME" "mv"
         fi
-        if [[ $flush_files != "" ]]
+        if [[ ${flush_files} != "" ]]
         then
             fe_old "${flush_files}" "$OLDTIME" "cp"
         fi
-        if [[ $evict_files != "" ]]
+        if [[ ${evict_files} != "" ]]
         then
             fe_old "${evict_files}" "$OLDTIME" "rm"
         fi
