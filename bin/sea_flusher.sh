@@ -4,6 +4,8 @@
 set -u
 #set -x
 
+run=$1
+
 base_source=""
 sources_arr=()
 n_sources=0
@@ -13,6 +15,12 @@ evict_file=${SEA_HOME}/.sea_evictlist
 tmpfile=$(mktemp /tmp/.sea_flush.inprog.XXXXXX)
 
 fe_old () {
+
+    # if we have no cache directories, flusher should terminate
+    if [[ ${sources_arr[@]} == "" ]]
+    then
+        exit
+    fi
 
     found_files=$1 # files that currently exist in source mounts
     OLDTIME=$2 # user specified expiration time
@@ -47,20 +55,40 @@ fe_old () {
                 fi
             done
 
-            echo "$task $f to ${base_source}${subpath}"
+            if [[ -f ${base_source}${subpath} ]]
+            then
+                BASETIME=$(stat ${base_source}${subpath} -c %Y || true && continue)
+
+                if [[ $BASETIME != NULL ]]
+                then
+                    TIMEDIFF=$((${FILETIME} - ${BASETIME}))
+
+                    if [[ ${TIMEDIFF} == 0 ]]
+                    then
+                        continue 
+                    fi
+                fi
+
+            fi
+
+            if [[ $task != "rm" ]]
+            then
+                echo "[Sea] Flusher: $task $f to ${base_source}${subpath}"
+            fi
             # makedirectory in case it does not exist
             mkdir -p $(dirname ${base_source}${subpath})
             # if we have some files that older that OLDTIME, flush/evict them
             # process each image individually (as opposed to all at once)
             if [[ $task == "mv" ]]
             then 
-                mv $f ${base_source}${subpath} || true
+                mv $f ${base_source}${subpath}
             elif [[ $task == "cp" ]]
             then 
-                cp $f ${base_source}${subpath} || true
+                cp $f ${base_source}${subpath}
             elif [[ $task == "rm" ]]
             then 
-                rm  $f || true
+                echo "[Sea] Flusher: $task $f"
+                rm $f || true
             fi
            
         fi
@@ -84,12 +112,12 @@ get_rgx () {
                 rgx+=" "
             fi
 
-            rgx+=$SOURCE/$re
+            rgx+="$SOURCE/$re"
 
         done < $FILE
 
     fi
-    echo ${rgx}
+    echo "${rgx}"
 }
 
 flush () {
@@ -135,7 +163,7 @@ flush () {
             then
                 all_files+=" "
             fi
-            all_files+=$(find ${rgx} -type f -follow 2> /dev/null || true)
+            all_files+=$(find -L ${rgx} -type f,l 2> /dev/null || true)
         done
 
         # if .sea_flushlist file contains regex
@@ -213,6 +241,7 @@ flush () {
                 tmp_evict+=$ef
             fi
         done
+        #echo ${fe_files}
 
         flush_files=$tmp_flush
         evict_files=$tmp_evict
@@ -239,20 +268,20 @@ flush () {
 
 flush_process () {
     OLDTIME=$1
-    echo "starting flusher"
+    echo "[Sea] Flusher: Starting flusher"
     while [[ -f $tmpfile ]]
     do
         flush $OLDTIME "process"
         sleep 5 &
         wait $!
     done
-    echo "flush process terminated"
-    echo "starting cleanup"
+    echo "[Sea] Flusher: Flush process terminated"
+    echo "[Sea] Flusher: Starting cleanup"
     time flush 0 "cleanup"
 }
 
 cleanup () {
-    echo "Cleaning up Sea mount"
+    echo "[Sea] Flusher: Cleaning up Sea mount"
     time flush 0 "cleanup"
 }
 
@@ -265,7 +294,7 @@ get_sources () {
     echo $n_lvls
     for ((i=0;i<${n_lvls};i++))
     do
-        source_lvl=$(cat ${conf_file} | grep "^\s*source_$i" | cut -d "=" -f 2 | tr -d ' ;')
+        source_lvl=$(cat ${conf_file} | grep "^\s*cache_$i" | cut -d "=" -f 2 | tr -d ' ;')
         IFS=',' read -ra curr_sources <<< "$source_lvl"
 
         if [ ! -d ${curr_sources[@]} ]
@@ -276,18 +305,17 @@ get_sources () {
 
         sources_arr+=(${curr_sources[@]})
 
-        echo source_$i ${sources_arr[@]}
+        echo "[Sea] Flusher: source_$i ${curr_sources[@]}"
     done
 
-    base_source=$(cat ${conf_file} | grep "^\s*source_$i" | cut -d "=" -f 2 | tr -d ' ;')
-    echo base dir ${base_source}
+    base_source=$(cat ${conf_file} | grep "^\s*cache_$i" | cut -d "=" -f 2 | tr -d ' ;')
+    echo "[Sea] Flusher: base dir ${base_source}"
 
 }
 
-#get_sources
-#flush 5 "test func"
-
-trap '[ -f $tmpfile ] && rm $tmpfile' SIGTERM SIGINT EXIT
-
-get_sources
-flush_process 5
+if [[ ${run} == 1 ]]
+then
+    trap '[ -f $tmpfile ] && rm $tmpfile' SIGTERM SIGINT EXIT
+    get_sources
+    flush_process 1
+fi

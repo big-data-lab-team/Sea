@@ -1,3 +1,4 @@
+.sea_*list
 *.o
 *.so
 *.gcda
@@ -5,6 +6,10 @@
 **/*.swp
 **/*.sif
 **/.*.*
+**/.ipynb_checkpoints
+**/__pycache__
+.ccls-cache/
+.vscode/
 sea.ini
 sea.log
 build/*
