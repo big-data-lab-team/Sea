@@ -7,6 +7,8 @@ export SOURCE_2="$PWD/source_2"
 export SEA_LOG_FILE="${PWD}/sea.log"
 export SEA_HOME=${PWD}
 
+mkdir -p ${SOURCE_2}/bin ${SOURCE_2}/build
+
 gen_conf() {
 cat > ${SEA_HOME}/sea.ini << DOC
 # Sea configuration
@@ -29,6 +31,7 @@ setup () {
 @test "get_sources" {
 	. bin/sea_flusher.sh 0
 	get_sources
+	echo "caches ${sources_arr[@]}"
 	[[ ${sources_arr[@]} == "${SOURCE} ${SOURCE_2}" ]]
 	[[ ${base_source} == ${SOURCE_1} ]]
 }
