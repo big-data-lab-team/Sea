@@ -80,6 +80,7 @@ setup () {
 }
 
 @test "flush" {
+	rm .sea_evictlist 2> /dev/null || true
 	. bin/sea_flusher.sh 0
 	get_sources
 
@@ -91,6 +92,7 @@ setup () {
 	flush 0 process
 
 	[[ -f ${SOURCE_1}/${f1} && -f ${SOURCE_1}/${f2} && -f ${SOURCE_1}/${f3} ]]
+	rm ${SOURCE_1}/${f1} ${SOURCE_1}/${f2} ${SOURCE_1}/${f3}
 }
 
 @test "evict" {
