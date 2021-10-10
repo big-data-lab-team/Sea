@@ -65,7 +65,7 @@ fe_old () {
                 then
                     TDIFF=$((${FILETIME} - ${BASETIME}))
 
-                    if [[ ${TIMEDIFF} == 0 ]]
+                    if [[ ${TDIFF} == 0 ]]
                     then
                         continue 
                     fi
@@ -254,6 +254,9 @@ flush () {
 
         flush_files=${tmp_flush}
         evict_files=${tmp_evict}
+
+        #echo "FLUSH ${flush_files}"
+        #echo "EVICT ${evict_files}"
 
         # check to see if there are any candidate files for flush/eviction and process them
         if [[ ${fe_files} != "" ]]

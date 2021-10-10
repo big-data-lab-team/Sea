@@ -109,13 +109,14 @@ setup () {
 
 	[[ ! -f ${SOURCE}/${f1} &&
            ! -f ${SOURCE}/bin/script.sh &&
-	   -f ${SOURCE}/bin/f2.txt && 
+	   ! -f ${SOURCE}/bin/f2.txt && 
 	   -f ${SOURCE}/subdir/f3.txt && 
 	   -f ${SOURCE_1}/f1.txt && 
 	   -f ${SOURCE_1}/bin/f2.txt && 
 	   -f ${SOURCE_1}/subdir/f3.txt ]]
 
 	rm ${SEA_HOME}/.sea_evictlist
+	rm ${SOURCE}/subdir/f3.txt ${SOURCE_1}/f1.txt ${SOURCE_1}/bin/f2.txt ${SOURCE_1}/subdir/f3.txt
 }
 
 @test "timediff" {
