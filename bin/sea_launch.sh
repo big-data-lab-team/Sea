@@ -28,7 +28,8 @@ echo "[Sea] Launch: flusher pid" ${pid}
 trap 'trap - SIGTERM && kill $pid' SIGINT SIGTERM #EXIT
 
 echo "[Sea] Launch: Launching script $@"
-LD_PRELOAD=${parent_dir}/build/sea.so bash -c "$@"
+export LD_PRELOAD=${parent_dir}/build/sea.so
+eval "$@"
 echo "[Sea] Launch: Killing flush" && kill $pid
 
 wait $pid

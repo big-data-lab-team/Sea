@@ -299,7 +299,6 @@ get_sources () {
     # refers to the last index and not the total number of sources
     n_lvls="$(($(awk -F "=" '/n_levels/ {print $2}' ${SEA_HOME}/sea.ini | tr -d ' ;') - 1))"
 
-    echo $n_lvls
     for ((i=0;i<${n_lvls};i++))
     do
         source_lvl=$(cat ${conf_file} | grep "^\s*cache_$i" | cut -d "=" -f 2 | tr -d ' ;')
