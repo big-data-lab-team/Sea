@@ -51,15 +51,15 @@ fe_old () {
                 if [[ $f == *$s* ]]
                 then
                     subpath=${subpath#$s}
-                    subpath=$(echo $subpath | sed 's/.*\//\//' )
+                    subpath=$(echo $subpath | cut -f 2- -d '/' )
                     break
                 fi
             done
 
-            if [[ -f ${base_source}${subpath} ]]
+            if [[ -f ${base_source}/${subpath} ]]
             then
-                BASETIME=$(stat ${base_source}${subpath} -c %Y || true)
-                BASETIME=$(stat ${base_source}${subpath} -c %Y || true)
+                BASETIME=$(stat ${base_source}/${subpath} -c %Y || true)
+                BASETIME=$(stat ${base_source}/${subpath} -c %Y || true)
 
                 if [[ $BASETIME != NULL ]]
                 then
@@ -75,18 +75,18 @@ fe_old () {
 
             if [[ $task != "rm" ]]
             then
-                echo "[Sea] Flusher: $task $f to ${base_source}${subpath}"
+                echo "[Sea] Flusher: $task $f to ${base_source}/${subpath}"
             fi
             # makedirectory in case it does not exist
-            mkdir -p $(dirname ${base_source}${subpath})
+            mkdir -p $(dirname ${base_source}/${subpath})
             # if we have some files that older that OLDTIME, flush/evict them
             # process each image individually (as opposed to all at once)
             if [[ $task == "mv" ]]
             then 
-                mv $f ${base_source}${subpath}
+                mv $f ${base_source}/${subpath}
             elif [[ $task == "cp" ]]
             then 
-                cp $f ${base_source}${subpath}
+                cp $f ${base_source}/${subpath}
             elif [[ $task == "rm" ]]
             then 
                 echo "[Sea] Flusher: $task $f"
