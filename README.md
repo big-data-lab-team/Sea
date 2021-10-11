@@ -11,6 +11,7 @@ the passthrough of [XtreemOS](https://github.com/xtreemfs/xtreemfs).
 ## Requirements (if building from source)
 - gcc-c++
 - libiniparser
+- libmagic
 - gtest (optional)
 - bash
 
@@ -65,7 +66,7 @@ Files that are listed in both the `.sea_evictlist` and `.sea_flushlist` are move
 
 In order to launch your application with Sea, it is crucial to first set the `SEA_HOME` variable. This variable is used to indicated the folder in which the `sea.ini` and `.sea_flushlist` files are located.
 
-The `sea_launch.sh` executable is used to launch the flushers and execute the program. However, your program must still set the `LD_PRELOAD` variable prior to execution in order to use the Sea file system. The LD_PRELOAD must be set with Sea's `passthrough.so`.
+The `sea_launch.sh` executable is used to launch the flushers and execute the program. However, your program must still set the `LD_PRELOAD` variable prior to execution in order to use the Sea file system. The LD_PRELOAD must be set with Sea's `sea.so`.
 
 e.g.
 
@@ -74,7 +75,7 @@ e.g.
 myprogram
 ```
 #!/bin/bash
-LD_PRELOAD=passthrough.so <myactualprogram>
+LD_PRELOAD=sea.so <myactualprogram>
 ```
 
 ### Troubleshooting
