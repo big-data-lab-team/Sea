@@ -172,7 +172,7 @@ flush () {
         done
 
         # if .sea_flushlist file contains regex
-        for rgx in "${re_flush[@]}"
+        for rgx in ${re_flush[@]+"${re_flush[@]}"}
         do
             if [[ ${flush_files} != "" ]]
             then
@@ -184,7 +184,7 @@ flush () {
         #echo "flush_files ${flush_files}"
 
         # if .sea_evictlist file contains regex
-        for rgx in "${re_evict[@]}"
+        for rgx in ${re_evict[@]+"${re_evict[@]}"}
         do
             if [[ ${evict_files} != "" ]]
             then

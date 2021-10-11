@@ -57,7 +57,7 @@ prefetch () {
         re_prefetch=(${re_prefetch[@]+"${re_prefetch[@]}"} ${reprefetch_arr[@]+"${reprefetch_arr[@]}"})
 
         # if .sea_prefetchlist file contains regex
-        for rgx in "${re_prefetch[@]}"
+        for rgx in ${re_prefetch[@]+"${re_prefetch[@]}"}
         do
             echo REGEX ${rgx}
             if [[ "${prefetch_files}" != "" ]]
