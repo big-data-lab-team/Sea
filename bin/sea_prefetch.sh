@@ -85,7 +85,7 @@ prefetch () {
                     if [[ ${FILESIZE} -le ${AVAILSPACE} ]]
                     then
                         log "Prefetch: Prefetching $f to ${sources_arr[i]}${subpath}"
-                        cp -H $f ${sources_arr[i]}${subpath}
+                        cp -H $f ${sources_arr[i]}${subpath} 2> /dev/null || true
                         break
                     fi
                 }

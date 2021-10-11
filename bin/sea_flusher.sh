@@ -96,14 +96,14 @@ fe_old () {
             # process each image individually (as opposed to all at once)
             if [[ $task == "mv" ]]
             then 
-                mv $f ${base_source}/${subpath}
+                mv $f ${base_source}/${subpath} 2> /dev/null || true
             elif [[ $task == "cp" ]]
             then 
-                cp $f ${base_source}/${subpath}
+                cp $f ${base_source}/${subpath} 2> /dev/null || true
             elif [[ $task == "rm" ]]
             then 
                 log "Flusher: $task $f"
-                rm $f || true
+                rm $f 2> /dev/null || true
             fi
            
         fi
