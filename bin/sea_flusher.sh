@@ -13,6 +13,14 @@ conf_file=${SEA_HOME}/sea.ini
 flush_file=${SEA_HOME}/.sea_flushlist
 evict_file=${SEA_HOME}/.sea_evictlist
 tmpfile=$(mktemp /tmp/.sea_flush.inprog.XXXXXX)
+logging=0
+
+log () {
+    if [[ logging -ge 3 ]]
+    then
+        echo "[Sea] $@"
+    fi
+}
 
 fe_old () {
 
@@ -75,7 +83,7 @@ fe_old () {
 
             if [[ $task != "rm" ]]
             then
-                echo "[Sea] Flusher: $task $f to ${base_source}/${subpath}"
+                log "Flusher: $task $f to ${base_source}/${subpath}"
             fi
             # makedirectory in case it does not exist
             mkdir -p $(dirname ${base_source}/${subpath})
@@ -89,7 +97,7 @@ fe_old () {
                 cp $f ${base_source}/${subpath}
             elif [[ $task == "rm" ]]
             then 
-                echo "[Sea] Flusher: $task $f"
+                log "Flusher: $task $f"
                 rm $f || true
             fi
            
@@ -126,9 +134,9 @@ flush () {
         OLDTIME=$1 # user specified expiration time
         task=$2 # the name of the calling task. either "process" or "cleanup"
 
-        re_flush="" # regex of files to flush
-        re_evict="" # regex of files to pin to local disk (don't flush or evict)
-        re_all="" # regex for all files
+        re_flush=() # regex of files to flush
+        re_evict=() # regex of files to pin to local disk (don't flush or evict)
+        re_all=() # regex for all files
         flush_files="" # files to flush only
         evict_files="" # files to evict only
         fe_files="" # files to flush and evict
@@ -139,27 +147,21 @@ flush () {
         for s in "${sources_arr[@]}"
         do
             # load rgx of files that need to be flushed
-            if [[ "${re_flush}" != "" ]]
-            then
-                re_flush+=" "
-            fi
-            re_flush+="$(get_rgx $s ${flush_file})"
+            tmp_reflush=("$(get_rgx $s ${flush_file})")
+            reflush_arr=()
+            IFS=' ' read -a reflush_arr <<< "${tmp_reflush}"
+            re_flush=("${re_flush[@]}" "${reflush_arr[@]}")
 
             # do the same for files that need to be pinned
-            if [[ "${re_evict}" != "" ]]
-            then
-                re_evict+=" "
-            fi
-            re_evict+="$(get_rgx $s ${evict_file})"
+            tmp_reevict="$(get_rgx $s ${evict_file})"
+            reevict_arr=()
+            IFS=' ' read -a reevict_arr <<< "${tmp_reevict}"
+            re_evict=("${re_evict[@]}" "${reevict_arr[@]}")
 
-            if [[ "${re_all}" != "" ]]
-            then
-                re_all+=" "
-            fi
-            re_all+="$s/*"
+            re_all+=("$s/*")
         done
 
-        for rgx in ${re_all}
+        for rgx in "${re_all[@]}"
         do
             if [[ ${all_files} != "" ]]
             then
@@ -170,19 +172,19 @@ flush () {
         done
 
         # if .sea_flushlist file contains regex
-        for rgx in ${re_flush}
+        for rgx in "${re_flush[@]}"
         do
             if [[ ${flush_files} != "" ]]
             then
                 flush_files+=" "
             fi
-            flush_files+=$(echo ${all_files} | tr " " "\n" | grep -Eo ${rgx} || true)
+            flush_files+=$(echo ${all_files} | tr " " "\n" | grep -Eo "${rgx}")
         done
         #echo "re_flush $re_flush"
         #echo "flush_files ${flush_files}"
 
         # if .sea_evictlist file contains regex
-        for rgx in ${re_evict}
+        for rgx in "${re_evict[@]}"
         do
             if [[ ${evict_files} != "" ]]
             then
@@ -193,8 +195,7 @@ flush () {
             then
                 continue
             fi
-
-            evict_files+=$(echo ${all_files} | tr " " "\n" | grep -Eo ${rgx})
+            evict_files+=$(echo ${all_files} | tr " " "\n" | grep -Eo "${rgx}" || true)
         done
 
         tmp_flush=""
@@ -276,20 +277,20 @@ flush () {
 
 flush_process () {
     OLDTIME=$1
-    echo "[Sea] Flusher: Starting flusher"
+    log "Flusher: Starting flusher"
     while [[ -f $tmpfile ]]
     do
         flush $OLDTIME "process"
         sleep 5 &
         wait $!
     done
-    echo "[Sea] Flusher: Flush process terminated"
-    echo "[Sea] Flusher: Starting cleanup"
+    log "Flusher: Flush process terminated"
+    log "Flusher: Starting cleanup"
     time flush 0 "cleanup"
 }
 
 cleanup () {
-    echo "[Sea] Flusher: Cleaning up Sea mount"
+    log "Flusher: Cleaning up Sea mount"
     time flush 0 "cleanup"
 }
 
@@ -298,6 +299,7 @@ get_sources () {
 
     # refers to the last index and not the total number of sources
     n_lvls="$(($(awk -F "=" '/n_levels/ {print $2}' ${SEA_HOME}/sea.ini | tr -d ' ;') - 1))"
+    logging="$(awk -F "=" '/log_level/ {print $2}' ${SEA_HOME}/sea.ini | tr -d ' ;' | sed 's/#.*//g')"
 
     for ((i=0;i<${n_lvls};i++))
     do
@@ -306,17 +308,17 @@ get_sources () {
 
         if [ ! -d ${curr_sources[@]} ]
         then
-            sourcevar="\$${curr_sources[@]}"
+            sourcevar="\${curr_sources[@]}"
             curr_sources=$(eval echo "${sourcevar}")
         fi
 
         sources_arr+=(${curr_sources[@]})
 
-        echo "[Sea] Flusher: source_$i ${curr_sources[@]}"
+        log "Flusher: source_$i ${curr_sources[@]}"
     done
 
     base_source=$(cat ${conf_file} | grep "^\s*cache_$i" | cut -d "=" -f 2 | tr -d ' ;')
-    echo "[Sea] Flusher: base dir ${base_source}"
+    log "Flusher: base dir ${base_source}"
 
 }
 

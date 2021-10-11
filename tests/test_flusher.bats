@@ -102,8 +102,8 @@ setup () {
 	f1=${SOURCE}/bin/"script.sh"
 	touch ${f1} 
 
-	echo "*.txt" > ${SEA_HOME}/.sea_evictlist
-	echo "bin/*" >> ${SEA_HOME}/.sea_evictlist
+	echo ".*.txt" > ${SEA_HOME}/.sea_evictlist
+	echo "bin/.*" >> ${SEA_HOME}/.sea_evictlist
 
 	#touch ${SOURCE_2}/bin/somefile
 
