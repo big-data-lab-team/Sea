@@ -150,13 +150,13 @@ flush () {
             tmp_reflush=("$(get_rgx $s ${flush_file})")
             reflush_arr=()
             IFS=' ' read -a reflush_arr <<< "${tmp_reflush}"
-            re_flush=("${re_flush[@]}" "${reflush_arr[@]}")
+            re_flush=(${re_flush[@]+"${re_flush[@]}"} ${reflush_arr[@]+"${reflush_arr[@]}"})
 
             # do the same for files that need to be pinned
             tmp_reevict="$(get_rgx $s ${evict_file})"
             reevict_arr=()
             IFS=' ' read -a reevict_arr <<< "${tmp_reevict}"
-            re_evict=("${re_evict[@]}" "${reevict_arr[@]}")
+            re_evict=(${re_evict[@]+"${re_evict[@]}"} ${reevict_arr[@]+"${reevict_arr[@]}"})
 
             re_all+=("$s/*")
         done

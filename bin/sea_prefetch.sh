@@ -54,11 +54,12 @@ prefetch () {
         tmp_reprefetch=("$(get_rgx ${base_source} ${prefetch_file})")
         reprefetch_arr=()
         IFS=' ' read -a reprefetch_arr <<< "${tmp_reprefetch}"
-        re_prefetch=("${re_prefetch[@]}" "${reprefetch_arr[@]}")
+        re_prefetch=(${re_prefetch[@]+"${re_prefetch[@]}"} ${reprefetch_arr[@]+"${reprefetch_arr[@]}"})
 
         # if .sea_prefetchlist file contains regex
         for rgx in "${re_prefetch[@]}"
         do
+            echo REGEX ${rgx}
             if [[ "${prefetch_files}" != "" ]]
             then
                 prefetch_files+=" "

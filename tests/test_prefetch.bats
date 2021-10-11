@@ -54,6 +54,7 @@ setup () {
 }
 
 @test "prefetch symlinks" {
+	rm ${SOURCE_1}/toprefetch1.txt ${SOURCE_1}/toprefetch2.txt ${SOURCE}/toprefetch1.txt ${SOURCE}/toprefetch2.txt 2> /dev/null || true
 	. bin/sea_prefetch.sh 0
 	get_sources
 
@@ -68,5 +69,4 @@ setup () {
 	prefetch_process
 
 	[[ -f "${SOURCE}"/toprefetch1.txt  && -f "${SOURCE}"/toprefetch2.txt ]]
-	rm ${SOURCE_1}/toprefetch1.txt ${SOURCE_1}/toprefetch2.txt ${SOURCE}/toprefetch1.txt ${SOURCE}/toprefetch2.txt
 }
