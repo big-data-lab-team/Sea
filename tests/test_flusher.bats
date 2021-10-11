@@ -63,7 +63,7 @@ setup () {
 	touch ${f}
 	fe_old ${f} 0 mv
 
-	[[ -f "${SOURCE_1}"/mv.txt  && ! -f "${f}" ]]
+	[[ -f "${SOURCE_1}"/mv.txt  && ! -f "${f}"  ]]
 	rm "${SOURCE_1}"/mv.txt
 
 }
@@ -79,10 +79,20 @@ setup () {
 	[[ ! -f "${SOURCE_1}"/rm.txt  && ! -f "${f}" ]]
 }
 
+@test "assign_rgx" {
+	. bin/sea_flusher.sh 0
+	get_sources
+	assign_rgx
+
+	[[ "${re_all[@]}" == "${SOURCE}/* ${SOURCE_2}/*"  &&
+	   "${re_flush[@]}" == "${SOURCE}/.*.txt ${SOURCE_2}/.*.txt" ]]
+}
+
 @test "flush" {
 	rm .sea_evictlist 2> /dev/null || true
 	. bin/sea_flusher.sh 0
 	get_sources
+	assign_rgx
 
 	f1="f1.txt"
 	f2="bin/f2.txt"
@@ -107,6 +117,7 @@ setup () {
 
 	#touch ${SOURCE_2}/bin/somefile
 
+	assign_rgx
 	flush 0 process
 
 	[[ ! -f ${SOURCE}/${f1} &&
@@ -124,6 +135,7 @@ setup () {
 @test "timediff" {
 	skip # currently has update issues
 	. bin/sea_flusher.sh 0
+	assign_rgx
 	get_sources
 
 	f1=bin/"timediff.txt"

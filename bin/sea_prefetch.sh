@@ -11,6 +11,10 @@ conf_file=${SEA_HOME}/sea.ini
 prefetch_file=${SEA_HOME}/.sea_prefetchlist
 logging=0
 
+
+re_prefetch=() # regex of files to prefetch
+re_all=() # regex representing all files in directory
+
 log () {
     if [[ logging -ge 3 ]]
     then
@@ -40,26 +44,26 @@ get_rgx () {
     echo "${rgx}"
 }
 
+assign_rgx () {
+    re_all="${base_source}/*"
+
+    # load all potential regex from file (concatenate the regex to existing source mounts)
+    # load rgx of files that need to be prefetched
+    tmp_reprefetch=("$(get_rgx ${base_source} ${prefetch_file})")
+    reprefetch_arr=()
+    IFS=' ' read -a reprefetch_arr <<< "${tmp_reprefetch}"
+    re_prefetch=(${re_prefetch[@]+"${re_prefetch[@]}"} ${reprefetch_arr[@]+"${reprefetch_arr[@]}"})
+}
+
 prefetch () {
 
-        re_prefetch=() # regex of files to prefetch
         prefetch_files="" # files to prefetch
-        re_all="${base_source}/*" # regex representing all files in directory
         all_files="$(find -L ${re_all} -type f 2> /dev/null || true)" # all files in source mounts
         all_files+="$(find -L ${re_all} -type l 2> /dev/null || true)" # all files in source mounts
-        sources_str="" # string containing all source paths
-
-        # load all potential regex from file (concatenate the regex to existing source mounts)
-        # load rgx of files that need to be prefetched
-        tmp_reprefetch=("$(get_rgx ${base_source} ${prefetch_file})")
-        reprefetch_arr=()
-        IFS=' ' read -a reprefetch_arr <<< "${tmp_reprefetch}"
-        re_prefetch=(${re_prefetch[@]+"${re_prefetch[@]}"} ${reprefetch_arr[@]+"${reprefetch_arr[@]}"})
 
         # if .sea_prefetchlist file contains regex
         for rgx in ${re_prefetch[@]+"${re_prefetch[@]}"}
         do
-            echo REGEX ${rgx}
             if [[ "${prefetch_files}" != "" ]]
             then
                 prefetch_files+=" "
@@ -92,6 +96,7 @@ prefetch () {
 
 prefetch_process () {
     log "Prefetch: Starting prefetch thread"
+    assign_rgx
     prefetch
     log "Prefetch: Prefetch process completed"
 }

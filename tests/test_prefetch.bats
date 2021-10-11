@@ -36,13 +36,24 @@ setup () {
 	echo ".*prefetch.*" > ${SEA_HOME}/.sea_prefetchlist
 	output=$(get_rgx ${SOURCE} ${SEA_HOME}/.sea_prefetchlist )
 
-	echo ${output}
 	[[ ${output} == "${SOURCE}/.*prefetch.*" ]]
+}
+
+@test "assign_rgx" {
+	. bin/sea_prefetch.sh 0
+	get_sources
+	assign_rgx
+	
+	echo "re_prefetch ${re_prefetch[@]}"
+	[[ "${re_all[@]}" == "${SOURCE_1}/*" && "${re_prefetch[@]}" == "${SOURCE_1}/.*prefetch.*" ]]
+
 }
 
 @test "prefetch" {
 	. bin/sea_prefetch.sh 0
 	get_sources
+	assign_rgx
+
 	f="${SOURCE_1}"/prefetch_f1.txt
 	f2="${SOURCE_1}"/bin/prefetch_f2.sh
 	f3="${SOURCE_1}"/subdir/prefetch_f3.txt
@@ -57,6 +68,7 @@ setup () {
 	rm ${SOURCE_1}/toprefetch1.txt ${SOURCE_1}/toprefetch2.txt ${SOURCE}/toprefetch1.txt ${SOURCE}/toprefetch2.txt 2> /dev/null || true
 	. bin/sea_prefetch.sh 0
 	get_sources
+	assign_rgx
 
 	mkdir -p inputs
 	f=inputs/file1.txt
