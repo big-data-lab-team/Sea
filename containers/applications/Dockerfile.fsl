@@ -20,4 +20,4 @@ ENV SEA_HOME /sea
 RUN apt update -y && apt-get -y install dc
 RUN source ${FSLDIR}/etc/fslconf/fsl.sh
 
-ENTRYPOINT ["/bin/sea_launch.sh"]
+ENTRYPOINT ["/sea/bin/sea_launch.sh"]

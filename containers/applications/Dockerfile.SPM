@@ -16,4 +16,4 @@ COPY --from=sea /usr/lib/x86_64-linux-gnu/libiniparser.so.1 /usr/lib
 
 ENV SEA_HOME /sea
 
-ENTRYPOINT ["/bin/sea_launch.sh"]
+ENTRYPOINT ["/sea/bin/sea_launch.sh"]
