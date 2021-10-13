@@ -4,6 +4,7 @@ export MOUNT="$PWD/mount"
 export SOURCE="$PWD/source"
 export SOURCE_1="$PWD/source_1"
 export SOURCE_2="$PWD/source_2"
+export SOURCE_3="$PWD/source_3"
 export SEA_LOG_FILE="${PWD}/sea.log"
 export SEA_HOME=${PWD}
 
@@ -16,8 +17,8 @@ cat > ${SEA_HOME}/sea.ini << DOC
 mount_dir = ${MOUNT} ;
 n_levels = 3 ;
 cache_0 = ${SOURCE} ;
-cache_1 = ${SOURCE_2}
-cache_2 = ${SOURCE_1} ;
+cache_1 = SOURCE_2,SOURCE_3 ;
+cache_2 = SOURCE_1 ;
 log_level = 0 ; # 4 crashes tests
 log_file = ${SEA_HOME}/sea.log ;
 max_fs = 1048576 ;
@@ -32,7 +33,8 @@ setup () {
 	. bin/sea_flusher.sh 0
 	get_sources
 	echo "caches ${sources_arr[@]}"
-	[[ ${sources_arr[@]} == "${SOURCE} ${SOURCE_2}" ]]
+	echo "${base_source}"
+	[[ ${sources_arr[@]} == "${SOURCE} ${SOURCE_2} ${SOURCE_3}" ]]
 	[[ ${base_source} == ${SOURCE_1} ]]
 }
 
@@ -84,8 +86,8 @@ setup () {
 	get_sources
 	assign_rgx
 
-	[[ "${re_all[@]}" == "${SOURCE}/* ${SOURCE_2}/*"  &&
-	   "${re_flush[@]}" == "${SOURCE}/.*.txt ${SOURCE_2}/.*.txt" ]]
+	[[ "${re_all[@]}" == "${SOURCE}/* ${SOURCE_2}/* ${SOURCE_3}/*"  &&
+	   "${re_flush[@]}" == "${SOURCE}/.*.txt ${SOURCE_2}/.*.txt ${SOURCE_3}/.*.txt" ]]
 }
 
 @test "flush" {

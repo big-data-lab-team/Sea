@@ -13,7 +13,7 @@ cat > ${SEA_HOME}/sea.ini << DOC
 mount_dir = ${MOUNT} ;
 n_levels = 2 ;
 cache_0 = ${SOURCE} ;
-cache_1 = ${SOURCE_1}
+cache_1 = SOURCE_1 ;
 log_level = 0 ; # 4 crashes tests
 log_file = ${SEA_HOME}/sea.log ;
 max_fs = 1048576 ;

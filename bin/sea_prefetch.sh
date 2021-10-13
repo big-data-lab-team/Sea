@@ -68,7 +68,7 @@ prefetch () {
             then
                 prefetch_files+=" "
             fi
-            prefetch_files+=$(echo ${all_files} | tr " " "\n" | grep -Eo "${rgx}")
+            prefetch_files+=$(echo ${all_files} | tr " " "\n" | grep -Eo "${rgx}" || true)
         done
 
         # check to see if there are any candidate files for flush/eviction and process them
@@ -112,18 +112,36 @@ get_sources () {
         source_lvl=$(cat ${conf_file} | grep "^\s*cache_$i" | cut -d "=" -f 2 | tr -d ' ;')
         IFS=',' read -ra curr_sources <<< "$source_lvl"
 
-        if [ ! -d ${curr_sources[@]} ]
-        then
-            sourcevar="\${curr_sources[@]}"
-            curr_sources=$(eval echo "${sourcevar}")
-        fi
+        resolved_sources=()
+        for src in "${curr_sources[@]}"
+        do
+            if [ ! -d ${src} ]
+            then
+                envvar=$(printenv | grep "^${src}=" | sed "s/^${src}=//g" || echo "")
+                if [[ ${envvar} != "" ]]
+                then
+                    resolved_sources+=( ${envvar} )
+                fi
+            else
+                resolved_sources+=( ${src} )
+            fi
+        done
+        sources_arr+=(${resolved_sources[@]})
 
-        sources_arr+=(${curr_sources[@]})
-
-        log "Prefetch: cache_$i ${curr_sources[@]}"
+        log "Flusher: cache_$i ${resolved_sources[@]}"
     done
 
     base_source=$(cat ${conf_file} | grep "^\s*cache_$i" | cut -d "=" -f 2 | tr -d ' ;')
+
+    if [ ! -d ${base_source} ]
+    then
+        envvar=$(printenv | grep "^${base_source}=" | sed "s/^${base_source}=//g" || echo "")
+        if [[ ${envvar} != "" ]]
+        then
+            base_source=${envvar}
+        fi
+    fi
+
     log "Prefetch: Base dir ${base_source}"
 
 }
