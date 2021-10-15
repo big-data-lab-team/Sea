@@ -17,7 +17,7 @@ COPY --from=sea /usr/lib/x86_64-linux-gnu/libiniparser.so.1 /usr/lib
 
 ENV SEA_HOME /sea
 
-RUN apt update -y && apt-get -y install dc
+RUN apt update -y && apt-get -y install dc bc
 RUN source ${FSLDIR}/etc/fslconf/fsl.sh
 
 ENTRYPOINT ["/sea/bin/sea_launch.sh"]
