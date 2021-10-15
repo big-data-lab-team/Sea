@@ -45,7 +45,7 @@ fe_old () {
         # code adapted from here https://stackoverflow.com/a/28341234
         # Get current and file times
         CURTIME=$(date +%s)
-        FILETIME=$(stat $f -c %Y || true)
+        FILETIME=$(stat $f -c %Y 2> /dev/null || true)
 
         if [[ $FILETIME == "" ]]
         then
@@ -71,8 +71,7 @@ fe_old () {
 
             if [[ -f ${base_source}/${subpath} ]]
             then
-                BASETIME=$(stat ${base_source}/${subpath} -c %Y || true)
-                BASETIME=$(stat ${base_source}/${subpath} -c %Y || true)
+                BASETIME=$(stat ${base_source}/${subpath} -c %Y 2> /dev/null || true)
 
                 if [[ $BASETIME != NULL ]]
                 then
@@ -96,10 +95,10 @@ fe_old () {
             # process each image individually (as opposed to all at once)
             if [[ $task == "mv" ]]
             then 
-                mv $f ${base_source}/${subpath} 2> /dev/null || true
+                mv --update $f ${base_source}/${subpath} 2> /dev/null || true
             elif [[ $task == "cp" ]]
             then 
-                cp $f ${base_source}/${subpath} 2> /dev/null || true
+                cp --preserve $f ${base_source}/${subpath} 2> /dev/null || true
             elif [[ $task == "rm" ]]
             then 
                 log "Flusher: $task $f"

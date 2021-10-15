@@ -19,7 +19,7 @@ n_levels = 3 ;
 cache_0 = ${SOURCE} ;
 cache_1 = SOURCE_2,SOURCE_3 ;
 cache_2 = SOURCE_1 ;
-log_level = 0 ; # 4 crashes tests
+log_level = 3 ; # 4 crashes tests
 log_file = ${SEA_HOME}/sea.log ;
 max_fs = 1048576 ;
 DOC
@@ -135,10 +135,10 @@ setup () {
 }
 
 @test "timediff" {
-	skip # currently has update issues
+	#skip # currently has update issues
 	. bin/sea_flusher.sh 0
-	assign_rgx
 	get_sources
+	assign_rgx
 
 	f1=bin/"timediff.txt"
 	echo ${RANDOM} > ${SOURCE}/${f1} 
@@ -150,6 +150,7 @@ setup () {
 
 	echo "updated" > ${SOURCE}/${f1}
 	a=$(flush 0 process)
+	echo "a" ${a}
 	[[ $(echo ${a} | grep "cp ${SOURCE}/${f1}" | wc -l) == 1 ]]
 }
 
