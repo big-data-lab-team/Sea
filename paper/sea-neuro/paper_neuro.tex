@@ -169,14 +169,52 @@ obtained with Sea.
 
 
 \subsubsection{Datasets}
-Functional magnetic resonance imaging datasets can vary greatly in total number
+fMRI datasets may vary greatly in total number
 of images and number of volumes within each image. To adequately capture the 
-diversity of datasets and when Sea could be pertinent, we selected three datasets of varying
-sizes: 1) OpenNeuro's ds001545 dataset~\cite{ds001545}, 2) the PREVENT-AD  dataset~\cite{preventad}, and
-3) the HCP dataset~\cite{hcp}. The ds001545 dataset is a total of 45.94~$GB$ (1778 files) and consists of data collected
-from 30 subjects in a single session. The PREVENT-AD dataset is a 255.0~$GB$ dataset (53061 files) consisting of data collected
-from 308 subjects. The HCP dataset is the largest of the three datasets at 85.4~$TB$ (x files) consisting of data collected from
-1113 subjects.
+diversity of datasets and the applicability of Sea, we have selected three datasets of varying
+time and space resolutions (Table~\ref{table:data}): 1) OpenNeuro's ds001545 dataset~\cite{ds001545},
+2) the PREVENT-AD dataset~\cite{preventad}, and 3) the HCP dataset~\cite{hcp}.
+The ds001545 dataset is a total of 45.94~$GB$ (1778 files) and consists of data collected
+from 30 participants in a single session watching 3 different clips (i.e. three runs/participants) of the The Grand Budapest Hotel.
+
+
+The PREVENT-AD dataset is publicly available dataset comprising of data from 330 participants with a familial history
+of Alzheimer's Disease.
+At the time of the experiments, the dataset contained 255.0~$GB$ (53061 files) originating from the 308 subjects available on DataLad~\cite{}.
+
+The HCP project, whose aim is to characterize brain connectivity using data collected from 1200 subjects, is the largest of the three datasets.
+At the time of our experimments, the dataset obtained consisted 85.4~$TB$ (x files) of data collected from 1113 subjects.
+
+By experimenting with datasets of different spatial and temporal resolutions, the amount of compute may be affected.
+Naturally, with more data there may inevitably be more computations performed, but also, the code itself may
+chose to perform entirely different computations as a result of differences in resolution. Moreover, parallelism and program I/O behaviour
+may be impacted depending on the particular characteristics of the data. Capturing this potential
+variety in processing will provide us with a better understanding of when and where Sea can be useful.
+
+\begin{table*}[t]
+  \small\centering
+\begin{tabular}{|c c c c c|}
+  \hline
+  Dataset & Total Size (MB) & Total Number of images & Number of images processed & Total size of processed (MB) \\
+  \hline
+  \multirow{3}{*}{PREVENT-AD} & \multirow{3}{*}{289532} & \multirow{3}{*}{53061} & 1 & 51.26\\
+  & & & 8 & \\
+  & & & 16 & \\
+  \hline
+  \multirow{3}{*}{ds001545} & \multirow{3}{*}{27377} & \multirow{3}{*}{1778} & 1 & 280.27\\
+  & & & 8 & \\
+  & & & 16 & \\
+  \hline
+  \multirow{3}{*}{HCP} & \multirow{3}{*}{83140079} & \multirow{3}{*}{X} & 1 &  1299.93\\
+  & & & 8 & \\
+  & & & 16 & \\
+
+
+  \hline
+
+  \hline
+\end{tabular}\caption{Dataset characteristics}\label{table:data}
+\end{table*}
 
 %just for example run
 %dataset size, resolution, resolution of voxels
@@ -194,14 +232,19 @@ from 308 subjects. The HCP dataset is the largest of the three datasets at 85.4~
 
 Similarly to datasets, preprocessing pipelines can also vary in duration as a result of methodological differences.
 Thus, we preprocessed each dataset using four standard preprocessing pipelines: FSL~\cite{fsl}, AFNI~\cite{AFNI},
-SPM~\cite{SPM}, fMRIPrep~\cite{fmriprep}. Table~\ref{tb1} provides an reference of the differences in computation and data-intensivity
-of the different pipelines on a single subject of the ds001545 dataset.
+SPM~\cite{SPM}, fMRIPrep~\cite{fmriprep}. Table~\ref{table:pipelines} provides an reference of the differences in computation and data-intensivity
+of the different pipelines on a single subject of all three of the datasets.
 
-Each tool was set to only run the preprocessing pipeline. Scripts used to execute each pipeline can be found at~\ref{github.com}.
+Each tool was set to only run the preprocessing pipeline. Scripts used to execute each pipeline can be found at~\ref{github.com/valhayot/sea-slurm-scripts}.
+
 For the FSL preprocessing pipeline, the default settings were maintained with the exception of slice-timing correction (interleaved),
 intensity normalization and non-linear registration to standard space.
 
 %% Add SPM here
+To preprocess the datasets with SPM12, we reused the template described in \cite{haitas2021}, with fieldmap correction removed.
+As the template was designed for a specific dataset, we updated the paths to the fMRI and anatomical images,
+as well as the dimensions, such as the number of volumes and slices and the TR and TA, for each dataset. Furthermore,
+we set the slice order to interleaved in all cases. 
 
 For AFNI preprocessing, the pipeline was configured to perform slice timing, alignment to Talaraich space, registration, smoothing
 and brain masking. While AFNI does have some parallelized components that can be controlled via environment variables, we chose to let 
@@ -213,15 +256,100 @@ per process, it was not possible to do so with fMRIPrep. Thus, fMRIPrep preproce
 
 %%{provide subject #/session#} of the ds001545 dataset.
 
+\begin{table*}[t]
+  \small\centering
+\begin{tabular}{|c c c c c c|}
+  \hline
+  Tool & Dataset &  Output Size (MB) & Total libc calls & Libc Lustre calls & Compute time (s) \\
+  \hline
+  \multirow{3}{1em}{AFNI} & PREVENT-AD & 539.6 & 272390 & 4348 & 103.25 \\
+  & ds001545 & 3063.4 & 281707 & 4570  & 280.30 \\
+  & HCP & 18720.4 & 305310 & 5367 & 816.16 \\
+  \hline
+  \multirow{3}{1em}{FSL Feat} & PREVENT-AD & 253.7 & &  & 1338.29 \\
+  & ds001545 & 550.6 & &  & 2145.96 \\
+  & HCP & 1607.9 & & & 6596.46 \\
+  \hline
+  \multirow{3}{1em}{SPM} & PREVENT-AD & 331.0 & 34868 & 10048 &  483.67 \\
+  & ds001545 & 744.4 & 47251 & 19568 & 446.53 \\
+  & HCP & 2082.5 & 54753 & 25226 & 715.43 \\
 
-
+  \hline
+\end{tabular}\caption{Pipeline execution characteristics}\label{table:pipelines}
+\end{table*}
 \subsection{Controls}
+Our objective is to measure the speedup brought by Sea on real neuroimaging pipelines.
+Although Sea is agnostic to the internals of the pipelines and their output results, incorrect parameter
+selection and resulting outputs may result in I/O patterns that would not necessarily be observed had the
+pipeline been executed properly.
+
+Visual QC on the pipeline to ensure it was correctly registered and skull-striped to the template brain (MNI template). 
+
+To validate that the outputs produced were sufficiently correct, we overlayed the output on the input image.
+This allowed up to see if steps such as skull-stripping and registration were correctly performed on the data.
+We repeated this step for all datasets and all pipelines processing a single image. In addition, we compared output
+number of files and output size to ensure that the pipeline was not producing different outputs depending on the file
+system used.
+
+% compare md5sums of uncompressed files.
+
 \subsection{Infrastructure}
 
+Our experiments were exected on two different clusters: 1) a local cluster and 2) Compute Canada's Beluga cluster.
+The local cluster comprised of 8 compute nodes with 256GB memory and 125GB tmpfs, running Centos 8. Storage on the local
+cluster was comprised of 4 Lustre ZFS storage nodes with 44 HDD OSTs and 1 MDS with a single MDT. The
+storage nodes were connected to the compute nodes via a 20Gbps ethernet connection.
+The cluster's hardware is similar to that of Beluga.
+
+The Beluga cluster
+
+%Busy writers
 \section{Results}
 
 
 \section{Discussion}
+\subsection{Significance of speedups with Sea}
+
+\subsection{Other use cases}
+writes a lot but it's actually more complicated. When dataset increases
+\subsection{Predicting speedups}
+ difficulties with summarizing speedups into guidelines.
+ variability is important and it's coming from the interaction between infrastructure and application.
+ Benefits of sea depend on parameters such as load of the filesystem which is multifold and the application compute and
+ file system configuration. 
+ page cache
+ examples:
+  - large dataset - > more computation
+  - data access patterns and bursty-ness
+  - small datasets + metadata accesses
+
+\subsection{Libc interception of neuroimaging pipelines}
+
+As demonstrated by our Sea experiments, we have found that libc interception is effective at capturing all file system
+calls executed by the applications. This means that Sea is compatible with the most prominently used neuroimaging
+preprocessing pipelines. Although we have not extensively against all possible parameters and toolbox applications, we
+assume that use of glibc within the toolboxes themselves are likely to be consistent.
+
+The ability to use libc interception over more common alternative methods such as kernel-based or fuse-based filesystems
+was essential in ensuring ease-of-use and minimal performance overheads. 
+
+opportunities for other optimizations
+
+Sea may be beneficial
+\subsection{Should Sea always be used?}
+
+user
+
+sysadmin
+
+write intensive
+
+
+
+\subsection{Effective use of available cluster resources}
+\subsection{Prefetching, flushing and eviction with Sea}
+\subsection{Comparisons to best case scenario}
+
 talk about testing
 
 
