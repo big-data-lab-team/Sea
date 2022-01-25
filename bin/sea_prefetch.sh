@@ -128,7 +128,7 @@ get_sources () {
         done
         sources_arr+=(${resolved_sources[@]})
 
-        log "Flusher: cache_$i ${resolved_sources[@]}"
+        log "Prefetch: cache_$i ${resolved_sources[@]}"
     done
 
     base_source=$(cat ${conf_file} | grep "^\s*cache_$i" | cut -d "=" -f 2 | tr -d ' ;')
