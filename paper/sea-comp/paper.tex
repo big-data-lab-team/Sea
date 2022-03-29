@@ -23,43 +23,41 @@
 
 % \algnewcommand\algorithmicforeach{\textbf{for each}}
 % \algdef{S}[FOR]{ForEach}[1]{\algorithmicforeach\ #1\ \algorithmicdo}
-% \algblock{Input}{EndInput}
-% \algnotext{EndInput}
-% \algblock{Output}{EndOutput}
-% \algnotext{EndOutput}
-% \newcommand{\Desc}[2]{\State \makebox[2em][l]{#1}#2}
-\newcommand{\todo}[1]{\marginpar{\parbox{18mm}{\flushleft\tiny\color{red}\textbf{TODO}: #1}}}
+% \algblock{Input}{EndInput} \algnotext{EndInput} \algblock{Output}{EndOutput}
+% \algnotext{EndOutput} \newcommand{\Desc}[2]{\State \makebox[2em][l]{#1}#2}
+\newcommand{\todo}[1]{\marginpar{\parbox{18mm}{\flushleft\tiny\color{red}\textbf{TODO}:
+#1}}}
 
-% benchmark on beluga, prefreesurfer with RUIS
-% use more than 64 subjects for prefreesurfer --> few 100 subjects
-% think more about how to benchmark I/O
-% try distributed jobs with Sea
+% benchmark on beluga, prefreesurfer with RUIS use more than 64 subjects for
+% prefreesurfer --> few 100 subjects think more about how to benchmark I/O try
+% distributed jobs with Sea
 
 \begin{document}
-\title{Sea: A lightweight data-management library for Big Data scientific computing}
-% remove neuroimaging and replace with scientific computing  add user-space, switch HPC to computing clusters
+\title{Sea: A lightweight data-placement library for Big Data scientific computing}
+% remove neuroimaging and replace with scientific computing  add user-space,
+% switch HPC to computing clusters
 
 \author{Val\'erie Hayot-Sasson, Mathieu Dugr\'e and Tristan Glatard}
 
 % The paper headers
 \markboth{Journal of \LaTeX\ Class Files,~Vol.~14, No.~8, August~2015}%
-{Hayot-Sasson\MakeLowercase{\textit{et al.}}: Bare Demo of IEEEtran.cls for Computer Society Journals}
-\IEEEtitleabstractindextext{%
+{Hayot-Sasson\MakeLowercase{\textit{et al.}}: Bare Demo of IEEEtran.cls for
+Computer Society Journals} \IEEEtitleabstractindextext{%
 \begin{abstract}
-    The recent influx of scientific data has lead to scientific
-computing transitioning from compute intensive to data intensive. Whereas many Big Data
+    The recent influx of scientific data has lead to scientific computing
+transitioning from compute intensive to data intensive. Whereas many Big Data
 Frameworks exist that minimize the cost of data transfers, few scientific
 applications adopt data-placement strategies as the efforts required to update
 the existing applications is significant.
 
 We developed Sea as a means to enable data-placement strategies for scientific
-applications executing on HPC clusters without the need to reinstrument workflows.
-Sea leverages GNU C library interception to intercept
-POSIX-compliant file system calls made by the applications. We designed a
-performance model and evaluated the performance of Sea on a synthetic
-data-intensive application processing a representative neuroimaging dataset (the
-Big Brain). Our results demonstrate that Sea significantly improves performance,
-up to a factor of 3$\times$. 
+applications executing on HPC clusters without the need to reinstrument
+workflows. Sea leverages GNU C library interception to intercept POSIX-compliant
+file system calls made by the applications. We designed a performance model and
+evaluated the performance of Sea on a synthetic data-intensive application
+processing a representative neuroimaging dataset (the Big Brain). Our results
+demonstrate that Sea significantly improves performance, up to a factor of
+3$\times$. 
 
 \end{abstract}
 }
@@ -69,184 +67,207 @@ up to a factor of 3$\times$.
 \maketitle
 
 
-\IEEEdisplaynontitleabstractindextext
-\IEEEpeerreviewmaketitle
+\IEEEdisplaynontitleabstractindextext \IEEEpeerreviewmaketitle
 
 
 
 \IEEEraisesectionheading{\section{Introduction}\label{sec:introduction}}
-\IEEEPARstart{E}{fficient} data-placement
-strategies have become essential in minimizing the costs of processing Big Data.
-Strategies, such as data locality and in-memory computing, improve application runtime by ensuring
-data access occur on the most efficient available storage. Existing Big Data frameworks, such as
-MapReduce~\cite{dean2008mapreduce}, Apache Spark~\cite{zaharia2016apache} and
-Dask~\cite{rocklin2015dask}, improve runtime performance through the incorporation of these data-placement
-strategies.
+\IEEEPARstart{E}{fficient} data-placement strategies have become essential in
+minimizing Big Data processing overheads. These strategies, such as data
+locality and in-memory computing, improve application runtime by ensuring data
+accesses occur on the most efficient available storage. Existing Big Data
+frameworks, such as MapReduce~\cite{dean2008mapreduce}, Apache
+Spark~\cite{zaharia2016apache} and Dask~\cite{rocklin2015dask}, improve runtime
+performance through the incorporation of these data-placement strategies.
 
 Until the recent surge in publicly available scientific data, scientific
 workflows have been regarded as compute intensive. As a result, standardized
-scientific tools typically lack data-placement mechanisms. In contrast, efforts have
-been placed on efficient storage representation, such as HDF5~\cite{hdf5} and Zarr~\cite{zarr}, and
-the sharing of data, through initiatives like DataLad~\cite{wagner2022fairly}.
+scientific tools typically lack data-placement mechanisms. In contrast, efforts
+have been placed on efficient storage representation, such as HDF5~\cite{hdf5}
+and Zarr~\cite{zarr}, and the sharing of data, through initiatives like
+DataLad~\cite{wagner2022fairly}.
 
-Data-placement strategies can complement existing solutions by selecting where data should be accessed at runtime,
-facilitating the transfer and processing of large datasets across different infrastructures, and placing the different
-file formats at the preferred storage layer to maximize efficiency. However, converting adapting existing scientific frameworks
-and applications to Big Data frameworks requires significant effort, necessitating the rewrite of many well established applications.
-Furthermore, as noted in \cite{mehta2017comparative}, Big Data frameworks are still difficult to use for the processing of certain
-scientific data, such as imaging data.
+Data-placement strategies can complement existing solutions by facilitating the
+transfer and processing of large datasets across different infrastructures, and
+placing the different file formats at the preferred storage layer to maximize
+efficiency. However, adapting existing scientific applications to Big Data
+frameworks requires considerable effort, necessitating the rewrite of many well
+established applications. Furthermore, as noted in \cite{mehta2017comparative},
+Big Data frameworks are not easy to use for the processing of certain scientific
+data, such as imaging data, due to the level of expertise required to rewrite
+reference implementations using the frameworks.
 
 
-%multiple disk support
-% pipeline agnostic and pipeline access patterns
-% don't leverage workflows
-% leverage existing filesystems
-% replace storage devices with storage location.
-% use applications
-% memory management paragraph: PAGE CACHE
+%multiple disk support pipeline agnostic and pipeline access patterns don't
+% leverage workflows leverage existing filesystems replace storage devices with
+% storage location. use applications memory management paragraph: PAGE CACHE
 % shared filesystems are slow and metadata management can be slow
 
-% add need for userspace / intelligent pipeline flushing
-% there is no one-size fits all with data intensive applications
-% due to io patterns, so we decided with userspace.
+% add need for userspace / intelligent pipeline flushing there is no one-size
+% fits all with data intensive applications due to io patterns, so we decided
+% with userspace.
 
 % add related work section
 
 
-Our goal is to provide a data-placement add-on to standardized scientific computing applications executing on High Performance Computing (HPC)
-clusters. The tools of particular interest to us consist of various tasks that communicate to each other via a POSIX-compliant file system. Whereas
-they can be platform-agnostic, users typically leverage them within an HPC context, particularly when processing large volumes of data, due to their
-inherent reliance on POSIX-compliance.
+Our goal is to provide a data-placement solution to standardized scientific
+computing applications executing on High Performance Computing (HPC) clusters.
+The tools of particular interest to us consist of various tasks that communicate
+to each other via a POSIX-compliant file system. Whereas the tools can be
+platform-agnostic, we assume users will leverage them within an HPC context,
+particularly when processing large volumes of data, due to their inherent
+reliance on POSIX-compliance.
 
-We developed Sea, a user-space data-placement library, that provides efficient data placement without reinstrumentation of the underlying application.
-Given a predefined storage hierarchy, Sea can prefetch, cache, flush and evict data to and from a permanent storage location. To evaluate Sea,
-we have designed a performance model, as well as evaluate its performance on a synthetic Big Data application running on a representative neuroimaging dataset.
+We developed Sea, a user-space data-placement library, that provides efficient
+data placement without reinstrumentation of the underlying application. Given a
+predefined storage hierarchy, Sea can prefetch, cache, flush and evict data to
+and from a permanent storage location. To assist in providing a
+frame-of-reference for Sea's performance on HPC systems, we designed a
+performance model. We then evaluated Sea's performance on a synthetic Big Data
+application running on a representative neuroimaging dataset, comparing its
+performance with the bounds delineated by the model.
 
 
 
 \section{Related Work}
 \subsection{HPC Infrastructure}
-      The general structure of HPC clusters may complicate the deployment of Big
+      The general structure of HPC clusters complicates the deployment of Big
       Data frameworks. Typical HPC clusters consist of distinct storage and
-      compute nodes. While the compute nodes may also have local storage, there
-      is no distributed file system like the Hadoop Distributed File System
+      compute nodes. While compute nodes may also have local storage, there is
+      no distributed file system like the Hadoop Distributed File System
       (HDFS)~\cite{shvachko2010hadoop} or Alluxio~\cite{alluxio} to facilitate
       data locality. Furthermore, access to these compute nodes is temporary,
       with allocation duration enforced by a batch scheduler. Therefore, any
-      data written to a compute node is inaccessible after the allocation is
-      terminated.
+      data written to compute nodes are rendered inaccessible after the
+      allocation is terminated.
 
       The storage layer found on HPC clusters consists of a high-performance
       parallel file system (PFS) (e.g. Lustre~\cite{lustre}). These file systems
       are shared amongst all compute nodes within a cluster, typically connected
       to each node via high-performance network interconnect such as
       InfiniBand~\cite{infiniband}. I/O overheads of shared PFS can be incurred
-      in many places, from the shared network, to the bandwidth of the storage
-      disks.  With Lustre specifically, there typically are many data nodes, known as
-      Object Storage Servers (OSS) which contain several storage devices, known
-      as Object Storage Targets (OST). All file metadata is maintained within a
-      separate node known as the Metadata Server (MDS) and stored within a
-      device referred to as the Metadata Target (MDT). Although data transfers
-      can be communicated directly to the corresponding OST, the clients need to
-      first communicate with the MDS to determine which OST to communicate with.
-      This can result in major data transfer overheads, particularly when making
-      numerous requests to the metadata server.
+      in many places, from the shared network to the bandwidth and latency of
+      the storage devices.  With Lustre specifically, there typically are many
+      data nodes, known as Object Storage Servers (OSS) which contain several
+      storage devices, known as Object Storage Targets (OST). All file metadata
+      is maintained within a separate node known as the Metadata Server (MDS)
+      and stored within a device referred to as the Metadata Target (MDT).
+      Although data transfers can be communicated directly to the corresponding
+      OST, the clients need to first communicate with the MDS to determine which
+      OST to communicate with. This can result in major data transfer overheads,
+      particularly when making numerous requests to the metadata server.
       
       
-      HPC clusters may provide a faster additional storage layer, known as a
+      HPC clusters may provide a faster intermediate storage layer, known as a
       Burst Buffer, aimed at improving I/O performance. A Burst Buffer typically
-      consists of fast storage (SSD and memory) and can be local to the compute
-      node or as a dedicated I/O node. It was introduced as a response to offset
-      the impacts of large-scale application checkpointing on the PFS~\cite{bb}. The
-      application would write a checkpoint to the Burst Buffer and resume
-      processing, while the checkpoint would be asynchronously flushed to the
-      PFS. 
+      consists of higher-performance storage devices (SSD and memory) and can be
+      local to the compute node or as a dedicated I/O node. Burst Buffers were
+      introduced as a response to offset the impacts of large-scale application
+      checkpointing on the PFS~\cite{bb}. The application would write a
+      checkpoint to the Burst Buffer and resume processing, while the checkpoint
+      would be asynchronously flushed to the PFS. 
 
 
 \subsection{Big Data Frameworks and File systems}
 
-      Strategies mitigate the impacts of data transfers in data-intensive workloads is
-      required. In text-based processing, frameworks such as
-      MapReduce~\cite{dean2008mapreduce} and Apache
-      Spark~\cite{zaharia2016apache} have implemented and popularized strategies
-      to minimize the need for data transfers during processing. These
-      strategies are known as data locality and in-memory computing.
+      Strategies to mitigate the impacts of data transfers in data-intensive
+      workloads are required to ensure optimal processing time. Early Big Data
+      frameworks, notably MapReduce~\cite{dean2008mapreduce} and Apache
+      Spark~\cite{zaharia2016apache} have implemented and popularized
+      data-management strategies to minimize data transfers at processing time.
+      These strategies are known as data locality and in-memory computing.
 
-      Data locality is the process by which compute tasks are scheduled nearest
-      to where the data is located. Traditionally, storage and compute were kept
-      separate, having to transfer data over the network to compute. Rather than
-      having to transfer large amounts of data over the network to the compute
-      tasks, which could incur significant overheads, Big Data frameworks ensure
-      that data is stored directly on the compute nodes. When a compute task
-      requires access to specific data, the scheduler sends the task to the
-      nearest available node to the data, thereby minimizing any cost of
-      network-related data transfers. This strategy is not only used by Big Data
-      Frameworks such as Hadoop MapReduce, Apache Spark, and
-      Dask~\cite{rocklin2015dask}, but also enabled by file systems such as HDFS
-      and Alluxio.
+      Data locality ensures that compute tasks are scheduled nearest to where
+      the data is located. Historically, storage and compute nodes were distinct
+      layers, data transfer to the compute location. Rather than transferring
+      large amounts of data over the network to compute tasks, which could incur
+      significant overheads, Big Data frameworks ensure that data is stored
+      directly on the compute nodes. When a compute task requires access to
+      specific data, the scheduler sends the task to the nearest available node
+      to the data, thereby minimizing any cost of network-related data
+      transfers. This strategy is not only used by Big Data Frameworks such as
+      Hadoop MapReduce, Apache Spark, and Dask~\cite{rocklin2015dask}, but also
+      enabled by file systems such as HDFS and Alluxio.
+
+      In-memory computing complements data locality by maximizing use of
+      available memory to maintain intermediate data. Whereas with data locality
+      alone, tasks would leverage local storage, typically in the form of HDDs
+      or SSD, to maintain task input and output data, with the addition of
+      in-memory computing, data would be stored in main memory to minimize
+      latency and maximize bandwidth.
+
+      While Big Data frameworks and filesystems are not commonly used in HPC,
+      HPC clusters are typically Linux-based and benefit from the Linux page
+      cache, which can provide data locality and in-memory computing at a
+      limited capacity. Furthermore, HPC architectures may also provide an
+      intermediate storage layer, known as a Burst Buffer, to improve
+      application I/O-related overheads. To facilitate an applications
+      interaction between application and storage layer, distributed file
+      systems have been developed.
 
 
 
 \subsection{The Linux page cache}
- While scientific applications uncommonly use Big Data frameworks and must
-      perform large over-the-network data transfers, they may still benefit from
-      in-memory computing and data locality through the Linux Page
-      Cache~\cite{pagecache}. Similarly to other file systems, Lustre leverages
-      the client node page cache to reduce I/O overheads. System memory is
-      composed of two components: 1) anonymous memory and 2) page cache.
-      Anonymous memory consists of all application-related objects, whereas page
-      cache consists of recently accessed file data. When a file is read, that
-      file is loaded up into the page cache to be flagged for eviction based on
-      a least recently used (LRU) policy. That means subsequent accesses to that
-      data may be done entirely in memory so long as that data has not already
-      been evicted. Similarly, for writes to a file system with writeback cache
-      enabled, the file will be written to memory completing the write operation
-      once the file has been written entirely to memory. That file will then be
-      flushed asynchronously to the appropriate storage device. As system memory
-      may get overloaded with too many write requests, there is a limit to the
-      amount of written data that can exist in memory, known as the
-      \texttt{dirty\_ratio}. Furthermore, applications producing too many write
-      requests may be throttled by the system.
+ While scientific applications do not customarily leverage data-placement
+      strategies and may perform large over-the-network data transfers, they may
+      still benefit from in-memory computing and data locality through the Linux
+      Page Cache~\cite{pagecache}. Similarly to other file systems, Lustre
+      leverages the compute node page cache to reduce I/O overheads. System
+      memory is composed of two components: 1) anonymous memory and 2) page
+      cache. Anonymous memory consists of all application-related objects,
+      whereas page cache consists of recently accessed file data. When a file is
+      read, that file is loaded up into the page cache to be flagged for
+      eviction based on a least recently used (LRU) policy. That means
+      subsequent accesses to that data may be done entirely in memory so long as
+      that data has not already been evicted. Similarly, for writes to a file
+      system with writeback cache enabled, the file will be written to memory
+      completing the write operation once the file has been written entirely to
+      memory. That file will then be flushed asynchronously to the appropriate
+      storage device. As system memory may get overloaded with too many write
+      requests, there is a limit to the amount of written data that can exist in
+      memory, known as the dirty\_ratio. Furthermore, applications producing too
+      many write requests may be throttled by the system.
 
 \subsection{File System implementations}
       Due to the architecture of conventional HPC clusters, network-based
       parallel files systems are favoured over Big Data distributed file
       systems. Such file systems require super-user access, preventing users
-      from deploying their own on-the-fly cluster. While HDFS can be loaded
-      in user-space by mounting its File System in Userspace (FUSE)
-      implementation, FUSE-based file systems can perform significantly worse
-      than desired, depending on the application~\cite{tofuse}. Even with a
-      user-space version of HDFS, there would be no mechanism to transfer all
-      the data back to the parallel file system to be accessible post resource
-      requests. Furthermore, such file systems are not POSIX-compliant, which
-      would be required for scientific computing applications.
+      from deploying their own on-the-fly cluster. While HDFS can be loaded in
+      user-space by mounting its FUSE (Filesystem in User Space) implementation,
+      FUSE-based file systems may perform significantly worse than desired,
+      depending on the application~\cite{tofuse}. Even with a user-space version
+      of HDFS, there would be no mechanism to transfer all the data back to the
+      PFS post-processing.
+      % Furthermore, such file systems are not POSIX-compliant, which would be
+      % required for scientific computing applications.
       
-      There are, however, Big Data file systems, such as
-      XtreemFS~\cite{xtreemfs} that exist entirely within user space, are
-      POSIX-compliant, and can use alternative methods to FUSE to function.
-      XtreemFS uses the LD\_PRELOAD trick to intercept file system calls made to
-      the GNU C library (glibc). There are limitations to using glibc
-      interception. For instance, the application must be dynamically linked and
-      make glibc calls. However, statically-linked applications are uncommon and
+      However, there exist Big Data file systems, such as
+      XtreemFS~\cite{xtreemfs}, that exist entirely within user space, are
+      POSIX-compliant, and can use alternative methods to FUSE to function. For
+      instance, XtreemFS uses the LD\_PRELOAD trick to intercept file system
+      calls made to the GNU C library (glibc). There are limitations to using
+      glibc interception; the application must be dynamically linked and make
+      glibc calls. However, statically-linked applications are uncommon and
       applications interacting with POSIX-compliant file systems on Linux
       machines, the predominant OS of HPC clusters, will make glibc calls.
       Nevertheless, there are alternatives to glibc intercept that can bypass
       the aforementioned issues, such as system call interception, but they
       result in greater overheads~\cite{quinson}.
 
-      Characteristics that make XtreemFS unlikely to be deployed on-the-fly
-      include complex file system deployment and configuration properties. It
-      also does not provide a simple way to leverage different classes of
-      storage devices, nor ensure that required data will be copied to the
-      cluster's parallel file system.
+      Due to complex file system deployment and configuration properties,
+      XtreemFS is unlikely to be deployed on an ephemeral burst buffer. It also
+      does not provide a simple way to leverage different classes of storage
+      devices, nor ensure that required data will be copied to the cluster's
+      parallel file system.
 
       BurstFS~\cite{burstfs} and GekkoFS~\cite{gekkofs} are two user-space file
       systems that are specifically designed for Burst Buffers. That is, both of
       these file systems exist only during the time-window in which the
       resources are allocated. Furthermore, they both exist entirely within
       user-space using glibc interception. While these implementations simplify
-      usage of burst buffers for users, their installation and configuration would be out of the
-      scope of a typical HPC user and thus require sysadmin intervention.
+      usage of burst buffers for users, their installation and configuration is
+      similarly out-of-scope for a typical HPC user.
+
 \section{Materials and Methods}
 
 \subsection{Sea design and implementation}
@@ -255,39 +276,45 @@ we have designed a performance model, as well as evaluate its performance on a s
 
     \centering
     \includegraphics[width=\columnwidth]{figures/seacomp-diagram.pdf}%
-\caption{The Sea data-management library. Sea intercepts I/O-related glibc calls issued by the application and
-translates the path provided if located within the Sea mountpoint. Sea leverages a user-defined storage hierarchy to help select the most appropriate path and the redirects the call to glibc to process the request on the translated path. }
+\caption{The Sea data-placement library. Sea intercepts I/O-related glibc calls
+issued by the application and translates the path provided if located within the
+Sea mountpoint. Sea leverages a user-defined storage hierarchy to help select
+the most appropriate path and the redirects the call to glibc to process the
+request on the translated path. }
 \label{fig:sea-comp:diagram}
 \end{figure*}
 
-Sea\footnote{\url{https://github.com/valhayot/sea}} is an open-source user-space
-data-placement C++ library for applications running on HPC systems. Its main
-aim is to reduce application data transfer costs by leveraging node-local
-storage (Figure~\ref{fig:sea-comp:diagram}). Sea redirects files accessed from a user-specified mount point to the
-appropriate storage devices using glibc interception. Within an intercepted call
-the file will be written to or read from the fastest storage device available. 
+Sea\footnote{\url{https://github.com/big-data-lab-team/sea}} is an open-source
+user-space data-placement C++ library for applications running on HPC systems.
+Its main aim is to reduce application data transfer costs by leveraging
+node-local storage (Figure~\ref{fig:sea-comp:diagram}). Sea redirects files
+accessed from a user-specified mount point to the appropriate storage devices
+using glibc interception. Within an intercepted call the file will be written to
+or read from the fastest storage device available. 
 
 
-At minimum, Sea requires the user to specify at least two storage devices, a
-fast temporary one (i.e. cache) and a slower long-term storage one. This could be RAM and SSD
-if working on a single node, or a compute-local SSD and a shared parallel file
-system, in the case of an HPC cluster. Ideally, a user will provide a multitude
-of short-term storage devices to improve Sea's efficacy. Furthermore, to
-maximize usage of the fastest available storage devices, Sea will allow the user
-to outline which files can be removed from short-term storage in addition to
-which files need to be materialized onto long-term storage. Eviction of files is
-important as this will allow Sea to maximize usage of short-term storage.
+Sea requires minimal configuration for use. In order to work, Sea requires the
+user to specify at least two storage devices, a fast temporary one (i.e. cache)
+and a slower long-term storage one. This could be RAM and SSD if working on a
+single node, or a compute-local SSD and a shared parallel file system, in the
+case of an HPC cluster. Ideally, a user will provide a multitude of ephemeral
+storage devices to improve Sea's efficacy. Furthermore, to maximize usage of the
+fastest available storage devices, Sea will allow the user to outline which
+files can be removed from short-term storage in addition to which files need to
+be materialized onto long-term storage. Eviction of files is important as this
+will allow Sea to maximize usage of short-term storage.
 
 
-Sea was meant as a data-management service to be employed at the discretion of
-the users on scientific applications. When coming up with the idea for Sea, we
+Sea was created as a data-placement service to be employed at the discretion of
+the users on scientific applications. When developing the idea for Sea, we
 observed the design differences between Big Data and scientific, specifically
-neuroimaging, frameworks and applications. Scientific frameworks tend to favour
-ease-of-use, reproducibility, portability and parallelism over minimizing data
-transfers. It was important for us to ensure that Sea would preserve the design
-decisions of the underlying tools. Sea achieves this by having few dependencies,
-is lightweight, and requires minimal configuration.
-
+neuroimaging, frameworks and applications. Scientific frameworks and
+applications tend to favour ease-of-use, reproducibility, portability and
+parallelism over minimizing data
+transfers\cite{jarecka2020pydra,esteban2019fmriprep,wagner2022fairly}. It was
+important for us to ensure that Sea would preserve the design decisions of the
+underlying tools. Sea achieves this by having few dependencies, is lightweight,
+and requires minimal configuration.
 
 In this subsection, we will discuss and outline the various design and
 implementation details made. Furthermore, we will go into detail into the
@@ -296,22 +323,22 @@ functionality of Sea.
 \subsubsection{Requirements and assumptions}
 
 Sea is primarily designed to work with workloads that generate large amounts of
-intermediate data. Since data must be read from the slower storage device and
-final output data most likely would have to be written to the same device, the
+intermediate data. Since data must be read from the slower storage device and final outputs will
+also have to be written to the same device, the
 use of Sea with workloads that do not produce intermediate data would result in
 limited speedup and may even introduce some overheads. 
 
 Sea provides two main modes based on flushing specification: In-memory computing
-and flush-all. In-memory computing is achieved when intermediate need not be
+and copy-all. In-memory computing is achieved when intermediate need not be
 materialized to long-term storage (i.e. no flushing). With Sea in-memory, we can
 expect speedups comparable to Big Data frameworks.
 
-As the name implies, Sea flush-all is achieved when all data must be
+As the name implies, Sea copy-all is applicable when all data must be
 materialized to long-term storage (i.e. flush everything). This can be coupled
 with eviction to limit the amount of data that will be written to slower, but
-larger local storage devices. While this option will have overheads, due to the
-need to flush all application data, performance can be improved when data
-transfers and compute time are similar. 
+larger, local storage devices. While this option will have overheads, due to the
+need to flush all application data, overheads will be negligible when data transfer and compute time
+are similar. 
 
 % Occasionally, it is desired to materialize even intermediate data to long-term
 % storage devices, for potential future use. The performance gain from using Sea
@@ -381,24 +408,21 @@ still allow users to gain a performance speedup on the pipeline given that the
 number of threads multiplied by the file size does not exceed storage space.
 
 \subsection{Testing}
-To work effectively, Sea has to intercept every glibc function that interacts with files or
-directories. Failure to intercept some of these function may result in the whole application
-crashing. This is because only Sea can translate the Sea mountpoint file paths to their
-respective real locations. Due to an absence of standardized glibc testing suites,
-we developed our own integration tests.
+To work effectively, Sea has to intercept every glibc function that interacts
+with files or directories. Failure to intercept some of these function may
+result in the whole application crashing. This is because only Sea can translate
+the Sea mountpoint file paths to their respective real locations. Due to an
+absence of standardized glibc testing suites, we developed our own integration
+tests.
 
-Our tests have been executed on three different operating systems: Ubuntu (xenial, bionic, focal),
-Fedora (32, 33, 34) and Centos (6, 7). Using this test matrix, the Sea tests were able to span seven glibc
-versions ranging from 2.17 to 2.33. As glibc file system functions may change over time, Sea behaviour with
+Our tests have been executed on three different operating systems: Ubuntu
+(xenial, bionic, focal), Fedora (32, 33, 34) and Centos (6, 7). Using this test
+matrix, the Sea tests were able to span seven glibc versions ranging from 2.17
+to 2.33. As glibc file system functions may change over time, Sea behaviour with
 newer and older versions of glibc is undefined. 
-% ldd (GNU libc) 2.17
-% ldd (Ubuntu GLIBC 2.23-0ubuntu11.3) 2.23
-% ldd (Ubuntu GLIBC 2.27-3ubuntu1.4) 2.27
-% ldd (GNU libc) 2.28
-% ldd (Ubuntu GLIBC 2.31-0ubuntu9.2) 2.31
-% ldd (GNU libc) 2.31
-% ldd (GNU libc) 2.32
-% ldd (GNU libc) 2.33
+% ldd (GNU libc) 2.17 ldd (Ubuntu GLIBC 2.23-0ubuntu11.3) 2.23 ldd (Ubuntu GLIBC
+% 2.27-3ubuntu1.4) 2.27 ldd (GNU libc) 2.28 ldd (Ubuntu GLIBC 2.31-0ubuntu9.2)
+% 2.31 ldd (GNU libc) 2.31 ldd (GNU libc) 2.32 ldd (GNU libc) 2.33
 
 
 
@@ -412,29 +436,31 @@ newer and older versions of glibc is undefined.
 \end{figure*}
 %\todo{add diagrams here?}
 Flushing and eviction mechanisms give way to four different modes: flush-only,
-evict-only, flush-and-evict and keep. A flush-only is synonymous with a
-file copy in that a file that already exists within a Sea cache will be copied
-to persistent storage. This operation is particularly useful when a file will be
+evict-only, flush-and-evict and keep. A flush-only is synonymous with a file
+copy in that a file that already exists within a Sea cache will be copied to
+persistent storage. This operation is particularly useful when a file will be
 reused by the application, and thus benefits from remaining in cache, but also
 needs to be communicated between other nodes or needs to be persisted for
 post-processing analysis. To flush-only a file, the file must only be specified
 in the \texttt{.sea\_flushlist}.
 
-Evict-only is equivalent to a remove operation. This mode is for files that are located
-within a Sea cache, but do not need to be persisted and will not be reused by
-the pipeline and therefore do not need to occupy cache space. Evict-only is
-useful for removing unnecessary application log files. To evict-only a file, the
-file must only be specified in the \texttt{.sea\_evictlist}.
+Evict-only is equivalent to a remove operation. This mode is for files that are
+located within a Sea cache, but do not need to be persisted and will not be
+reused by the pipeline and therefore do not need to occupy cache space.
+Evict-only is useful for removing unnecessary application log files. To
+evict-only a file, the file must only be specified in the
+\texttt{.sea\_evictlist}.
 
 Similar to the flush-only, the flush-and-evict mode copies data from cache to
 persistent storage. However, the assumption here is that these files will not be
 reused by the application and therefore need not occupy space in cache.
 Flush-and-evict is therefore synonymous with a move operation and is invoked on
-files that are specified in both the \texttt{.sea\_flushlist} and \texttt{.sea\_evictlist}.
+files that are specified in both the \texttt{.sea\_flushlist} and
+\texttt{.sea\_evictlist}.
 
 
-Keep is useful for when file needs to be in cache as it will be reused by
-the application, but is not needed in post-processing analysis or by other nodes.
+Keep is useful for when file needs to be in cache as it will be reused by the
+application, but is not needed in post-processing analysis or by other nodes.
 
 %\subsubsection{Configuration File} \subsubsection{Program execution}
 %\subsubsection{Limitations} behaviour unspecified in mixed static/dynamic
@@ -442,12 +468,13 @@ the application, but is not needed in post-processing analysis or by other nodes
 
 \subsection{The Sea and Lustre model}\label{ss:sea-comp:model}
 
-      Experimental results can be prone to error and variability, particularly in instances
-      where there a many factors at play, such as in cluster environments. To improve
-      confidence in our results, we developed a simplified performance model that
-      could help describe the behaviours found in our experimental results. Since different
-      parallel file systems may operate differently, our baseline model will be
-      based on Lustre which is commonly used on HPC infrastructure.
+      Experimental results can be prone to error and variability, particularly
+      in instances where there a many factors at play, such as in cluster
+      environments. To improve confidence in our results, we developed a
+      simplified performance model that could help describe the behaviours found
+      in our experimental results. Since different parallel file systems may
+      operate differently, our baseline model will be based on Lustre which is
+      commonly used on HPC infrastructure.
 
       For data intensive use cases, the makespan models for both Lustre and Sea
       can be broken down into two components: The amount of time it takes read
@@ -468,8 +495,7 @@ the application, but is not needed in post-processing analysis or by other nodes
           M_{l} =  \frac{D_{r}}{L_{r}} + \frac{D_{w}}{L_{w}}
       \end{equation}
 
-      {\noindent}
-      Where, \\
+      {\noindent} Where, \\
       $M_{l}$ is the application makespan using Lustre \\
       $D_{r}$ is the amount of data read \\
       $D_{w}$ is the amount of data written \\
@@ -511,8 +537,7 @@ the application, but is not needed in post-processing analysis or by other nodes
         L_{w} = \min{(cN, sN, d_{w}\min{(d, cp)})}
     \end{equation}
 
-    {\noindent}
-    Where, \\
+    {\noindent} Where, \\
     $N$ is the network bandwidth \\
     $c$ is the number of compute nodes used \\
     $s$ is the number of Lustre storage nodes \\
@@ -546,12 +571,11 @@ the application, but is not needed in post-processing analysis or by other nodes
 
       %\spacing{1.5}
       For the sake of simplicity, the above models assume that the network
-      bandwidth between the compute and data nodes is the same. This,
-      however, may not necessarily be the case. Furthermore, the model also
-      assumes that each file can only be located on a single disk, meaning that
-      the parallel bandwidth can at maximum be as fast as all Lustre disks
-      combined and as slow as the minimum number of compute threads reading and
-      writing files.
+      bandwidth between the compute and data nodes is the same. This, however,
+      may not necessarily be the case. Furthermore, the model also assumes that
+      each file can only be located on a single disk, meaning that the parallel
+      bandwidth can at maximum be as fast as all Lustre disks combined and as
+      slow as the minimum number of compute threads reading and writing files.
 
       As with many file systems, page cache plays an important role in the speed
       of application read and writes in Lustre. Since the effects of page cache
@@ -567,8 +591,7 @@ the application, but is not needed in post-processing analysis or by other nodes
           M_{c} = \frac{D_{cr}}{cC_{r}} + \frac{D_{cw}}{cC_{w}}
       \end{equation}
 
-      {\noindent}
-      Where, \\
+      {\noindent} Where, \\
       $M_{c}$ is the makespan of application I/O to page cache \\
     %   $c$ is the number of compute nodes \\
       $D_{cr}$ is the amount of data read from cache \\
@@ -617,8 +640,7 @@ the application, but is not needed in post-processing analysis or by other nodes
           M_{lc} = \frac{D_{I}}{L_{r}} + M_{c}
       \end{equation}
 
-      {\noindent}
-      Where, \\
+      {\noindent} Where, \\
       $M_{lc}$ is the application makespan using Lustre with page cache \\
       $D_{I}$ is the amount of input data \\
       $L_{r}$ is the Lustre read bandwidth \\
@@ -803,18 +825,12 @@ the application, but is not needed in post-processing analysis or by other nodes
         \removelatexerror
         \begin{algorithm}[H]
           \caption{Incrementation}\label{alg:sea-comp:incrementation}
-          \SetAlgoLined 
-            \SetKwInOut{Input}{Input}
-            \Input{$n$ number of iterations;\\
+          \SetAlgoLined \SetKwInOut{Input}{Input} \Input{$n$ number of
+          iterations;\\
                 $C$ a set of image chunks;\\
                 $fs$ the file system to write to (Lustre or Sea)\\
-            }
-            \ForEach{$chunk \in C$}
-            { 
-              read $chunk$ from Lustre 
-              \For{$i \in [1,n]$}
-              { $chunk\gets chunk+1$ save $chunk$ to $fs$ }
-            }
+            } \ForEach{$chunk \in C$} { read $chunk$ from Lustre \For{$i \in
+            [1,n]$} { $chunk\gets chunk+1$ save $chunk$ to $fs$ } }
         \end{algorithm}
       \end{figure}
 
@@ -823,8 +839,7 @@ the application, but is not needed in post-processing analysis or by other nodes
       all our experiments, we utilize the \SI{20}{\micro\meter} dataset, which
       totals to approximately \SI{603}{\gibi\byte}. The dataset was broken down
       into 1000 files each consisting of \SI{617}{\mebi\byte} of data.
-      %of data as well as
-      %5000 blocks each \SI{124}{\mebi\byte} in size.
+      %of data as well as 5000 blocks each \SI{124}{\mebi\byte} in size.
       
                                                                                    
       We evaluated Sea using 4 different experimental conditions: 1) varying the
@@ -920,7 +935,8 @@ the application, but is not needed in post-processing analysis or by other nodes
     \end{subfigure}
     \caption{Benchmarks comparing Lustre and Sea In-memory performance under
     various conditions using the incrementation application on the Big Brain
-    image. All experiments were repeated 5$\times$. Model bounds represented by coloured regions}
+    image. All experiments were repeated 5$\times$. Model bounds represented by
+    coloured regions}
     \label{fig:sea-comp:benchmarks}
     \end{figure*}
 
@@ -973,12 +989,12 @@ the application, but is not needed in post-processing analysis or by other nodes
       single process writing to it.
 
       When Sea does not provide speedups, it either performs similarly to
-      Lustre, as can be seen in Figure~\ref{fig:sea-comp:nodes} at one node and in
-      Figure~\ref{fig:sea-comp:iterations} at 1 iteration, or sightly slows down
-      execution, as can be seen in~\ref{fig:sea-comp:disks}. As expected, Sea at
-      a single iteration can at best perform similarly or slightly worse than
-      Lustre. This is because all the data is read from Lustre and written to
-      Lustre, operating in the same way that Lustre would with page cache.
+      Lustre, as can be seen in Figure~\ref{fig:sea-comp:nodes} at one node and
+      in Figure~\ref{fig:sea-comp:iterations} at 1 iteration, or sightly slows
+      down execution, as can be seen in~\ref{fig:sea-comp:disks}. As expected,
+      Sea at a single iteration can at best perform similarly or slightly worse
+      than Lustre. This is because all the data is read from Lustre and written
+      to Lustre, operating in the same way that Lustre would with page cache.
 
       Sea at a single node likely performs equivalently to Lustre because
       Lustre, in this case, has very good bandwidth, having at most 6 concurrent
@@ -1000,13 +1016,13 @@ the application, but is not needed in post-processing analysis or by other nodes
 
       \subsection{Model accurately predicts performance trends}
 
-      Figure~\ref{fig:sea-comp:benchmarks} shows us that our model correctly describes The
-      bounds for all but two experiments: Experiment 3
+      Figure~\ref{fig:sea-comp:benchmarks} shows us that our model correctly
+      describes The bounds for all but two experiments: Experiment 3
       (Figure~\ref{fig:sea-comp:iterations}) and Experiment 4
       (Figure~\ref{fig:sea-comp:processes}). In Experiment 3, the model
-      incorrectly represents the bounds for 1 iteration. Since, in this case, all
-      the data should be able to fit in page cache for both Sea and Lustre, it
-      is possible that memory bandwidth has been overestimated, resulting in
+      incorrectly represents the bounds for 1 iteration. Since, in this case,
+      all the data should be able to fit in page cache for both Sea and Lustre,
+      it is possible that memory bandwidth has been overestimated, resulting in
       incorrect model predictions.
 
       We believe that Lustre exceeds the model bounds in Experiment 4 due to
@@ -1076,12 +1092,11 @@ the application, but is not needed in post-processing analysis or by other nodes
     performance is significantly impacted by the presence of a single flush and
     evict process.  
 
-    Sea cannot be used with operating systems
-    that are not Linux-based, and therefore, the use of Sea limits application
-    portability. However, HPC systems commonly use Linux operating systems,
-    thus, it is not limiting for its intended use case. Furthermore, we provide
-    publicly available containers to simplify the usage of Sea on various other
-    operating systems.
+    Sea cannot be used with operating systems that are not Linux-based, and
+    therefore, the use of Sea limits application portability. However, HPC
+    systems commonly use Linux operating systems, thus, it is not limiting for
+    its intended use case. Furthermore, we provide publicly available containers
+    to simplify the usage of Sea on various other operating systems.
 
     \subsection{In-memory performance with Sea}
    
@@ -1158,8 +1173,8 @@ the application, but is not needed in post-processing analysis or by other nodes
     completion faster, as it only needs to wait for all the data to be written
     to local storage, the time required for the final flush of the data can be
     quite significant, particularly when flushing from disk to Lustre.
-    Therefore, we recommend that flushing all the data is reserved for
-    more compute-intensive applications. 
+    Therefore, we recommend that flushing all the data is reserved for more
+    compute-intensive applications. 
 
 
     Increase in performance from eviction is not only limited to scenarios where
@@ -1175,9 +1190,9 @@ the application, but is not needed in post-processing analysis or by other nodes
 \section{Conclusion}
     We created Sea, a lightweight open-source data-management library for
     scientific applications. With the help of glibc interception, we were able
-    to create a library that maintains qualities important to scientific computing
-    (i.e. ease-of-use, reproducibility, portability and parallelism). Our
-    results demonstrate that Sea is quite beneficial to reducing the data
+    to create a library that maintains qualities important to scientific
+    computing (i.e. ease-of-use, reproducibility, portability and parallelism).
+    Our results demonstrate that Sea is quite beneficial to reducing the data
     transfers overheads, particularly when using an in-memory computing
     configuration, producing speedups of up to 3$\times$. Sea's performance is,
     however, limited when the PFS is not being heavily used.
@@ -1202,24 +1217,19 @@ the application, but is not needed in post-processing analysis or by other nodes
 
 
 
-% if have a single appendix:
-%\appendix[Proof of the Zonklar Equations]
-% or
-%\appendix  % for no appendix heading
-% do not use \section anymore after \appendix, only \section*
-% is possibly needed
+% if have a single appendix: \appendix[Proof of the Zonklar Equations] or
+%\appendix  % for no appendix heading do not use \section anymore after
+%\appendix, only \section* is possibly needed
 
-% use appendices with more than one appendix
-% then use \section to start each appendix
-% you must declare a \section before using any
-% \subsection or using \label (\appendices by itself
-% starts a section numbered zero.)
+% use appendices with more than one appendix then use \section to start each
+% appendix you must declare a \section before using any \subsection or using
+% \label (\appendices by itself starts a section numbered zero.)
 %
 
 
 \appendices
-% you can choose not to have a title for an appendix
-% if you want by leaving the argument blank
+% you can choose not to have a title for an appendix if you want by leaving the
+% argument blank
 \section{}
 Appendix two text goes here.
 
@@ -1233,10 +1243,8 @@ Appendix two text goes here.
   \section*{Acknowledgment}
 \fi
 
-% % Can use something like this to put references on a page
-% % by themselves when using endfloat and the captionsoff option.
-% \ifCLASSOPTIONcaptionsoff
-%   \newpage
+% % Can use something like this to put references on a page % by themselves when
+% using endfloat and the captionsoff option. \ifCLASSOPTIONcaptionsoff \newpage
 % \fi
 \bibliographystyle{plain}
 \bibliography{biblio}
