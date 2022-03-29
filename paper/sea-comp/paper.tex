@@ -49,7 +49,6 @@ transitioning from compute intensive to data intensive. Whereas many Big Data
 Frameworks exist that minimize the cost of data transfers, few scientific
 applications adopt data-placement strategies as the efforts required to update
 the existing applications is significant.
-
 We developed Sea as a means to enable data-placement strategies for scientific
 applications executing on HPC clusters without the need to reinstrument
 workflows. Sea leverages GNU C library interception to intercept POSIX-compliant
@@ -87,15 +86,16 @@ have been placed on efficient storage representation, such as HDF5~\cite{hdf5}
 and Zarr~\cite{zarr}, and the sharing of data, through initiatives like
 DataLad~\cite{wagner2022fairly}.
 
-Data-placement strategies can complement existing solutions by facilitating the
-transfer and processing of large datasets across different infrastructures, and
-placing the different file formats at the preferred storage layer to maximize
-efficiency. However, adapting existing scientific applications to Big Data
-frameworks requires considerable effort, necessitating the rewrite of many well
-established applications. Furthermore, as noted in \cite{mehta2017comparative},
-Big Data frameworks are not easy to use for the processing of certain scientific
-data, such as imaging data, due to the level of expertise required to rewrite
-reference implementations using the frameworks.
+Data-placement strategies can complement existing solutions by facilitating
+the transfer and processing of large datasets across different
+infrastructures, and placing the different file formats at the preferred
+storage layer to maximize efficiency. However, adapting existing scientific
+applications to Big Data frameworks requires considerable effort,
+necessitating the rewrite of many well-established applications.
+Furthermore, as noted in \cite{mehta2017comparative}, Big Data frameworks
+are not easy to use for the processing of certain scientific data, such as
+imaging data, due to the level of expertise required to rewrite reference
+implementations using the frameworks.
 
 
 %multiple disk support pipeline agnostic and pipeline access patterns don't
@@ -118,10 +118,10 @@ platform-agnostic, we assume users will leverage them within an HPC context,
 particularly when processing large volumes of data, due to their inherent
 reliance on POSIX-compliance.
 
-We developed Sea, a user-space data-placement library, that provides efficient
+We developed Sea, a user-space data-placement library that provides efficient
 data placement without reinstrumentation of the underlying application. Given a
-predefined storage hierarchy, Sea can prefetch, cache, flush and evict data to
-and from a permanent storage location. To assist in providing a
+predefined storage hierarchy, Sea can prefetch, cache, flush, and evict data to
+and from a permanent storage location. To provide a
 frame-of-reference for Sea's performance on HPC systems, we designed a
 performance model. We then evaluated Sea's performance on a synthetic Big Data
 application running on a representative neuroimaging dataset, comparing its
