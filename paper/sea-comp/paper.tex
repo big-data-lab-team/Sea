@@ -1,5 +1,6 @@
 \documentclass[10pt,journal,compsoc]{IEEEtran}
-\usepackage{xcolor}
+\usepackage[table]{xcolor}
+\usepackage{booktabs}
 \usepackage{hyperref}
 \usepackage{ulem}
 \usepackage{graphicx}
@@ -20,7 +21,7 @@
 \newcommand{\removelatexerror}{\let\@latex@error\@gobble}
 \makeatother
 
-
+\newcommand\VRule[1][\arrayrulewidth]{\vrule width #1}
 % \algnewcommand\algorithmicforeach{\textbf{for each}}
 % \algdef{S}[FOR]{ForEach}[1]{\algorithmicforeach\ #1\ \algorithmicdo}
 % \algblock{Input}{EndInput} \algnotext{EndInput} \algblock{Output}{EndOutput}
@@ -322,6 +323,20 @@ functionality of Sea.
 
 \subsubsection{Requirements and assumptions}
 
+Sea removes the need to implement the logic to redirect data to the appropriate
+storage locations. Furthermore, it implements logic to ensure that files are
+written to the best possible location at any given time. It is both pipeline and
+infrastructure agnostic.
+
+As it executes in user-space, root permissions are not required, enabling users
+to use Sea on most Linux-based systems available to them. This differs from Big
+Data file systems which may require elevated permissions to install. The
+overhead of intercepting glibc calls is minimal, and negligible compared to
+system call interception and file systems such as FUSE.
+
+Unlike Big Data frameworks, Sea does not require reinstrumentation of the
+existing pipelines, allowing users to gain an instant performance boost.
+
 Sea is primarily designed to work with workloads that generate large amounts of
 intermediate data. Since data must be read from the slower storage device and final outputs will
 also have to be written to the same device, the
@@ -370,26 +385,10 @@ used by increasing the maximum file size of the application.
 %\todo{depending on the version of libc, the application static/dynamic linking,
 %version of the function}
 
-
-\subsubsection{Benefits}
-Sea removes the need to implement the logic to redirect data to the appropriate
-storage locations. Furthermore, it implements logic to ensure that files are
-written to the best possible location at any given time. It is both pipeline and
-infrastructure agnostic.
-
-As it executes in user-space, root permissions are not required, enabling users
-to use Sea on most Linux-based systems available to them. This differs from Big
-Data file systems which may require elevated permissions to install. The
-overhead of intercepting glibc calls is minimal, and negligible compared to
-system call interception and file systems such as FUSE.
-
-Unlike Big Data frameworks, Sea does not require reinstrumentation of the
-existing pipelines, allowing users to gain an instant performance boost.
-
 \subsubsection{Glibc interception}
 
 Glibc interception is achieved by writing wrappers to existing glibc functions.
-Most importantly, every glibc function accepting a file path needs to be
+Most importantly, every glibc function containing accepting a file path as input parameter needs to be
 wrapped. The wrappers take any input filepath that is located within the
 user-provided Sea mountpoint and convert it a filepath pointing to the best
 available storage device.
@@ -419,23 +418,39 @@ Our tests have been executed on three different operating systems: Ubuntu
 (xenial, bionic, focal), Fedora (32, 33, 34) and Centos (6, 7). Using this test
 matrix, the Sea tests were able to span seven glibc versions ranging from 2.17
 to 2.33. As glibc file system functions may change over time, Sea behaviour with
-newer and older versions of glibc is undefined. 
+newer and older versions of glibc is unknown. 
 % ldd (GNU libc) 2.17 ldd (Ubuntu GLIBC 2.23-0ubuntu11.3) 2.23 ldd (Ubuntu GLIBC
 % 2.27-3ubuntu1.4) 2.27 ldd (GNU libc) 2.28 ldd (Ubuntu GLIBC 2.31-0ubuntu9.2)
 % 2.31 ldd (GNU libc) 2.31 ldd (GNU libc) 2.32 ldd (GNU libc) 2.33
 
 
 
-\subsubsection{Flushing and eviction modes}
-\begin{figure*}
+\subsubsection{Memory-management}
+      \begin{table}
+      \centering
+      \begin{tabular}{ccc}
+        \toprule
+       Mode & .sea\_flushlist & .sea\_evictlist \\
+       \midrule
+       Copy & yes & no \\
+       Remove & no & yes \\
+       Move & yes & yes \\
+       Keep & no & no \\
 
-    \centering
-    \includegraphics[scale=0.8]{figures/sea-flushevict.pdf}%
-\caption{The four Sea flush and eviction modes }
-\label{fig:sea-comp:fe}
-\end{figure*}
+       \bottomrule
+
+      \end{tabular}
+      \caption{Sea's memory management modes}
+      \label{table:sea-comp:fe}
+      \end{table}
 %\todo{add diagrams here?}
-Flushing and eviction mechanisms give way to four different modes: flush-only,
+Memory-management is an integral component of Sea as deallocating data from cache
+makes room for future files to be stored within the higher-performance storage devices.
+Generalizing an efficient memory-management strategy across all applications is a challenging task.
+Since Sea works on a per-application basis, memory-management in Sea is application-specific, configured
+via two files: \texttt{.sea\_flushlist} and \texttt{.sea\_evictlist}.
+
+Memory management in Sea consists of four different modes, as described in Table~\ref{table:sea-comp:fe}: flush-only,
 evict-only, flush-and-evict and keep. A flush-only is synonymous with a file
 copy in that a file that already exists within a Sea cache will be copied to
 persistent storage. This operation is particularly useful when a file will be
@@ -462,6 +477,10 @@ files that are specified in both the \texttt{.sea\_flushlist} and
 Keep is useful for when file needs to be in cache as it will be reused by the
 application, but is not needed in post-processing analysis or by other nodes.
 
+A third text file, namely the \texttt{.sea\_prefetchlist}, exists that can be populated by input
+files to be prefetched. At this time, Sea cannot determine when prefetched files are no longer needed by the pipeline, and
+therefore should not be evicted. For files to be prefetched, they must be located within Sea's mountpoint at startup.
+
 %\subsubsection{Configuration File} \subsubsection{Program execution}
 %\subsubsection{Limitations} behaviour unspecified in mixed static/dynamic
 %workloads
@@ -469,18 +488,18 @@ application, but is not needed in post-processing analysis or by other nodes.
 \subsection{The Sea and Lustre model}\label{ss:sea-comp:model}
 
       Experimental results can be prone to error and variability, particularly
-      in instances where there a many factors at play, such as in cluster
+      in instances where there a many factors at play, such as in distributed cluster
       environments. To improve confidence in our results, we developed a
-      simplified performance model that could help describe the behaviours found
-      in our experimental results. Since different parallel file systems may
+      simplified performance model that could help describe the behaviours observed in our experimental
+      results. Since different PFS may
       operate differently, our baseline model will be based on Lustre which is
       commonly used on HPC infrastructure.
 
-      For data intensive use cases, the makespan models for both Lustre and Sea
+      For data-intensive use cases, the makespan models for both Lustre and Sea
       can be broken down into two components: The amount of time it takes read
       the data and the amount of time it takes to write the data. With more
-      heterogeneous applications (some components are compute intensive whereas
-      others are data intensive), a third component, consisting of compute time,
+      heterogeneous applications (some components are compute-intensive whereas
+      others are data-intensive), a third component, consisting of compute time,
       can be added. Furthermore, latency may also play a significant role
       application makespan, particularly in scenarios with large amounts of
       small files. We choose to ignore latency costs in our model and make the
@@ -571,7 +590,7 @@ application, but is not needed in post-processing analysis or by other nodes.
 
       %\spacing{1.5}
       For the sake of simplicity, the above models assume that the network
-      bandwidth between the compute and data nodes is the same. This, however,
+      bandwidth between the compute and data nodes is the same. However, this
       may not necessarily be the case. Furthermore, the model also assumes that
       each file can only be located on a single disk, meaning that the parallel
       bandwidth can at maximum be as fast as all Lustre disks combined and as
@@ -621,13 +640,13 @@ application, but is not needed in post-processing analysis or by other nodes.
       each compute node.
 
 
-      Page cache is difficult to summarize accurately and effectively within a
+      Page cache is difficult to summarize accurately within a
       model. For one, we must not only consider available memory and anonymous
       memory used by the application, but we must also consider which pages are
       candidates for eviction and which files they belong to. In addition, in
       the case of writes, we must consider asynchronous flushing and the
       throttling that may occur as a consequence of surpassing the
-      \texttt{dirty\_ratio}. Furthermore, Lustre also has its own user-defined
+      dirty\_ratio. Furthermore, Lustre also has its own user-defined
       settings for how it interacts with the cache that would add additional
       complexities to the model. As a result, we assume two possible scenarios,
       one in which page cache is never used
@@ -669,7 +688,11 @@ application, but is not needed in post-processing analysis or by other nodes.
       levels (e.g. tmpfs, NVMe, SSD, HDD, Lustre) and $M_{S}$ represent the
       makespan of an application reading and writing to Sea. For our model, we
       will assume 3 storage layers: 1) fast tmpfs, 2) intermediate local SSD
-      storage, and 3) slow parallel file system layer.
+      storage, and 3) slow parallel file system layer. It is important to note that
+      the model assumes that I/O never occurs in distinct storage layers in parallel.
+      Although Sea tries to exhaust the layers, starting from the fastest, it is Nevertheless
+      possible that Sea writes to two storage layers at the same time, for instance, when one becomes full
+      and another parallel thread needs to perform a write.
 
       Since the modelling of page cache is even more challenging with Sea due to
       the additional tmpfs and SSD layer, we will will model the upper and lower
@@ -729,7 +752,7 @@ application, but is not needed in post-processing analysis or by other nodes.
       concurrently.
 
       The local disk  makespan model is similar to the tmpfs makespan model,
-      however, we must ensure to disregard any data that has already been
+      although we must disregard any data that has already been
       written to tmpfs. Furthermore, in Sea, it is possible to leverage however
       many disk-based file systems are available for use ($g$). For our model,
       we assume that the size of each device is identical. The makespan model
@@ -863,30 +886,30 @@ application, but is not needed in post-processing analysis or by other nodes.
 \subsubsection{Infrastructure}
       \begin{table}
       \centering
-      \begin{tabular}{@{}|c|c|c|@{}}
-       \hline
+      \begin{tabular}{ccc}
+       \toprule
        Storage layer & Action & Avg. bandwidth (MiB/s) \\
-              \hline
-       \multirow{3}{*}{tmpfs} & read & 6676.48 \\
-       & cached read & 6318.08  \\
-       & write & 2560.00 \\
-       \hline
+       \midrule
+      \multirow{3}{*}{tmpfs} & read & 6676.48 \\
+      & cached read & 6318.08  \\
+      & write & 2560.00 \\
+      \midrule
        \multirow{3}{*}{local disk} & read & 501.70  \\
        & cached read & 7034.88 \\
        & write & 426.00 \\
-       \hline
+       \midrule
        \multirow{3}{*}{Lustre} & read & 1381.14 \\
        & cached read & 6103.04  \\
        & write & 121.00  \\
 
-       \hline
+       \bottomrule
 
       \end{tabular}
       \caption{Storage benchmarks}
       \label{table:sea-comp:fs}
       \end{table}
             Our experiments were executed on a Centos 8.1 (Linux kernel 4.18.0)
-      cluster with 8 compute nodes, a 4 data node Lustre server with 1 dedicated
+      cluster with 8 compute nodes, a 4 data node Lustre server with 1
       metadata node. Each compute node is equipped it two Intel(R) Xeon(R) Gold
       6130 CPUs, \SI{250}{\gibi\byte} of memory with \SI{126}{\gibi\byte} of
       tmpfs space and 6 \SI{447}{\gibi\byte} Intel SSDSC2KG480G8R SSDs. The data
@@ -896,6 +919,10 @@ application, but is not needed in post-processing analysis or by other nodes.
       \SI{25}{\giga\bit}E and uses TCP for communication. Jobs are scheduled on
       the cluster from a controller node using Slurm with cgroups. Swapping is
       disabled and Lustre dirty writes is limited to \SI{1}{\giga\byte} per OST.
+
+
+      There was no background load on the cluster for the duration of the experiments.
+
 
       Each file system was benchmarked using \texttt{dd} using 5 repetitions.
       The average bandwidths are reported in Table~\ref{table:sea-comp:fs}
@@ -942,11 +969,11 @@ application, but is not needed in post-processing analysis or by other nodes.
 
       \subsection{Sea achieves significant speedups}
 
-      As can be seen in Figure~\ref{fig:sea-comp:benchmarks}, Sea with the
+      As can be seen in Figure~\ref{fig:sea-comp:benchmarks}, Sea using
       in-memory configuration speeds up execution the majority of the
       conditions. The largest speedups observed can be seen in
       Figure~\ref{fig:sea-comp:processes} at 32 processes, where the speedup is
-      nearly 3$\times$. We believe that the speedup here is primarily due to the
+      nearly 3$\times$. We believe that the speedup is primarily due to the
       contention on Lustre. While each local disk has an average of 5 processes
       trying to write concurrently to it at 32 processes, each Lustre has around
       3 concurrent processes while to it. Whereas one might assume this means
@@ -971,9 +998,9 @@ application, but is not needed in post-processing analysis or by other nodes.
 
       When varying the number of nodes (Figure~\ref{fig:sea-comp:nodes}), we
       achieved the greatest speedup at 5 nodes, with a speedup of 2.4$\times$.
-      Similar to our experiments with multiprocessing, the speedup here appears
+      Similar to our experiments with multiprocessing, the speedup appears
       to be due to increased contention on Lustre. However, there is one main
-      difference here, and that is that only Sea is experiencing increased
+      difference, and that is that only Sea is experiencing increased
       contention, as the contention within the compute nodes is fixed. Both the
       model and experimental results state that the speedup is approaching a
       plateau, however, it is expected that once the number of threads writing
@@ -1014,10 +1041,10 @@ application, but is not needed in post-processing analysis or by other nodes.
       improves Sea's performance beyond what Lustre can achieve.
     
 
-      \subsection{Model accurately predicts performance trends}
+      \subsection{Performance trends described by the model}
 
-      Figure~\ref{fig:sea-comp:benchmarks} shows us that our model correctly
-      describes The bounds for all but two experiments: Experiment 3
+      Figure~\ref{fig:sea-comp:benchmarks} shows us that our model can
+      describe the performance trends for all but two experiments: Experiment 3
       (Figure~\ref{fig:sea-comp:iterations}) and Experiment 4
       (Figure~\ref{fig:sea-comp:processes}). In Experiment 3, the model
       incorrectly represents the bounds for 1 iteration. Since, in this case,
