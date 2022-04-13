@@ -182,7 +182,7 @@ performance with the bounds delineated by the model.
 
       Data locality ensures that compute tasks are scheduled nearest to where
       the data is located. Historically, storage and compute nodes were distinct
-      layers, \TG{missing word?} data transfer to the compute location. Rather than transferring
+      layers, transferring data to the compute location whenever necessary. Rather than transferring
       large amounts of data over the network to compute tasks, which could incur
       significant overheads, Big Data frameworks ensure that data is stored
       directly on the compute nodes. When a compute task requires access to
@@ -975,8 +975,8 @@ therefore should not be evicted. For files to be prefetched, they must be locate
       Figure~\ref{fig:sea-comp:processes} at 32 processes, where the speedup is
       nearly 3$\times$. We believe that the speedup is primarily due to the
       contention on Lustre. While each local disk has an average of 5 processes
-      trying to write concurrently to it at 32 processes, each Lustre has around
-      3 concurrent processes while to it \TG{this sentence doesn't make sense, revise}. Whereas one might assume this means
+      trying to write concurrently to it at 32 processes, each Lustre disk has around
+      3 concurrent processes writing to it. Whereas one might assume this means
       Lustre would have less contention overall and should perform better, there
       are significant bandwidth differences to account for between the local
       disks and Lustre (see Table~\ref{table:sea-comp:fs}) that would result in
@@ -1109,11 +1109,10 @@ therefore should not be evicted. For files to be prefetched, they must be locate
     of Sea modifying the contents of the data, Sea preserves the reproducibility
     requirement.
 
-    The flush-and-evict process may affect overall application parallelism. It
-    would depend on how many Sea processes are started on the compute node. If
+    The flush-and-evict process may affect overall application parallelism if multiple Sea instances
+    are launched on a given node. If
     only a single instance of Sea is called on a compute node, there will only
-    be a single flush and evict process, and therefore, only a single flush and
-    evict process will exist \TG{this sentence is circular, revise}. However, if Sea is launched many times on a given
+    be a single flush and evict process. However, if Sea is launched many times on a given
     node, there will be many flush and evict processes which may interfere with
     the application compute. However, our results do not indicate that
     performance is significantly impacted by the presence of a single flush and
