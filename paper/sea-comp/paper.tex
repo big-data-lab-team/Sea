@@ -47,11 +47,13 @@
 {Hayot-Sasson\MakeLowercase{\textit{et al.}}: Bare Demo of IEEEtran.cls for
 Computer Society Journals} \IEEEtitleabstractindextext{%
 \begin{abstract}
-    The recent influx of scientific data has lead to scientific computing
-transitioning from compute intensive to data intensive. Whereas many Big Data
-Frameworks exist that minimize the cost of data transfers, few scientific
-applications adopt data-placement strategies as the efforts required to update
-the existing applications is significant.
+    The recent influx of open scientific data has contributed to the
+    transitioning of scientific computing from compute intensive to data intensive.
+    Whereas many Big Data
+frameworks exist that minimize the cost of data transfers, few scientific
+applications integrate these frameworks or adopt data-placement strategies to mitigate the costs.
+Scientific applications commonly rely on well-established command-line tools that would require complete reinstrumentation
+in order to incorporate existing frameworks.
 We developed Sea as a means to enable data-placement strategies for scientific
 applications executing on HPC clusters without the need to reinstrument
 workflows. Sea leverages GNU C library interception to intercept POSIX-compliant
@@ -74,13 +76,13 @@ demonstrate that Sea significantly improves performance, up to a factor of
 
 
 \IEEEraisesectionheading{\section{Introduction}\label{sec:introduction}}
-\IEEEPARstart{E}{fficient} data-placement strategies have become essential in
+\IEEEPARstart{E}{fficient} data-placement strategies have become essential to
 minimizing Big Data processing overheads. These strategies, such as data
 locality and in-memory computing, improve application runtime by ensuring data
 accesses occur on the most efficient available storage. Existing Big Data
 frameworks, such as MapReduce~\cite{dean2008mapreduce}, Apache
 Spark~\cite{zaharia2016apache} and Dask~\cite{rocklin2015dask}, improve runtime
-performance through the incorporation of these data-placement strategies.
+performance through the incorporation of data-placement strategies.
 
 Until the recent surge in publicly available scientific data, scientific
 workflows have been regarded as compute intensive. As a result, standardized
@@ -115,16 +117,18 @@ implementations using the frameworks.
 
 Our goal is to provide a data-placement solution to standardized scientific
 computing applications executing on High Performance Computing (HPC) clusters.
-The tools of particular interest to us consist of various tasks that communicate
-to each other via a POSIX-compliant file system. Whereas the tools can be
-platform-agnostic, we assume users will leverage them within an HPC context,
+The applications of interest to us consist of various tasks that communicate
+to each other via a POSIX-compliant file system. Whereas the application can be
+platform-agnostic, we assume users will leverage them within an linux-based HPC context,
 particularly when processing large volumes of data, due to their inherent
 reliance on POSIX-compliance.
 
 We developed Sea, a user-space data-placement library that provides efficient
 data placement without reinstrumentation of the underlying application. Given a
 predefined storage hierarchy, Sea can prefetch, cache, flush, and evict data to
-and from a permanent storage location. To provide a
+and from a permanent storage location.
+
+To provide a
 frame-of-reference for Sea's performance on HPC systems, we designed a
 performance model. We then evaluated Sea's performance on a synthetic Big Data
 application running on a representative neuroimaging dataset, comparing its
@@ -139,7 +143,7 @@ performance with the bounds delineated by the model.
       compute nodes. While compute nodes may also have local storage, there is
       no distributed file system like the Hadoop Distributed File System
       (HDFS)~\cite{shvachko2010hadoop} or Alluxio~\cite{alluxio} to facilitate
-      data locality. Furthermore, access to these compute nodes is temporary,
+      data locality. Furthermore, access to these compute nodes is ephemeral,
       with allocation duration enforced by a batch scheduler. Therefore, any
       data written to compute nodes are rendered inaccessible after the
       allocation is terminated.
@@ -147,7 +151,7 @@ performance with the bounds delineated by the model.
       The storage layer found on HPC clusters consists of a high-performance
       parallel file system (PFS) (e.g. Lustre~\cite{lustre}). These file systems
       are shared amongst all compute nodes within a cluster, typically connected
-      to each node via high-performance network interconnect such as
+      to the nodes via high-performance network interconnect like
       InfiniBand~\cite{infiniband}. I/O overheads of shared PFS can be incurred
       in many places, from the shared network to the bandwidth and latency of
       the storage devices.  With Lustre specifically, there typically are many
@@ -173,13 +177,11 @@ performance with the bounds delineated by the model.
 
 \subsection{Big Data Frameworks and File systems}
 
-      Strategies to mitigate the impacts of data transfers in data-intensive
-      workloads are required to ensure optimal processing time. Early Big Data
+Early Big Data
       frameworks, notably MapReduce~\cite{dean2008mapreduce} and Apache
       Spark~\cite{zaharia2016apache} have implemented and popularized
       data-management strategies to minimize data transfers at processing time.
       These strategies are known as data locality and in-memory computing.
-
       Data locality ensures that compute tasks are scheduled nearest to where
       the data is located. Historically, storage and compute nodes were distinct
       layers, transferring data to the compute location whenever necessary. Rather than transferring
@@ -204,7 +206,7 @@ performance with the bounds delineated by the model.
       cache, which can provide data locality and in-memory computing at a
       limited capacity. Furthermore, HPC architectures may also provide an
       intermediate storage layer, known as a Burst Buffer, to improve
-      application I/O-related overheads. To facilitate an applications
+      application I/O-related overheads. To facilitate an application's
       interaction between application and storage layer, distributed file
       systems have been developed.
 
@@ -222,7 +224,7 @@ performance with the bounds delineated by the model.
       read, that file is loaded up into the page cache to be flagged for
       eviction based on a least recently used (LRU) policy. That means
       subsequent accesses to that data may be done entirely in memory so long as
-      that data has not already been evicted. Similarly, for writes to a file
+      the data has not already been evicted. Similarly, for writes to a file
       system with writeback cache enabled, the file will be written to memory
       completing the write operation once the file has been written entirely to
       memory. That file will then be flushed asynchronously to the appropriate
@@ -249,11 +251,11 @@ performance with the bounds delineated by the model.
       POSIX-compliant, and can use alternative methods to FUSE to function. For
       instance, XtreemFS uses the LD\_PRELOAD trick to intercept file system
       calls made to the GNU C library (glibc). There are limitations to using
-      glibc interception; the application must be dynamically linked and make
+      glibc interception; the application must be dynamically-linked and make
       glibc calls. However, statically-linked applications are uncommon and
       applications interacting with POSIX-compliant file systems on Linux
       machines, the predominant OS of HPC clusters, will make glibc calls.
-      Nevertheless, there are alternatives to glibc intercept that can bypass
+      Nevertheless, alternatives to glibc intercept exist that can bypass
       the aforementioned issues, such as system call interception, but they
       result in greater overheads~\cite{quinson}.
 
@@ -264,12 +266,12 @@ performance with the bounds delineated by the model.
       parallel file system.
 
       BurstFS~\cite{burstfs} and GekkoFS~\cite{gekkofs} are two user-space file
-      systems that are specifically designed for Burst Buffers. That is, both of
-      these file systems exist only during the time-window in which the
-      resources are allocated. Furthermore, they both exist entirely within
-      user-space using glibc interception. While these implementations simplify
-      usage of burst buffers for users, their installation and configuration is
-      similarly out-of-scope for a typical HPC user.
+      systems that are specifically designed with HPC Burst Buffers. That is, both of
+      these file systems are designed to support the ephemeral nature of HPC compute nodes and their associated storage.
+      Additionally, these implementations exist entirely in user-space leveraging the LD\_PRELOAD trick to intercept
+      necessary library calls. Whereas these libraries incorporate a client-server architecture to aid in transferring data
+      between nodes, Sea opts for a more lightweight approach ensuring decentralization, statelessness and leveraging underlying
+      file systems for communication and consistency.
 
 \section{Materials and Methods}
 
@@ -297,9 +299,9 @@ or read from the fastest storage device available.
 
 
 Sea requires minimal configuration for use. In order to work, Sea requires the
-user to specify at least two storage devices, a fast temporary one (i.e. cache)
-and a slower long-term storage one. This could be RAM and SSD if working on a
-single node, or a compute-local SSD and a shared parallel file system, in the
+user to specify at least two storage devices, a fast temporary device used as cache
+and a slower long-term storage device. This could be RAM and SSD if working on a
+single node, or a compute-local SSD and a shared PFS, in the
 case of an HPC cluster. Ideally, a user will provide a multitude of ephemeral
 storage devices to improve Sea's efficacy. Furthermore, to maximize usage of the
 fastest available storage devices, Sea will allow the user to outline which
@@ -446,32 +448,31 @@ newer and older versions of glibc is unknown.
       \label{table:sea-comp:fe}
       \end{table}
 %\todo{add diagrams here?}
-Memory-management is an integral component of Sea as deallocating data from cache
+Memory-management is an integral component of Sea as de-allocating data from cache
 makes room for future files to be stored within the higher-performance storage devices.
 Generalizing an efficient memory-management strategy across all applications is a challenging task.
 Since Sea works on a per-application basis, memory-management in Sea is application-specific, configured
 via two files: \texttt{.sea\_flushlist} and \texttt{.sea\_evictlist}.
 
-Memory management in Sea consists of four different modes, as described in Table~\ref{table:sea-comp:fe}: flush-only,
-evict-only, flush-and-evict and keep. A flush-only is synonymous with a file
-copy in that a file that already exists within a Sea cache will be copied to
+Memory management in Sea consists of four different modes, as described in Table~\ref{table:sea-comp:fe}: copy,
+remove, move and keep. A copy copies a file located within the Sea cache to
 persistent storage. This operation is particularly useful when a file will be
 reused by the application, and thus benefits from remaining in cache, but also
 needs to be communicated between other nodes or needs to be persisted for
-post-processing analysis. To flush-only a file, the file must only be specified
+post-processing analysis. To copy a file, the file must only be specified
 in the \texttt{.sea\_flushlist}.
 
-Evict-only is equivalent to a remove operation. This mode is for files that are
+Remove is for files that are
 located within a Sea cache, but do not need to be persisted and will not be
 reused by the pipeline and therefore do not need to occupy cache space.
-Evict-only is useful for removing unnecessary application log files. To
-evict-only a file, the file must only be specified in the
+Remove is useful for removing unnecessary application log files. To
+remove a file, the file must only be specified in the
 \texttt{.sea\_evictlist}.
 
-Similar to the flush-only, the flush-and-evict mode copies data from cache to
+Similar to the copy, the move mode copies data from cache to
 persistent storage. However, the assumption here is that these files will not be
 reused by the application and therefore need not occupy space in cache.
-Flush-and-evict is therefore synonymous with a move operation and is invoked on
+Move is therefore synonymous with a copy-and-remove operation and is invoked on
 files that are specified in both the \texttt{.sea\_flushlist} and
 \texttt{.sea\_evictlist}.
 
@@ -689,7 +690,7 @@ therefore should not be evicted. For files to be prefetched, they must be locate
       Here, $M_{n}$ represents the makespans of the different possible storage
       levels (e.g. tmpfs, NVMe, SSD, HDD, Lustre) and $M_{S}$ represent the
       makespan of an application reading and writing to Sea. For our model, we
-      will assume 3 storage layers: 1) fast tmpfs, 2) intermediate local SSD
+      will assume three storage layers: 1) fast tmpfs, 2) intermediate local SSD
       storage, and 3) slow parallel file system layer. It is important to note that
       the model assumes that I/O never occurs in distinct storage layers in parallel.
       Although Sea tries to exhaust the layers, starting from the fastest, it is nevertheless
