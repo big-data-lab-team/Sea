@@ -23,7 +23,7 @@
         if (d != NULL)                                                                                                                             \
         {                                                                                                                                          \
             log_msg(DEBUG, "sea_readnext%s: read entry %s", #VERSION, d->d_name);                                                                  \
-            if (sd->curr_index > 0 && d->d_type == DT_DIR)                                                                                         \
+            if (!sd->seen_files.insert(std::string(d->d_name)).second || (sd->curr_index > 0 && d->d_type == DT_DIR))                              \
             {                                                                                                                                      \
                 log_msg(DEBUG, "sea_readnext%s: Curr dir is a directory, reading next inode.", #VERSION);                                          \
                 d = sea_readnext##VERSION(d, sea_conf, sd);                                                                                        \
@@ -46,7 +46,6 @@
         log_msg(INFO, "readdir%s: passthrough initialized", #VERSION);                                                                  \
         if (sea_conf.parsed == true)                                                                                                    \
         {                                                                                                                               \
-            initialize_sea_if_necessary();                                                                                              \
             log_msg(INFO, "readdir%s: sea initialized", #VERSION, #VERSION);                                                            \
                                                                                                                                         \
             SEA_DIR *sd = (SEA_DIR *)dirp;                                                                                              \
@@ -59,6 +58,11 @@
                 {                                                                                                                       \
                     log_msg(DEBUG, "readdir%s: reading sea dir current idx = %d", #VERSION, sd->curr_index);                            \
                     d = ((funcptr_readdir##VERSION)libc_readdir##VERSION)(sd->dirp);                                                    \
+                                                                                                                                        \
+                    if (d != NULL)                                                                                                      \
+                    {                                                                                                                   \
+                        sd->seen_files.insert(std::string(d->d_name));                                                                  \
+                    }                                                                                                                   \
                 }                                                                                                                       \
                                                                                                                                         \
                 log_msg(DEBUG, "readdir%s: curr_idx %d n_sources %d d NULL %d", #VERSION, sd->curr_index + 1, sd->total_dp, d == NULL); \
@@ -71,6 +75,10 @@
                     }                                                                                                                   \
                     log_msg(DEBUG, "readdir%s: launching sea_readnext %d %d", #VERSION, sd->curr_index, sd->total_dp);                  \
                     d = sea_readnext##VERSION(d, sea_conf, sd);                                                                         \
+                }                                                                                                                       \
+                if (d == NULL)                                                                                                          \
+                {                                                                                                                       \
+                    sd->seen_files.clear();                                                                                             \
                 }                                                                                                                       \
             }                                                                                                                           \
             else                                                                                                                        \
@@ -92,7 +100,9 @@
         else if (d != NULL && errno)                                                                                                    \
             log_msg(ERROR, "readdir%s: failed to read null dir %d", #VERSION, errno);                                                   \
         else if (d == NULL)                                                                                                             \
+        {                                                                                                                               \
             log_msg(DEBUG, "readdir%s: returning null", #VERSION);                                                                      \
+        }                                                                                                                               \
                                                                                                                                         \
         log_msg(INFO, "readdir%s: readdir%s ended", #VERSION, #VERSION);                                                                \
         return d;                                                                                                                       \
@@ -125,7 +135,6 @@ void init_path(const char *function, const char *path, char passpath[PATH_MAX], 
     struct config sea_conf = get_sea_config();
     if (sea_conf.parsed == true)
     {
-        initialize_sea_if_necessary();
         match = sea_getpath(path, passpath, masked);
     }
     else
@@ -175,7 +184,6 @@ void init_twopaths(const char *function, const char *oldpath, const char *newpat
     int match_new = 0;
     if (sea_conf.parsed == true)
     {
-        initialize_sea_if_necessary();
         match_old = sea_getpath(oldpath, oldpasspath, 0);
         match_new = sea_getpath(newpath, newpasspath, 0);
     }
@@ -354,11 +362,6 @@ extern "C"
 
                 if (sea_conf.parsed == true)
                 {
-                    //char mountpath[PATH_MAX];
-                    //char fdloc[PATH_MAX];
-                    //char afd[10];
-                    initialize_sea_if_necessary();
-
                     sea_getpath(abspath, passpath, 0, 0);
                     // source_match = sea_getpath(abspath, mountpath, 1);
 
@@ -414,12 +417,11 @@ extern "C"
         //printf("parsed %d nsource %d\n", sea_conf.parsed, sea_conf.n_sources);
         if (sea_conf.parsed == true)
         {
-            SEA_DIR *sd = (SEA_DIR *)malloc(sizeof(SEA_DIR));
+            SEA_DIR *sd = new SEA_DIR; //(SEA_DIR *)malloc(sizeof(SEA_DIR) + sizeof(std::vector<std::string>));
             sd->issea = 0;
             sd->dirnames = (char **)malloc(sizeof(char *) * sea_conf.n_sources);
             sd->other_dirp = (DIR **)malloc(sizeof(DIR *) * sea_conf.n_sources - 1);
 
-            initialize_sea_if_necessary();
             int mount_match = sea_getpath(pathname, passpath, 0, 0);
             //int source_match = sea_getpath(pathname, mountpath, 1);
 
@@ -446,7 +448,7 @@ extern "C"
             sd->curr_index = 0;
             sd->issea = 1;
             // indicator for if list is empty
-            sd->other_dirp[0] = NULL;
+            //sd->other_dirp[0] = NULL;
             sd->total_dp = sea_conf.n_sources;
             sd->dirp = ((funcptr_opendir)libc_opendir)(passpath);
 
@@ -495,11 +497,10 @@ extern "C"
         //check if file is in Sea mount
         if (sea_conf.parsed == true)
         {
-            initialize_sea_if_necessary();
             int mount_match = sea_getpath(abspath, passpath, 0, 0);
             int source_match = sea_getpath(abspath, mountpath, 1);
 
-            SEA_DIR *sd = (SEA_DIR *)malloc(sizeof(SEA_DIR));
+            SEA_DIR *sd = new SEA_DIR; //(SEA_DIR *)malloc(sizeof(SEA_DIR));
             sd->curr_index = 0;
             sd->dirnames = (char **)malloc(sizeof(char *) * sea_conf.n_sources);
             sd->other_dirp = (DIR **)malloc(sizeof(DIR *) * sea_conf.n_sources - 1);
@@ -677,7 +678,6 @@ extern "C"
 
         if (sea_conf.parsed == true)
         {
-            initialize_sea_if_necessary();
             SEA_DIR *sd = (SEA_DIR *)dirp;
 
             free(sd->dirnames[0]);
@@ -695,7 +695,7 @@ extern "C"
             int ret = 0;
             ret = ((funcptr_closedir)libc_closedir)(sd->dirp);
 
-            free(sd);
+            delete sd;
             return ret;
         }
         log_msg(INFO, "closedir");
@@ -711,7 +711,6 @@ extern "C"
 
         if (sea_conf.parsed == true)
         {
-            initialize_sea_if_necessary();
             SEA_DIR *sd = (SEA_DIR *)dirp;
 
             if (sd->issea)
@@ -793,7 +792,6 @@ extern "C"
 
         if (sea_conf.parsed)
         {
-            initialize_sea_if_necessary();
             int mount_match = sea_getpath(pathname, passpath, 0, 0);
             int source_match = sea_getpath(pathname, mountpath, 1);
 
@@ -834,7 +832,6 @@ extern "C"
         if (sea_conf.parsed == true)
         {
             char mountpath[PATH_MAX];
-            initialize_sea_if_necessary();
             int mount_match = sea_getpath(abspath, passpath, 0, 0);
             int source_match = sea_getpath(passpath, mountpath, 1);
 
@@ -876,8 +873,6 @@ extern "C"
 
         if (sea_conf.parsed)
         {
-            initialize_sea_if_necessary();
-
             SEA_DIR *sd = (SEA_DIR *)dirp;
             log_msg(DEBUG, "in dirfd4. returning %d", sd->dirp);
             return ((funcptr_dirfd)libc_dirfd)(sd->dirp);
@@ -901,7 +896,13 @@ extern "C"
     {
         char oldpasspath[PATH_MAX];
         char newpasspath[PATH_MAX];
-        init_twopaths("renameat", oldpath, newpath, oldpasspath, newpasspath, 0);
+
+        char oldabspath[PATH_MAX];
+        char newabspath[PATH_MAX];
+
+        get_dirpath(oldpath, oldabspath, olddirfd);
+        get_dirpath(newpath, newabspath, newdirfd);
+        init_twopaths("renameat", oldabspath, newabspath, oldpasspath, newpasspath, 0);
         return ((funcptr_renameat)libc_renameat)(olddirfd, oldpasspath, newdirfd, newpasspath);
     }
 
@@ -909,8 +910,15 @@ extern "C"
     {
         char oldpasspath[PATH_MAX];
         char newpasspath[PATH_MAX];
-        init_twopaths("renameat2", oldpath, newpath, oldpasspath, newpasspath, 0);
-        return ((funcptr_renameat2)libc_renameat2)(olddirfd, oldpasspath, newdirfd, newpasspath, flags);
+
+        char oldabspath[PATH_MAX];
+        char newabspath[PATH_MAX];
+
+        get_dirpath(oldpath, oldabspath, olddirfd);
+        get_dirpath(newpath, newabspath, newdirfd);
+        init_twopaths("renameat2", oldabspath, newabspath, oldpasspath, newpasspath, 0);
+        int res = ((funcptr_renameat2)libc_renameat2)(olddirfd, oldpasspath, newdirfd, newpasspath, flags);
+        return res;
     }
 
     int remove(const char *pathname)
@@ -966,7 +974,6 @@ extern "C"
                 if (sea_conf.parsed == true)
                 {
                     char mountpath[PATH_MAX];
-                    initialize_sea_if_necessary();
                     int mount_match = sea_getpath(abspath, passpath, 0, 0);
                     int source_match = sea_getpath(passpath, mountpath, 1);
 
@@ -1010,7 +1017,6 @@ extern "C"
         if (sea_conf.parsed == true)
         {
             char mountpath[PATH_MAX];
-            initialize_sea_if_necessary();
             int mount_match = sea_getpath(pathname, passpath, 0, 0);
 
             // if not a directory within the mountpoint or the source directories, return just the current dir
