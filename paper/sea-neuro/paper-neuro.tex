@@ -54,44 +54,24 @@
  
   \section{Introduction}\label{sec:sea_neuro:introduction}
     
-    Neuroimaging datasets continue to grow in size resulting in new data
-    management challenges. The current largest neuroimaging datasets, such as
+    The recent explosion in publicly available neuroimaging data has lead to new data
+    management challenges, from storage infrastructure application processing times. To meet the storage, accessibility and
+    security demands of neuroimaging data, large datasets have been stored in object stores provided by cloud storage providers.
+    Standardized metadata formats, such as the Brain Imaging Data Standards (BIDS)\cite{bids}, have been implemented to facilitate the sharing
+    of the datasets. Tools such as DataLad~\cite{datalad} have been developed to provide versioning and provenance capture of data.
+    Furthermore, recent developments in neuroimaging pipelines have addressed computation time limitations by adopting machine-learning approaches.
+    While all these solutions to Big Data-related data management exist, certain aspects, such as processing-related data-transfer overheads
+    have received limited attention.
+
+    The current largest neuroimaging datasets,
     the Human Connectome Project (HCP)~\cite{HCP} and the UK
-    Biobank~\cite{ukbiobank} reach up to Petabytes of data. For datasets of this
-    volume, there is no choice but to store the data in slower remote storage,
-    which can incur important data transfer costs when processing. Should the
-    processed data be of a similar magnitude in volume, application writes will
-    also need to be made to compute-remote storage thus further prolonging
-    application makespan. 
-
-    To minimize the costs of data transfers, Big Data frameworks, such as Apache
-    Spark~\cite{zaharia2016apache} and Dask~\cite{rocklin2015dask} leverage
-    memory and local storage as a cache. While these frameworks have been used
-    to process neuroimaging data~\cite{rokem2021pan,thunder,boubela2016big},
-    their popularity within the domain remains low due to the effort required to
-    rewrite standardized neuroimaging toolboxes for the
-    frameworks. 
-    % Although it is possible to use the tools within the Big Data frameworks,
-    % optimizations like in-memory computing would not be leveraged due to the
-    % fact that neuroimaging tools are meant to be used as command-line tools
-    % and do not provide interfaces that enable the data to be transferred
-    % in-memory.
-    
-    Workflow engines used in neuroimaging, such as Nipype~\cite{nipype} and
-    Joblib~\cite{joblib} instead focus on reducing compute time of workloads via
-    parallelization of tasks.
-    %This is because even with large datasets, neuroimaging data processing
-    %remains split between compute and data intensive components.
-    Although these workflow engines do not prohibit the use of data-management
-    strategies, it is not directly integrated into the workflow. To give
-    neuroimaging applications data management capabilities, the applications
-    must interact with a file system that can do so.
-
-    Data management-specific scientific frameworks, such as
-    DataLad~\cite{halchenko2021datalad} aim to increase performance by focusing
-    on reproducibility, thereby reducing the need to recompute
-    results~\cite{wagner2021fairly}. We aim to complement frameworks such as
-    these, by reducing data transfer times when computation is required.
+    Biobank~\cite{ukbiobank}, reach up to Petabytes of data. For datasets of this
+    volume, parallel high-capacity remote storage solutions are commonly relied
+    upon as the persistent storage layer during processing. 
+    Despite their respective high-scalability, these remote file systems cannot typically
+    compete with the performance of compute-local storage (e.g. DRAM and SSDs). Should the pipelines 
+    need to transfer large amounts of data to these remote storage locations, significant data
+    processing overheads may occur.
 
     Big Data in neuroimaging can be present in two formats: 1) very large files
     (e.g. BigBrain~\cite{amunts2013bigbrain}) and 2) small files pertaining to a
@@ -99,11 +79,36 @@
     collectively amount to very large datasets. Differences in the number and
     size of files result in different data transfer overheads. Whereas large
     file I/O is predominantly impacted by the underlying storage bandwidth,
-    small file I/O results in a non-negligible latency overhead. Addressing both
-    of these issues in neuroimaging is important, however, for this paper we
-    focus on fMRI datasets, which are currently more likely to experience a
-    latency overhead. We chose to focus on these types of datasets due to the
-    number of well-established tools to process them.
+    small file I/O results in a non-negligible latency overhead. 
+
+    Big Data frameworks have addressed the performance limitations arising from large data transfers via the
+    implementation of two strategies: data locality and in-memory computing~\cite{zaharia2016apache, rocklin2015dask}.
+    The collective aim of these strategies is to reduce overheads related to large data
+    transfers by leveraging compute-local storage as cache.
+    While these frameworks have been used
+    to process neuroimaging data~\cite{rokem2021pan,thunder,boubela2016big},
+    their popularity within the domain remains low due to efforts required to
+    rewrite standardized neuroimaging toolboxes to utilize the frameworks.
+    % Although it is possible to use the tools within the Big Data frameworks,
+    % optimizations like in-memory computing would not be leveraged due to the
+    % fact that neuroimaging tools are meant to be used as command-line tools
+    % and do not provide interfaces that enable the data to be transferred
+    % in-memory.
+    
+    Newer neuroimaging applications leveraging popular neuroimaging pipeline engines
+    also do not benefit from processing-related data management.
+    Although engines such as Nipype~\cite{nipype} and
+    Joblib~\cite{joblib} do not prohibit the use of data-management
+    strategies, they do not facilitate the integration of these strategies into their resulting workflow. To give
+    neuroimaging applications data management capabilities, the applications
+    must interact with a file system or library that enable the strategies.
+
+    % Data management-specific scientific frameworks, such as
+    % DataLad~\cite{halchenko2021datalad} aim to increase performance by focusing
+    % on reproducibility, thereby reducing the need to recompute
+    % results~\cite{wagner2021fairly}. We aim to complement frameworks such as
+    % these, by reducing data transfer times when computation is required.
+
 
     
     %Big Data in neuroimaging can be present in two formats: 1) very large
@@ -149,12 +154,8 @@
     been used in many projects and to create lightweight userspace versions of
     file systems~\cite{xtreemfs,burstfs,gekkofs}. 
     
-    In this paper, we evaluate Sea (Chapter~\ref{chapter:sea-comp}), a data-management library for HPC, on three neuroimaging preprocessing pipelines
-    executed on three different datasets. We structure our analysis of Sea for the data-management of
-    neuroimaging pipelines by first investigating whether Sea can effectively intercept the calls of these neuroimaging pipelines.
-    We then investigate the presence of speedup by using Sea alongside neuroimaging pipelines and try to understand the conditions
-    which result in greater speedups.
-    
+    We present Sea~\cite{sea-comp}, a data-management library designed to reduce processing-related overheads. We view Sea as a complement
+    to the existing stack of neuroimaging tools and standards meant to facilitate the processing of neuroimaging Big Data.    
     % \tristan{Intro logic is good but writing could be polished}
     % \tristan{Outlining the content of the paper would be useful}
     
