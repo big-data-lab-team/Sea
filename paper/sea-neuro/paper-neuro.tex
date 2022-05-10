@@ -7,6 +7,10 @@
 \usepackage{graphicx}
 \usepackage{caption}
 \usepackage{subcaption}
+\usepackage{xspace}
+
+\newcommand{\TG}[1]{\color{red}\textsc{From Tristan}: #1\xspace\color{black}}
+
 
 \linenumbers
 
@@ -55,11 +59,11 @@
   \section{Introduction}\label{sec:sea_neuro:introduction}
     
     The recent explosion in publicly available neuroimaging data has lead to new data
-    management challenges, from storage infrastructure application processing times. To meet the storage, accessibility and
-    security demands of neuroimaging data, large datasets have been stored in object stores provided by cloud storage providers.
+    management challenges, from storage infrastructure application processing times \TG{missing word?}. To meet the storage, accessibility and
+    security demands of neuroimaging data, large datasets have been stored in object stores provided by cloud storage providers \TG{mentioning clouds so early in the paper may give the impression that the paper will focus on them.}.
     Standardized metadata formats, such as the Brain Imaging Data Standards (BIDS)\cite{bids}, have been implemented to facilitate the sharing
     of the datasets. Tools such as DataLad~\cite{datalad} have been developed to provide versioning and provenance capture of data.
-    Furthermore, recent developments in neuroimaging pipelines have addressed computation time limitations by adopting machine-learning approaches.
+    Furthermore, recent developments in neuroimaging pipelines have addressed computation time limitations by adopting machine-learning approaches \TG{cite fastsurfer, hd-bet}.
     While all these solutions to Big Data-related data management exist, certain aspects, such as processing-related data-transfer overheads
     have received limited attention.
 
@@ -98,7 +102,7 @@
     Newer neuroimaging applications leveraging popular neuroimaging pipeline engines
     also do not benefit from processing-related data management.
     Although engines such as Nipype~\cite{nipype} and
-    Joblib~\cite{joblib} do not prohibit the use of data-management
+    Joblib~\cite{joblib} \TG{joblib is multithreading, dask or ray. I wouldn't call it an engine. You should use another example.} do not prohibit the use of data-management
     strategies, they do not facilitate the integration of these strategies into their resulting workflow. To give
     neuroimaging applications data management capabilities, the applications
     must interact with a file system or library that enable the strategies.
