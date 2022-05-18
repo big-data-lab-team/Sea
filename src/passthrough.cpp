@@ -66,6 +66,7 @@ void *libc_dirfd;
 void *libc_access;
 void *libc_faccessat;
 void *libc_stat;
+void *libc_statx;
 void *libc_fstat;
 void *libc_fstatat;
 void *libc_lstat;
@@ -129,6 +130,7 @@ void *libc_basename;
 void *libc_bindtextdomain;
 
 void *libc_symlink;
+void *libc_symlinkat;
 void *libc_readlink;
 void *libc_nftw;
 void *libc_ftw;
@@ -247,7 +249,9 @@ char *make_file_name_canonical(char const *file_path)
             // to a canonical form of the existing path.
             char *combined_file_path = (char *)malloc(strlen(canonical_file_path) + strlen(file_path_copy + char_idx + 1) + 2);
             strcpy(combined_file_path, canonical_file_path);
-            strcat(combined_file_path, "/");
+
+            if (combined_file_path[strlen(combined_file_path) - 1] != '/')
+              strcat(combined_file_path, "/");
             strcat(combined_file_path, file_path_copy + char_idx + 1);
             free(canonical_file_path);
             canonical_file_path = combined_file_path;
@@ -342,10 +346,10 @@ int check_if_seapath(char path[PATH_MAX], char canonical[PATH_MAX], char passpat
     if ((match = strstr(canonical, path)))
     {
 
-      if (match == NULL || match[0] != '/')
+      if (match == NULL)
         log_msg(DEBUG, "match null");
 
-      if (match[0] == '/')
+      if (((match + len)[0] == '/') || (strlen(path) == strlen(canonical)))
       {
         log_msg(DEBUG, "match %s", passpath);
         *match = '\0';
@@ -365,7 +369,7 @@ int check_if_seapath(char path[PATH_MAX], char canonical[PATH_MAX], char passpat
 
 int pass_getpath(const char *oldpath, char passpath[PATH_MAX], int masked_path)
 {
-  return pass_getpath(oldpath, passpath, masked_path, 0);
+  return pass_getpath(oldpath, passpath, masked_path, -1);
 }
 
 /**
@@ -395,27 +399,44 @@ int pass_getpath(const char *oldpath, char passpath[PATH_MAX], int masked_path, 
 
   //log_msg(DEBUG, "oldpath: %s, actualpath: %s, mount_dir: %s", oldpath, actualpath, mount_dir);
 
-  get_pass_canonical(path, passpath, mount_dir, sea_config.source_mounts[sea_lvl], masked_path);
+  if (sea_lvl == -1)
+  {
+    get_pass_canonical(path, passpath, mount_dir, sea_config.source_mounts[0], masked_path);
+  }
+  else
+  {
+    get_pass_canonical(path, passpath, mount_dir, sea_config.source_mounts[sea_lvl], masked_path);
+  }
+
   match_found = check_if_seapath(path, canonical, passpath);
 
-  // check if there's a match with a source if no matches found
-  // if (match_found == 0)
-  // {
-  //   for (int i = 0; i < sea_config.n_sources; i++)
-  //   {
-  //     get_pass_canonical(path, passpath, sea_config.source_mounts[i], sea_config.source_mounts[sea_lvl], masked_path);
-  //     match_found = check_if_seapath(path, canonical, passpath);
+  // check if there's a match with a source if no matches found and sea_lvl was specified
+  if ((sea_lvl >= 0 || masked_path == 1) && match_found == 0)
+  {
+    for (int i = 0; i < sea_config.n_sources; i++)
+    {
+      passpath[0] = '\0';
 
-  //     if (match_found == 1)
-  //       break;
-  //   }
-  // }
+      if (masked_path == 0)
+      {
+        get_pass_canonical(path, passpath, sea_config.source_mounts[i], sea_config.source_mounts[sea_lvl], masked_path);
+      }
+      else
+      {
+        get_pass_canonical(path, passpath, mount_dir, sea_config.source_mounts[i], masked_path);
+      }
+      match_found = check_if_seapath(path, canonical, passpath);
+
+      if (match_found == 1)
+        break;
+    }
+  }
   //if (canonical != NULL)
   //  free(canonical);
   if (passpath == NULL)
     return 0;
 
-  //printf("sea_lvl=%d  :   old fn %s ---> new fn %s\n", sea_lvl, oldpath, passpath);
+  //printf("sea_lvl=%d  :   old fn %s ---> new fn %s %s\n", sea_lvl, oldpath, passpath, path);
   log_msg(INFO, "sea_lvl=%d  :   old fn %s ---> new fn %s", sea_lvl, oldpath, passpath);
   return match_found;
 }
@@ -471,6 +492,7 @@ void initialize_functions()
   libc_access = dlsym(libc, "access");
   libc_faccessat = dlsym(libc, "faccessat");
   libc_stat = dlsym(libc, "stat");
+  libc_statx = dlsym(libc, "statx");
   libc_lstat = dlsym(libc, "lstat");
   libc_lstat64 = dlsym(libc, "lstat64");
   libc_fstat = dlsym(libc, "fstat");
@@ -535,6 +557,7 @@ void initialize_functions()
   libc_bindtextdomain = dlsym(libc, "bindtextdomain");
 
   libc_symlink = dlsym(libc, "symlink");
+  libc_symlinkat = dlsym(libc, "symlinkat");
   libc_readlink = dlsym(libc, "readlink");
   libc_nftw = dlsym(libc, "nftw");
   libc_ftw = dlsym(libc, "ftw");

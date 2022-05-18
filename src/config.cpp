@@ -55,7 +55,7 @@ void create_config_file(char *config_file)
             "log_file = %s/sea.log ;\n"
             "log_level = 1 ; # DEBUG=4, INFO=3, WARNING=2, ERROR=1, NONE=0 (use <= 3 tests)\n"
             "n_levels = 1 ;\n"
-            "source_0 = %s/source ; # use absolute paths\n"
+            "cache_0 = %s/source ; # use absolute paths\n"
             "max_fs = 100"
             "\n",
             sea_home, sea_home, sea_home);
@@ -84,7 +84,7 @@ void parse_config()
     }
     if ((sea_config.n_levels = iniparser_getint(config_dict, "sea:n_levels", 0)) == 0)
     {
-        printf("Missing n_sources in config file %s\n", config_file);
+        printf("Missing n_caches in config file %s\n", config_file);
         exit(1);
     }
     std::vector<std::string> all_sources;
@@ -96,15 +96,29 @@ void parse_config()
     {
         std::vector<std::string> current_lvl;
         char source_name[15];
-        sprintf(source_name, "sea:source_%d", i);
+        sprintf(source_name, "sea:cache_%d", i);
         char *lvl_str;
-        //sea_config.source_mounts[i] = new char[PATH_MAX];
         if ((lvl_str = (char *)iniparser_getstring(config_dict, source_name, NULL)) == 0)
         {
             printf("Missing %s in config file %s\n", source_name, config_file);
             exit(1);
         }
-        std::stringstream s_stream(lvl_str);
+
+        char *cache_env;
+        char *cache_dirpath;
+        cache_env = secure_getenv(lvl_str);
+
+        if (cache_env != NULL)
+        {
+            cache_dirpath = strdup(cache_env);
+        }
+        else
+        {
+            cache_dirpath = strdup(lvl_str);
+        }
+
+        // TODO : convert to C
+        std::stringstream s_stream(cache_dirpath);
         while (s_stream.good())
         {
             std::string substr;
@@ -123,20 +137,38 @@ void parse_config()
 
     for (int i = 0; i < sea_config.n_sources; i++)
     {
-        std::vector<char> source_vec(all_sources.at(i).begin(), all_sources.at(i).end());
-        source_vec.push_back('\0');
-        sea_config.source_mounts[i] = strndup(source_vec.data(), PATH_MAX);
+        sea_config.source_mounts[i] = strndup(all_sources.at(i).c_str(), PATH_MAX);
     }
     if ((sea_config.mount_dir = (char *)iniparser_getstring(config_dict, "sea:mount_dir", NULL)) == 0)
     {
         printf("Missing mount_dir in config file %s\n", config_file);
         exit(1);
     }
+
+    char *mount_env;
+    mount_env = secure_getenv(sea_config.mount_dir);
+
+    if (mount_env != NULL)
+    {
+        free(sea_config.mount_dir);
+        sea_config.mount_dir = strdup(mount_env);
+    }
+
     if ((sea_config.log_file = (char *)iniparser_getstring(config_dict, "sea:log_file", NULL)) == 0)
     {
         printf("Missing log_file in config file %s\n", config_file);
         exit(1);
     }
+
+    char *sea_logenv;
+    sea_logenv = secure_getenv(sea_config.log_file);
+
+    if (sea_logenv != NULL)
+    {
+        free(sea_config.log_file);
+        sea_config.log_file = strdup(sea_logenv);
+    }
+
     if ((sea_config.max_fs = atol((char *)iniparser_getstring(config_dict, "sea:max_fs", NULL))) == 0)
     {
         printf("Missing max_fs in config file %s\n", config_file);

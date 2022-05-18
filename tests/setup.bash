@@ -4,24 +4,41 @@ gen_conf() {
 
     if [[ $1 == 1 ]]
     then
+        echo "Test with 2 mounts" 
         cat > ${SEA_HOME}/sea.ini << DOC
         # Sea configuration
         [Sea]
         mount_dir = ${MOUNT} ;
         n_levels = 2 ;
-        source_0 = ${SOURCE} ;
-        source_1 = ${SOURCE_1}
+        cache_0 = ${SOURCE} ;
+        cache_1 = ${SOURCE_1}
         log_level = 3 ; # 4 crashes tests
         log_file = ${SEA_HOME}/sea.log ;
         max_fs = 1048576 ;
 DOC
+    elif [[ $1 == 2 ]]
+    then
+        echo "Test with environment variable ${SEA_LOG_FILE}"
+        cat > ${SEA_HOME}/sea.ini << DOC
+        # Sea configuration
+        [Sea]
+        mount_dir = MOUNT ;
+        n_levels = 2 ;
+        cache_0 = SOURCE ;
+        cache_1 = SOURCE_1 ;
+        log_level = 3 ; # 4 crashes tests
+        log_file = SEA_LOG_FILE ;
+        max_fs = 1048576 ;
+DOC
     else
+        echo "Test with a single mount"
+
         cat > ${SEA_HOME}/sea.ini << DOC
         # Sea configuration
         [Sea]
         mount_dir = ${MOUNT} ;
         n_levels = 1 ;
-        source_0 = ${SOURCE} ;
+        cache_0 = ${SOURCE} ;
         log_level = 3 ; # 4 crashes tests
         log_file = ${SEA_HOME}/sea.log ;
         max_fs = 1048576 ;
@@ -44,5 +61,7 @@ echo "#!/bin/bash" > ${SOURCE}/bin/hello.sh
 echo "echo \"hello\"" > ${SOURCE}/bin/hello.sh
 chmod +x ${SOURCE}/bin/hello.sh
 export SEA_HOME=$PWD
-gen_conf 1
+gen_conf ${levels}
+export LD_PROFILE_OUTPUT=${PWD}
+export LD_PROFILE=build/sea.so
 export LD_PRELOAD=${PWD}/build/sea.so

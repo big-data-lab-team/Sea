@@ -55,7 +55,7 @@
         "strategy": "mem"
     },
     {
-        "name": "lustre_6n_6t_6d_1000f_617m_5i",
+        "name": "lustre_5n_6t_6d_1000f_617m_5i",
         "ndisks": 6,
         "nthreads": 6,
         "nnodes": 5,

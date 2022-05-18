@@ -15,15 +15,9 @@
 #include <string>
 #include <dirent.h>
 
-extern int sea_internal;
-int set_internal();
-int get_internal();
-int unset_internal();
 int sea_checkpath(const char *path);
 int sea_getpath(const char *oldpath, char passpath[PATH_MAX], int masked_path);
 int sea_getpath(const char *oldpath, char passpath[PATH_MAX], int masked_path, int source_id);
-void initialize_sea();
-void initialize_sea_if_necessary();
 extern const char *fdpath;
 
 struct SEA_DIR
@@ -34,6 +28,7 @@ struct SEA_DIR
     char **dirnames;
     int curr_index;
     int total_dp;
+    std::set<std::string> seen_files; // bandaid solution to not listing duplicate files in mount
 };
 
 #endif

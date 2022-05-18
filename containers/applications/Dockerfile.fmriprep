@@ -1,0 +1,20 @@
+# image to get sea library and binaries from
+FROM ghcr.io/valhayot/sea-xenial:master AS sea
+
+# base image
+FROM nipreps/fmriprep:20.2.1
+
+RUN mkdir -p /sea/build
+RUN mkdir -p /sea/bin
+COPY --from=sea /libsea/build/sea.so /sea/build/sea.so
+COPY --from=sea /libsea/bin/sea* /sea/bin/
+COPY --from=sea /libsea/build/mirror /sea/build/mirror
+COPY --from=sea /usr/lib/x86_64-linux-gnu/libiniparser.so.1 /usr/lib
+
+ENV SEA_HOME /sea
+
+RUN echo "#!/bin/bash\n" \
+	"fmriprep \$@" > /sea/bin/seafprep.sh
+RUN chmod +x /sea/bin/seafprep.sh
+
+ENTRYPOINT ["/sea/bin/sea_launch.sh", "/sea/bin/seafprep.sh"]

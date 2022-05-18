@@ -1,0 +1,23 @@
+
+# image to get sea library and binaries from
+FROM ghcr.io/valhayot/sea-focal:master AS sea
+
+
+FROM brainlife/fsl:6.0.4
+
+USER root
+
+# copy sea binaries and shared object over
+RUN mkdir -p /sea/build
+RUN mkdir -p /sea/bin
+COPY --from=sea /libsea/build/sea.so /sea/build/sea.so
+COPY --from=sea /libsea/bin/sea* /sea/bin/
+COPY --from=sea /libsea/build/mirror /sea/build/mirror
+COPY --from=sea /usr/lib/x86_64-linux-gnu/libiniparser.so.1 /usr/lib
+
+ENV SEA_HOME /sea
+
+RUN apt update -y && apt-get -y install dc bc
+RUN source ${FSLDIR}/etc/fslconf/fsl.sh
+
+ENTRYPOINT ["/sea/bin/sea_launch.sh"]

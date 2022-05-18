@@ -7,14 +7,14 @@ runs=$4
 exp_name=$5
 
 sea_home=/home/vhs/Sea
-out_fldr="/mnt/lustre/vhs/output/"
-sea_mount="/mnt/lustre/vhs/mount/"
+out_fldr="/mnt/lustre/vhs/output"
+sea_mount="/mnt/lustre/vhs/mount"
 rdir="./results"
 library="/home/vhs/Sea/build/sea.so"
 #executable="python increment.py"
 flush_out=flushlist.out
 bench_out=benchmarks.out
-alldisks=("/disk0/vhs/seatmp/" "/disk1/vhs/seatmp/" "/disk2/vhs/seatmp/" "/disk3/vhs/seatmp/" "/disk4/vhs/seatmp/" "/disk5/vhs/seatmp/")
+alldisks=("/disk0/vhs/seatmp" "/disk1/vhs/seatmp" "/disk2/vhs/seatmp" "/disk3/vhs/seatmp" "/disk4/vhs/seatmp" "/disk5/vhs/seatmp")
 cnodes=("comp02" "comp03" "comp04" "comp06" "comp07")
 
 mkdir -p ${rdir}
@@ -48,11 +48,11 @@ format_config () {
 [Sea]                                                                    
 mount_dir = '"${sea_mount}"' ;           
 n_levels = 3 ;                                                          
-source_0 = /dev/shm/seatmp/ ;           
-source_1 = '"$disks"' ;
-source_2 = '"$out_fldr"' ;
+cache_0 = /dev/shm/seatmp ;           
+cache_1 = '"$disks"' ;
+cache_2 = '"$out_fldr"' ;
 log_level = 0 ; # 4 crashes tests                                        
-log_file = /home/vhs/passthrough/sea.log ;
+log_file = /home/vhs/Sea/sea.log ;
 max_fs = '"$fsize"' ;
 n_threads = '"$nthreads"' ;' > $conf
 
@@ -62,14 +62,14 @@ n_threads = '"$nthreads"' ;' > $conf
 
     if [[ $strategy == "cp" ]]
     then
-        echo "*" > $flushlist
+        echo ".*" > $flushlist
     elif [[ $strategy == "mem" ]]
     then
         echo "" > $flushlist
         #TODO: uncomment
-        echo "${final_it}*.nii" > $flushlist
+        echo "${final_it}.*.nii" > $flushlist
     fi
-    echo "${final_it}*.nii" > $evictlist
+    echo "${final_it}.*.nii" > $evictlist
 
     cp $flushlist $evictlist ${sea_home}
 
@@ -122,7 +122,7 @@ launch_exp () {
 
     file_count=$(ls ${out_fldr} | wc -l)
     echo -e "Number of files currently on lustre: ${file_count}"
-    echo "$name,$run,$res,$flushtime,$ssdwrites,$totalflush" >> ${results_file}
+    echo "$name,$run,$res,$flushtime,$ssdwrites,${file_count}" >> ${results_file}
 }
 
 main () {
@@ -180,7 +180,7 @@ number of iterations: ${niterations}"
             out_mount=$out_fldr
 
         else
-            prefix="LD_PRELOAD=$library $executable"
+            prefix="$executable"
             out_mount=$sea_mount
         fi
 
@@ -268,6 +268,7 @@ srun -N'"$nnodes"' mkdir /disk0/vhs/seatmp /disk1/vhs/seatmp /disk2/vhs/seatmp /
             if [[ $node != $nprev ]]
             then 
                 echo "parallel --jobs ${nthreads} < ${node_jobs}" >> ${parallel_script}
+                chmod +x ${parallel_script}
 
                 if [[ ${strategy} == "lustre" ]]
                 then

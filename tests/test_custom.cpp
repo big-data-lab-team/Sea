@@ -151,10 +151,10 @@ TEST(Passthrough, GetRealPath)
 TEST(Sea, OpenDir)
 {
 
-    char *sd = "/subdir";
+    char *sd = strdup("/subdir");
 
     // Test if path outside of sea can be opened
-    char *regdir = "newdir";
+    char *regdir = strdup("newdir");
 
     DIR *rdp = opendir(regdir);
     EXPECT_TRUE(rdp != NULL);
@@ -174,7 +174,7 @@ TEST(Sea, OpenDir)
     //((funcptr_closedir)libc_closedir)(((SEA_DIR *)rsdp)->dirp);
 
     // Test if Sea mount point can be opened
-    char *seadir = "mount";
+    char *seadir = strdup("mount");
     DIR *sdp = opendir(seadir);
     EXPECT_TRUE(sdp != NULL);
 
@@ -194,15 +194,13 @@ TEST(Sea, OpenDir)
     DIR *ssdirp = opendir(seasd);
     EXPECT_TRUE(sdp != NULL);
 
-    SEA_DIR *seasdp = (SEA_DIR *)ssdirp;
-    //close_seadir(seasdp);
     closedir(ssdirp);
 
     //free(seadp);
     //free(seasdp);
 
     // Check that a directory which does not exist fails
-    char *fakedir = "mount/fkdir";
+    char *fakedir = strdup("mount/fkdir");
     DIR *fkdir = opendir(fakedir);
 
     EXPECT_TRUE(fkdir == NULL);
@@ -211,9 +209,8 @@ TEST(Sea, OpenDir)
 TEST(Sea, ReadDir)
 {
 
-    initialize_sea_if_necessary();
     // Test nonseadir
-    char *regdir = "newdir";
+    char *regdir = strdup("newdir");
     struct dirent *entry;
     std::set<std::string> reg_files = {".", "..", "subdir"};
     std::set<std::string> found_files;
@@ -226,7 +223,6 @@ TEST(Sea, ReadDir)
         found_files.insert(entry->d_name);
     }
     closedir(rd);
-    //((funcptr_closedir)libc_closedir)(rd);
 
     ASSERT_EQ(reg_files, found_files);
 
@@ -249,16 +245,14 @@ TEST(Sea, ReadDir)
     found_files.clear();
 
     // 32bit
-    char *seadir = "mount";
+    char *seadir = strdup("mount");
     DIR *sdp = opendir(seadir);
 
-    SEA_DIR *sd = (SEA_DIR *)sdp;
     while ((entry = readdir(sdp)))
     {
         found_files.insert(entry->d_name);
     }
     closedir(sdp);
-    //close_seadir((SEA_DIR *)sdp);
     ASSERT_EQ(sea_files, found_files);
 
     //64bit
@@ -274,7 +268,7 @@ TEST(Sea, ReadDir)
     ASSERT_EQ(sea_files, found_files);
 
     // Test sea subdirectory
-    seadir = "mount/subdir";
+    seadir = strdup("mount/subdir");
     std::set<std::string> subdir_files = {".", "..", "file_in_subdir.txt"};
 
     // 32bit
@@ -305,16 +299,12 @@ TEST(Sea, ReadDir)
 TEST(Sea, InitializeSea)
 {
 
-    initialize_sea();
-
     initialize_passthrough_if_necessary();
     config sea_config = get_sea_config();
 
     char *added_dir = new char[PATH_MAX];
     strcpy(added_dir, sea_config.source_mounts[1]);
     strcat(added_dir, "/newdir");
-
-    initialize_sea();
 }
 
 int main(int argc, char **argv)
@@ -322,8 +312,9 @@ int main(int argc, char **argv)
     ::testing::InitGoogleTest(&argc, argv);
 
     initialize_passthrough_if_necessary();
-    ((funcptr_mkdir)libc_mkdir)("newdir", 0666);
-    ((funcptr_mkdir)libc_mkdir)("newdir/subdir", 0666);
+    ((funcptr_mkdir)libc_mkdir)("newdir", 0777);
+    ((funcptr_mkdir)libc_mkdir)("newdir/subdir", 0777);
 
     return RUN_ALL_TESTS();
+    ((funcptr_mkdir)libc_mkdir)("newdir", 0777);
 }

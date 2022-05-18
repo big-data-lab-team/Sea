@@ -70,6 +70,7 @@ typedef int (*funcptr_link)(const char *, const char *);
 typedef int (*funcptr_access)(const char *, int);
 typedef int (*funcptr_faccessat)(int, const char *, int, int);
 typedef int (*funcptr_stat)(const char *, struct stat *);
+typedef int (*funcptr_statx)(int dirfd, const char *pathname, int flags, unsigned int mask, struct statx *statbux);
 typedef int (*funcptr_lstat)(const char *, struct stat *);
 typedef int (*funcptr_lstat64)(const char *, struct stat64 *);
 typedef int (*funcptr_fstat)(int, struct stat *);
@@ -130,6 +131,7 @@ typedef char *(*funcptr_basename)(const char *);
 typedef char *(*funcptr_bindtextdomain)(const char *, const char *);
 
 typedef int (*funcptr_symlink)(const char *, const char *);
+typedef int (*funcptr_symlinkat)(const char *oldpath, int newdirfd, const char *newpath);
 typedef ssize_t (*funcptr_readlink)(const char *, char *, size_t);
 typedef int (*funcptr_nftw)(const char *, int (*)(const char *, const struct stat *, int, struct FTW *),
                             int, int);
@@ -197,6 +199,7 @@ extern void *libc_readdir64;
 extern void *libc_access;
 extern void *libc_faccessat;
 extern void *libc_stat;
+extern void *libc_statx;
 extern void *libc_lstat;
 extern void *libc_lstat64;
 extern void *libc_fstat;
@@ -257,6 +260,7 @@ extern void *libc_basename;
 extern void *libc_bindtextdomain;
 
 extern void *libc_symlink;
+extern void *libc_symlinkat;
 extern void *libc_readlink;
 extern void *libc_nftw;
 extern void *libc_ftw;
