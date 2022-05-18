@@ -43,9 +43,10 @@
 \author{Val\'erie Hayot-Sasson, Mathieu Dugr\'e and Tristan Glatard}
 
 % The paper headers
-\markboth{Journal of \LaTeX\ Class Files,~Vol.~14, No.~8, August~2015}%
-{Hayot-Sasson\MakeLowercase{\textit{et al.}}: Bare Demo of IEEEtran.cls for
-Computer Society Journals} \IEEEtitleabstractindextext{%
+% \markboth{Journal of \LaTeX\ Class Files,~Vol.~14, No.~8, August~2015}%
+% {Hayot-Sasson\MakeLowercase{\textit{et al.}}: Bare Demo of IEEEtran.cls for
+% Computer Society Journals} 
+\IEEEtitleabstractindextext{%
 \begin{abstract}
     The recent influx of open scientific data has contributed to the
     transitioning of scientific computing from compute intensive to data intensive.
@@ -1260,6 +1261,9 @@ therefore should not be evicted. For files to be prefetched, they must be locate
 % \section{}
 % Appendix two text goes here.
 
+\section*{Acknowlegments}
+Val\'erie Hayot-Sasson was funded by the Canadian Open Neuroscience Platform (CONP) Scholar Award.
+This work was also supported by the Canada Foundation for Innovation as well as the Canada Research Chairs program.
 
 % % use section* for acknowledgment
 % \ifCLASSOPTIONcompsoc
@@ -1280,10 +1284,19 @@ therefore should not be evicted. For files to be prefetched, they must be locate
 
 % biography section
 
-\begin{IEEEbiography}{Val\'erie Hayot-Sasson}
+\begin{IEEEbiography}[{\includegraphics[width=1in,height=1.25in,clip,keepaspectratio]{biopics/vhs.pdf}}]{Val\'erie Hayot-Sasson} is a PhD student at Concordia University in the Big Data for Neuroinformatics lab. Her research interests focus on studying the effects of data transfers on Big Data scientific application.
 \end{IEEEbiography}
-\begin{IEEEbiography}{Tristan Glatard}
+\begin{IEEEbiography}[{\includegraphics[width=1in,height=1.25in,clip,keepaspectratio]{biopics/md}}]{Mathieu Dugr\'e} is a Ph.D. student at the Big Data Infrastructure for Neuroinformatics lab at Concordia University, Montreal, Canada. His research interests are in Big Data performance techniques for neuroimaging applications.
+
+\end{IEEEbiography}
+\begin{IEEEbiography}[{\includegraphics[width=1in,height=1.25in,clip,keepaspectratio]{biopics/tg}}]{Tristan Glatard} is Associate Professor in the
+Department of Computer Science and Software
+Engineering at Concordia University in Montreal,
+and Canada Research Chair (Tier II) on Big
+Data Infrastructures for Neuroinformatics. Before
+that, he was research scientist at the French Na-
+tional Centre for Scientific Research and Visiting
+Scholar at McGill University.
 \end{IEEEbiography}
 \end{document}
-
 
