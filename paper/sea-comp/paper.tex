@@ -30,6 +30,7 @@
 \newcommand{\todo}[1]{\marginpar{\parbox{18mm}{\flushleft\tiny\color{red}\textbf{TODO}:
 #1}}}
 \newcommand{\TG}[1]{\color{red}\textsc{From Tristan}: #1\xspace\color{black}}
+\newcommand{\MD}[1]{\color{magenta}\textsc{From Mathieu}: #1\xspace\color{black}}
 
 % benchmark on beluga, prefreesurfer with RUIS use more than 64 subjects for
 % prefreesurfer --> few 100 subjects think more about how to benchmark I/O try
@@ -150,7 +151,7 @@ performance with the bounds delineated by the model.
       allocation is terminated.
 
       The storage layer found on HPC clusters consists of a high-performance
-      parallel file system (PFS) (e.g. Lustre~\cite{lustre}). These file systems
+      parallel file system (PFS) (e.g., Lustre~\cite{lustre}). These file systems
       are shared amongst all compute nodes within a cluster, typically connected
       to the nodes via high-performance network interconnect like
       InfiniBand~\cite{infiniband}. I/O overheads of shared PFS can be incurred
@@ -504,7 +505,7 @@ therefore should not be evicted. For files to be prefetched, they must be locate
       the data and the amount of time it takes to write the data. With more
       heterogeneous applications (some components are compute-intensive whereas
       others are data-intensive), a third component, consisting of compute time,
-      can be added. Furthermore, latency may also play a significant role
+      can be added. Furthermore, latency may also play a significant role in an
       application makespan, particularly in scenarios with large amounts of
       small files. We choose to ignore latency costs in our model and make the
       assumption that the application bottleneck is the bandwidth, however, for
@@ -689,7 +690,7 @@ therefore should not be evicted. For files to be prefetched, they must be locate
       \end{equation}
 
       Here, $M_{n}$ represents the makespans of the different possible storage
-      levels (e.g. tmpfs, NVMe, SSD, HDD, Lustre) and $M_{S}$ represent the
+      levels (e.g., tmpfs, NVMe, SSD, HDD, Lustre) and $M_{S}$ represent the
       makespan of an application reading and writing to Sea. For our model, we
       will assume three storage layers: 1) fast tmpfs, 2) intermediate local SSD
       storage, and 3) slow parallel file system layer. It is important to note that
@@ -842,7 +843,7 @@ therefore should not be evicted. For files to be prefetched, they must be locate
       model should be able to support images of different sizes, we wanted to
       minimize any possible scheduling effects from our experiments. Therefore,
       each application processes the same amount of input data, produces the
-      same amount of intermediate and output data and performs the same amount
+      same amount of intermediate and output data, and performs the same amount
       of computation.
                                                                                    
 
@@ -862,14 +863,14 @@ therefore should not be evicted. For files to be prefetched, they must be locate
       We use the BigBrain~\cite{amunts2013bigbrain}, a one-of-a-kind histology
       dataset of the human brain, as a representative scientific dataset. For
       all our experiments, we utilize the \SI{20}{\micro\meter} dataset, which
-      totals to approximately \SI{603}{\gibi\byte}. The dataset was broken down
+      totals to approximately \SI{603}{\gibi\byte} \MD{Are you sure it's 603? I had calculated 606~GiB for my Spark \& Dask paper}. The dataset was broken down
       into 1000 files each consisting of \SI{617}{\mebi\byte} of data.
       %of data as well as 5000 blocks each \SI{124}{\mebi\byte} in size.
       
                                                                                    
       We evaluated Sea using 4 different experimental conditions: 1) varying the
       number of nodes, 2) varying the number of disks, 3) varying the number of
-      threads, and 4) varying the number of iterations. Experimental condition 1
+      threads, and 4) varying the number of iterations. Experimental condition 1 \MD{Is the number of thread constant when varying nodes? i.e., 64 threads total for either 8 nodes or 4 nodes}
       tests the effects of increasing concurrent accesses to Lustre while fixing
       disk parallel threads. Condition 2 varies disk contention while fixing
       contention to Lustre, whereas 3 tests the effects of contention on both
@@ -926,7 +927,7 @@ therefore should not be evicted. For files to be prefetched, they must be locate
       There was no background load on the cluster for the duration of the experiments.
 
 
-      Each file system was benchmarked using \texttt{dd} using 5 repetitions.
+      Each file system was benchmarked using \texttt{dd} using 5 repetitions. \MD{What dd command was used? In particular, the block size and the total data size transfered}
       The average bandwidths are reported in Table~\ref{table:sea-comp:fs}
 
 %Big Brain incrementation fmri processing?
@@ -968,6 +969,7 @@ therefore should not be evicted. For files to be prefetched, they must be locate
     coloured regions}
     \label{fig:sea-comp:benchmarks}
     \end{figure*}
+    \MD{The y-lim on figure 2-d could be set to 35000, or even 25000, to make the rest of the plot easier to see}
 
       \subsection{Sea achieves significant speedups}
 
@@ -1006,7 +1008,7 @@ therefore should not be evicted. For files to be prefetched, they must be locate
       contention, as the contention within the compute nodes is fixed. Both the
       model and experimental results state that the speedup is approaching a
       plateau, however, it is expected that once the number of threads writing
-      to Lustre exceeds the number of OSTs (e.g. 9 nodes), we will observe an
+      to Lustre exceeds the number of OSTs (e.g., 9 nodes), we will observe an
       even greater speedup from Sea due to the increased contention on Lustre.
 
       As expected, our results demonstrate that with an increase in local disk,
@@ -1121,7 +1123,7 @@ therefore should not be evicted. For files to be prefetched, they must be locate
     evict process.  
 
     Sea cannot be used with operating systems that are not Linux-based, and
-    therefore, the use of Sea limits application portability. However, HPC
+    therefore, the use of Sea limits application portability \MD{Does Sea really limits portability? The application could still be used on other platform easily. i.e., Sea is limited to Posix-based system but doesn't limit application by itself, since it no rewrite of the application is required.}. However, HPC
     systems commonly use Linux operating systems, thus, it is not limiting for
     its intended use case. Furthermore, we provide publicly available containers
     to simplify the usage of Sea on various other operating systems.
@@ -1139,7 +1141,7 @@ therefore should not be evicted. For files to be prefetched, they must be locate
     On shared cluster environments, such as those found in high-performance
     computing clusters, it is less likely that the PFS would be so underused
     that it could achieve better performance than leveraging local storage, even
-    if local storage was limited. We therefore believe that it is very unlikely
+    if local storage was limited. We therefore believe that it is very unlikely to
     obtain no speedups from using Sea on a production HPC cluster as long as the
     application is data intensive.
     
