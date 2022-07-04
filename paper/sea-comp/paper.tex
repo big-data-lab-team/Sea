@@ -922,7 +922,7 @@ therefore should not be evicted. For files to be prefetched, they must be locate
       nodes each contain 11 \SI{10}{\tera\byte} HGST HUH721010AL HDD OSTs and
       \SI{62}{\gibi\byte} memory. The metadata server contains a Toshiba
       KPM5XVUG960G \SI{960}{\giga\byte} MDT. The network bandwidth is
-      \SI{25}{\giga\bit}E and uses TCP for communication. Jobs are scheduled on
+      25~GbE and uses TCP for communication. Jobs are scheduled on
       the cluster from a controller node using Slurm with cgroups. Swapping is
       disabled and Lustre dirty writes is limited to \SI{1}{\giga\byte} per OST.
 
@@ -972,7 +972,6 @@ therefore should not be evicted. For files to be prefetched, they must be locate
     coloured regions}
     \label{fig:sea-comp:benchmarks}
     \end{figure*}
-    \MD{The y-lim on figure 2-d could be set to 35000, or even 25000, to make the rest of the plot easier to see}
 
       \subsection{Sea achieves significant speedups}
 
