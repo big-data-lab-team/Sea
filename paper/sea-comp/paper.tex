@@ -16,6 +16,7 @@
 \usepackage{amsmath}
 \usepackage{tabularx}
 \usepackage{xspace}
+\usepackage{footmisc}
 
 % for algorithm2e
 \makeatletter
@@ -566,6 +567,7 @@ therefore should not be evicted. For files to be prefetched, they must be locate
     $c$ is the number of compute nodes used \\
     $s$ is the number of Lustre storage nodes \\
     $p$ is the number of parallel application processes \\
+    $d$ is the number of Lustre storage disks \\
     $d_{r}$ is the read bandwidth of a single Lustre storage disk \\
     $d_{w}$ is the write bandwidth of a single Lustre storage disk \\
 
@@ -863,17 +865,18 @@ therefore should not be evicted. For files to be prefetched, they must be locate
       We use the BigBrain~\cite{amunts2013bigbrain}, a one-of-a-kind histology
       dataset of the human brain, as a representative scientific dataset. For
       all our experiments, we utilize the \SI{20}{\micro\meter} dataset, which
-      totals to approximately \SI{603}{\gibi\byte} \MD{Are you sure it's 603? I had calculated 606~GiB for my Spark \& Dask paper}. The dataset was broken down
+      totals to approximately \SI{603}{\gibi\byte}. The dataset was broken down
       into 1000 files each consisting of \SI{617}{\mebi\byte} of data.
       %of data as well as 5000 blocks each \SI{124}{\mebi\byte} in size.
       
                                                                                    
       We evaluated Sea using 4 different experimental conditions: 1) varying the
       number of nodes, 2) varying the number of disks, 3) varying the number of
-      threads, and 4) varying the number of iterations. Experimental condition 1 \MD{Is the number of thread constant when varying nodes? i.e., 64 threads total for either 8 nodes or 4 nodes}
+      threads, and 4) varying the number of iterations. Experimental condition 1
       tests the effects of increasing concurrent accesses to Lustre while fixing
-      disk parallel threads. Condition 2 varies disk contention while fixing
-      contention to Lustre, whereas 3 tests the effects of contention on both
+      disk parallel threads (i.e., the number of threads per node is constant).
+      Condition 2 varies disk contention while fixing
+      contention to Lustre, whereas condition 3 evaluates the effects of contention on both
       Lustre and local storage. Experimental condition 4 varies the total amount
       of intermediate data produced by the application. The fixed conditions for
       the experiment were 5 nodes, 6 processes, 6 disks, 10 iterations and 1000
@@ -927,7 +930,7 @@ therefore should not be evicted. For files to be prefetched, they must be locate
       There was no background load on the cluster for the duration of the experiments.
 
 
-      Each file system was benchmarked using \texttt{dd} using 5 repetitions. \MD{What dd command was used? In particular, the block size and the total data size transfered}
+      Each file system was benchmarked 5 times with the \texttt{dd} command \footnote{\url{https://github.com/big-data-lab-team/Sea/blob/master/benchmarks/scripts/bench_disks.sh}}.
       The average bandwidths are reported in Table~\ref{table:sea-comp:fs}
 
 %Big Brain incrementation fmri processing?
@@ -1123,9 +1126,9 @@ therefore should not be evicted. For files to be prefetched, they must be locate
     evict process.  
 
     Sea cannot be used with operating systems that are not Linux-based, and
-    therefore, the use of Sea limits application portability \MD{Does Sea really limits portability? The application could still be used on other platform easily. i.e., Sea is limited to Posix-based system but doesn't limit application by itself, since it no rewrite of the application is required.}. However, HPC
-    systems commonly use Linux operating systems, thus, it is not limiting for
-    its intended use case. Furthermore, we provide publicly available containers
+    therefore, the use of an application with Sea has limited portability. However, Linux-based operating systems
+    are ubiquitous in HPC, and therefore, Sea is not limiting for
+    its intended use case. Furthermore, we provide publicly available containers~\footnote{\url{https://github.com/orgs/big-data-lab-team/packages?repo_name=Sea}}
     to simplify the usage of Sea on various other operating systems.
 
     \subsection{In-memory performance with Sea}
