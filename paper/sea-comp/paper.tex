@@ -16,6 +16,7 @@
 \usepackage{amsmath}
 \usepackage{tabularx}
 \usepackage{xspace}
+\usepackage{footmisc}
 
 % for algorithm2e
 \makeatletter
@@ -30,6 +31,7 @@
 \newcommand{\todo}[1]{\marginpar{\parbox{18mm}{\flushleft\tiny\color{red}\textbf{TODO}:
 #1}}}
 \newcommand{\TG}[1]{\color{red}\textsc{From Tristan}: #1\xspace\color{black}}
+\newcommand{\MD}[1]{\color{magenta}\textsc{From Mathieu}: #1\xspace\color{black}}
 
 % benchmark on beluga, prefreesurfer with RUIS use more than 64 subjects for
 % prefreesurfer --> few 100 subjects think more about how to benchmark I/O try
@@ -43,9 +45,10 @@
 \author{Val\'erie Hayot-Sasson, Mathieu Dugr\'e and Tristan Glatard}
 
 % The paper headers
-\markboth{Journal of \LaTeX\ Class Files,~Vol.~14, No.~8, August~2015}%
-{Hayot-Sasson\MakeLowercase{\textit{et al.}}: Bare Demo of IEEEtran.cls for
-Computer Society Journals} \IEEEtitleabstractindextext{%
+% \markboth{Journal of \LaTeX\ Class Files,~Vol.~14, No.~8, August~2015}%
+% {Hayot-Sasson\MakeLowercase{\textit{et al.}}: Bare Demo of IEEEtran.cls for
+% Computer Society Journals} 
+\IEEEtitleabstractindextext{%
 \begin{abstract}
     The recent influx of open scientific data has contributed to the
     transitioning of scientific computing from compute intensive to data intensive.
@@ -149,7 +152,7 @@ performance with the bounds delineated by the model.
       allocation is terminated.
 
       The storage layer found on HPC clusters consists of a high-performance
-      parallel file system (PFS) (e.g. Lustre~\cite{lustre}). These file systems
+      parallel file system (PFS) (e.g., Lustre~\cite{lustre}). These file systems
       are shared amongst all compute nodes within a cluster, typically connected
       to the nodes via high-performance network interconnect like
       InfiniBand~\cite{infiniband}. I/O overheads of shared PFS can be incurred
@@ -503,7 +506,7 @@ therefore should not be evicted. For files to be prefetched, they must be locate
       the data and the amount of time it takes to write the data. With more
       heterogeneous applications (some components are compute-intensive whereas
       others are data-intensive), a third component, consisting of compute time,
-      can be added. Furthermore, latency may also play a significant role
+      can be added. Furthermore, latency may also play a significant role in an
       application makespan, particularly in scenarios with large amounts of
       small files. We choose to ignore latency costs in our model and make the
       assumption that the application bottleneck is the bandwidth, however, for
@@ -564,6 +567,7 @@ therefore should not be evicted. For files to be prefetched, they must be locate
     $c$ is the number of compute nodes used \\
     $s$ is the number of Lustre storage nodes \\
     $p$ is the number of parallel application processes \\
+    $d$ is the number of Lustre storage disks \\
     $d_{r}$ is the read bandwidth of a single Lustre storage disk \\
     $d_{w}$ is the write bandwidth of a single Lustre storage disk \\
 
@@ -688,7 +692,7 @@ therefore should not be evicted. For files to be prefetched, they must be locate
       \end{equation}
 
       Here, $M_{n}$ represents the makespans of the different possible storage
-      levels (e.g. tmpfs, NVMe, SSD, HDD, Lustre) and $M_{S}$ represent the
+      levels (e.g., tmpfs, NVMe, SSD, HDD, Lustre) and $M_{S}$ represent the
       makespan of an application reading and writing to Sea. For our model, we
       will assume three storage layers: 1) fast tmpfs, 2) intermediate local SSD
       storage, and 3) slow parallel file system layer. It is important to note that
@@ -841,7 +845,7 @@ therefore should not be evicted. For files to be prefetched, they must be locate
       model should be able to support images of different sizes, we wanted to
       minimize any possible scheduling effects from our experiments. Therefore,
       each application processes the same amount of input data, produces the
-      same amount of intermediate and output data and performs the same amount
+      same amount of intermediate and output data, and performs the same amount
       of computation.
                                                                                    
 
@@ -870,8 +874,9 @@ therefore should not be evicted. For files to be prefetched, they must be locate
       number of nodes, 2) varying the number of disks, 3) varying the number of
       threads, and 4) varying the number of iterations. Experimental condition 1
       tests the effects of increasing concurrent accesses to Lustre while fixing
-      disk parallel threads. Condition 2 varies disk contention while fixing
-      contention to Lustre, whereas 3 tests the effects of contention on both
+      disk parallel threads (i.e., the number of threads per node is constant).
+      Condition 2 varies disk contention while fixing
+      contention to Lustre, whereas condition 3 evaluates the effects of contention on both
       Lustre and local storage. Experimental condition 4 varies the total amount
       of intermediate data produced by the application. The fixed conditions for
       the experiment were 5 nodes, 6 processes, 6 disks, 10 iterations and 1000
@@ -917,7 +922,7 @@ therefore should not be evicted. For files to be prefetched, they must be locate
       nodes each contain 11 \SI{10}{\tera\byte} HGST HUH721010AL HDD OSTs and
       \SI{62}{\gibi\byte} memory. The metadata server contains a Toshiba
       KPM5XVUG960G \SI{960}{\giga\byte} MDT. The network bandwidth is
-      \SI{25}{\giga\bit}E and uses TCP for communication. Jobs are scheduled on
+      25~GbE and uses TCP for communication. Jobs are scheduled on
       the cluster from a controller node using Slurm with cgroups. Swapping is
       disabled and Lustre dirty writes is limited to \SI{1}{\giga\byte} per OST.
 
@@ -925,7 +930,7 @@ therefore should not be evicted. For files to be prefetched, they must be locate
       There was no background load on the cluster for the duration of the experiments.
 
 
-      Each file system was benchmarked using \texttt{dd} using 5 repetitions.
+      Each file system was benchmarked 5 times with the \texttt{dd} command \footnote{\url{https://github.com/big-data-lab-team/Sea/blob/master/benchmarks/scripts/bench_disks.sh}}.
       The average bandwidths are reported in Table~\ref{table:sea-comp:fs}
 
 %Big Brain incrementation fmri processing?
@@ -1005,7 +1010,7 @@ therefore should not be evicted. For files to be prefetched, they must be locate
       contention, as the contention within the compute nodes is fixed. Both the
       model and experimental results state that the speedup is approaching a
       plateau, however, it is expected that once the number of threads writing
-      to Lustre exceeds the number of OSTs (e.g. 9 nodes), we will observe an
+      to Lustre exceeds the number of OSTs (e.g., 9 nodes), we will observe an
       even greater speedup from Sea due to the increased contention on Lustre.
 
       As expected, our results demonstrate that with an increase in local disk,
@@ -1120,9 +1125,9 @@ therefore should not be evicted. For files to be prefetched, they must be locate
     evict process.  
 
     Sea cannot be used with operating systems that are not Linux-based, and
-    therefore, the use of Sea limits application portability. However, HPC
-    systems commonly use Linux operating systems, thus, it is not limiting for
-    its intended use case. Furthermore, we provide publicly available containers
+    therefore, the use of an application with Sea has limited portability. However, Linux-based operating systems
+    are ubiquitous in HPC, and therefore, Sea is not limiting for
+    its intended use case. Furthermore, we provide publicly available containers~\footnote{\url{https://github.com/orgs/big-data-lab-team/packages?repo_name=Sea}}
     to simplify the usage of Sea on various other operating systems.
 
     \subsection{In-memory performance with Sea}
@@ -1138,7 +1143,7 @@ therefore should not be evicted. For files to be prefetched, they must be locate
     On shared cluster environments, such as those found in high-performance
     computing clusters, it is less likely that the PFS would be so underused
     that it could achieve better performance than leveraging local storage, even
-    if local storage was limited. We therefore believe that it is very unlikely
+    if local storage was limited. We therefore believe that it is very unlikely to
     obtain no speedups from using Sea on a production HPC cluster as long as the
     application is data intensive.
     
@@ -1260,6 +1265,9 @@ therefore should not be evicted. For files to be prefetched, they must be locate
 % \section{}
 % Appendix two text goes here.
 
+\section*{Acknowlegments}
+Val\'erie Hayot-Sasson was funded by the Canadian Open Neuroscience Platform (CONP) Scholar Award.
+This work was also supported by the Canada Foundation for Innovation as well as the Canada Research Chairs program.
 
 % % use section* for acknowledgment
 % \ifCLASSOPTIONcompsoc
@@ -1280,10 +1288,19 @@ therefore should not be evicted. For files to be prefetched, they must be locate
 
 % biography section
 
-\begin{IEEEbiography}{Val\'erie Hayot-Sasson}
+\begin{IEEEbiography}[{\includegraphics[width=1in,height=1.25in,clip,keepaspectratio]{biopics/vhs.pdf}}]{Val\'erie Hayot-Sasson} is a PhD student at Concordia University in the Big Data for Neuroinformatics lab. Her research interests focus on studying the effects of data transfers on Big Data scientific application.
 \end{IEEEbiography}
-\begin{IEEEbiography}{Tristan Glatard}
+\begin{IEEEbiography}[{\includegraphics[width=1in,height=1.25in,clip,keepaspectratio]{biopics/md}}]{Mathieu Dugr\'e} is a Ph.D. student at the Big Data Infrastructure for Neuroinformatics lab at Concordia University, Montreal, Canada. His research interests are in Big Data performance techniques for neuroimaging applications.
+
+\end{IEEEbiography}
+\begin{IEEEbiography}[{\includegraphics[width=1in,height=1.25in,clip,keepaspectratio]{biopics/tg}}]{Tristan Glatard} is Associate Professor in the
+Department of Computer Science and Software
+Engineering at Concordia University in Montreal,
+and Canada Research Chair (Tier II) on Big
+Data Infrastructures for Neuroinformatics. Before
+that, he was research scientist at the French Na-
+tional Centre for Scientific Research and Visiting
+Scholar at McGill University.
 \end{IEEEbiography}
 \end{document}
-
 
