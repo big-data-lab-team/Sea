@@ -15,7 +15,7 @@
 
 \linenumbers
 
-\title{Hierarchical storage management in user space for neuroimaging applications}
+\title{Ephemeral hierarchical data-management for neuroimaging applications}
 
 \author{Val\'erie Hayot-Sasson}
 \author{Tristan Glatard}
@@ -26,7 +26,10 @@
 
 	Neuroimaging open-data initiatives have led to increased availability of large
   scientific datasets. While these datasets are shifting the processing
+  scientific datasets. While these datasets are shifting the processing
   bottleneck from compute-intensive to data-intensive, current standardized
+  analysis tools have yet to adopt strategies that mitigate the costs
+  associated with large data transfers. A major challenge in adapting neuroimaging
   analysis tools have yet to adopt strategies that mitigate the costs
   associated with large data transfers. A major challenge in adapting neuroimaging
   applications for data-intensive processing is that they must be entirely
@@ -42,7 +45,7 @@
   shared file system is not overburdened by other users, performance is
   unaffected by Sea, suggesting that Sea's overhead is minimal even in cases
   where its benefits are limited. Overall, Sea is beneficial, even when performance gain
-  is minimal, as it can be used to limit the number of files created on parallel file systems.
+  is minimal, as it can be used to limit files on PFS.
 \end{abstract}
 \begin{document}
 
@@ -59,18 +62,18 @@
     
     The ever-growing surge in publicly available neuroimaging data has lead to new data
     management challenges, from storage infrastructure to application processing times.
-    Many tools have been developed by the community to address various needs in 
+    Many tools have been developed by the community to address to various needs in 
     neuroimaging data management.
     %To meet the storage, accessibility and security demands of neuroimaging data,
     %large datasets have been stored in object stores provided by cloud storage providers
     %\TG{mentioning clouds so early in the paper may give the impression that the paper will 
     % focus on them.}.
-    For instance, standardized metadata formats, such as the Brain Imaging Data Standards (BIDS)\cite{gorgolewski2016brain},
+    For instance, standardized metadata formats, such as the Brain Imaging Data Standards (BIDS)\cite{bids},
     have been implemented to facilitate the sharing
-    of the datasets, and data management tools such as DataLad~\cite{halchenko2021datalad} have been developed to provide 
+    of the datasets. Tools such as DataLad~\cite{datalad} have been developed to provide 
     versioning and provenance capture of data.
     Furthermore, recent developments in neuroimaging pipelines have addressed computation time 
-    limitations by adopting machine-learning approaches~\cite{henschel2020fastsurfer,hoffmann2021synthmorph}.
+    limitations by adopting machine-learning approaches \TG{cite fastsurfer, hd-bet}.
     While all these solutions to Big Data-related data management exist, certain aspects, 
     such as processing-related data-transfer overheads
     have received limited attention.
@@ -81,12 +84,12 @@
     volume, parallel high-capacity remote storage solutions are commonly relied
     upon as the persistent storage layer during processing. 
     Despite their respective high-scalability, these remote file systems cannot typically
-    compete with the performance of compute-local storage such as in-memory file systems (tmpfs) or solid-state drives (SSDs). Should the pipelines 
+    compete with the performance of compute-local storage (e.g., tmpfs and SSDs). Should the pipelines 
     need to transfer large amounts of data to these remote storage locations, significant data
     processing overheads may occur.
 
     Big Data in neuroimaging max exist in two formats: 1) very large files
-    (e.g., BigBrain~\cite{amunts2013bigbrain}) and 2) small files pertaining to a
+    (e.g. BigBrain~\cite{amunts2013bigbrain}) and 2) small files pertaining to a
     population of individuals, such as those found in MRI datasets, that
     collectively amount to very large datasets. Differences in the number and
     size of files result in different data transfer overheads. Whereas large
@@ -109,6 +112,11 @@
     
     Newer neuroimaging applications leveraging popular neuroimaging pipeline engines
     also do not benefit from processing-related data management.
+    Although engines such as Nipype~\cite{nipype}
+    % and Joblib~\cite{joblib} \TG{joblib is multithreading, dask or ray. I wouldn't call it an engine. You should use another example.}
+    do not prohibit the use of data-management
+    strategies, they do not facilitate the integration of these strategies into
+    their resulting workflow. To give
     Although engines such as Nipype~\cite{nipype}
     % and Joblib~\cite{joblib} \TG{joblib is multithreading, dask or ray. I wouldn't call it an engine. You should use another example.}
     do not prohibit the use of data-management
@@ -147,12 +155,14 @@
     researchers. %In this paper, we will focus on HPC processing.
     
     HPC systems rely on scalable network-based parallel file systems (e.g.,
+    HPC systems rely on scalable network-based parallel file systems (e.g.,
     Lustre) for storage. While such file systems offer excellent performance,
     they are shared between all the users on the cluster, meaning that users
     with data-intensive applications can effectively deteriorate the performance
     of the shared file system for all users on the cluster. Solutions for
     improving shared file system performance include
     throttling~\cite{huang2020ooops} the data-intensive workloads or
+    recommending the use of Burst Buffers~\cite{bb} (e.g., reserving a compute
     recommending the use of Burst Buffers~\cite{bb} (e.g., reserving a compute
     node for storage or leveraging local compute storage during processing). The
     latter, however, requires that the user manages their data to and from the
@@ -164,13 +174,13 @@
     typically made to interact with POSIX-based file systems, the new file
     system must also be compliant to the format. One method to ensure that these
     conditions are met is through the \texttt{LD\_PRELOAD} trick. This trick is
+    conditions are met is through the \texttt{LD\_PRELOAD} trick. This trick is
     used to intercept select library calls and redefine their behaviour. It has
     been used in many projects and to create lightweight userspace versions of
     file systems~\cite{xtreemfs,burstfs,gekkofs}. 
     
-    In this paper, we present Sea~\cite{hayot2022sea}, a data-management library designed to reduce
-    transfer-related overheads in user space. Sea leverages the \texttt{LD\_PRELOAD} trick to redirect applications read and write calls to 
-    local or remote storage transparently. We view Sea as a complement
+    In this paper, we present Sea~\cite{sea-comp}, a data-management library designed to reduce
+    transfer-related overheads. We view Sea as a complement
     to the existing stack of neuroimaging tools and standards meant to facilitate 
     the processing of neuroimaging Big Data.   
     % \tristan{Intro logic is good but writing could be polished}
@@ -196,15 +206,16 @@
 \end{figure*}
     Sea (Figure~\ref{fig:seaneuro:diagram}) is a data-management library that leverages
     the \texttt{LD\_PRELOAD}
-    trick to intercept POSIX file system calls (more specifically, file access calls to the GNU C library,
-    glibc) on Linux systems. This enables Sea to redirect write calls
+    trick to intercept POSIX file system (more specifically, the GNU C library,
+    glibc) calls on Linux systems. This enables Sea to redirect write calls
     aimed at slower storage devices to a faster devices whenever possible.
     Similarly, when intercepting read calls, Sea can choose to read from a
     faster device if a copy is available on that device. Sea decides which
     storage location it can write to based on the details provided in an
+    storage location it can write to based on the details provided in an
     initialization file called \texttt{sea.ini}. This file informs Sea of which
     locations it can use to read and write to, and well as their order of
-    priority. Importantly, Sea is not a filesystem, but rather a
+    priority. It is important to note that Sea is not a filesystem, but rather a
     lightweight tool that redirects files to more optimal storage devices.
 
     We define all locations in which Sea can redirect writes to as a cache. Such
@@ -290,8 +301,8 @@ using a single process was the next fastest pipeline, with an average speedup of
 (5$\times$). The FSL Feat pipeline had speedups as well, with a maximum average speedup of
 1.3$\times$ when preprocessing a single PREVENT-AD image. The SPM pipeline consistently had
 excellent speedups, which is likely due to a mix of prefetching the initial
-input files and the I/O patterns of the application. While it was expected that the
-AFNI pipeline would benefit the most from Sea due to its
+input files and the I/O patterns of the application. While it was expected that
+AFNI would benefit the most from Sea due to its
 minimal compute time and the amount of data it generates, it did not benefit
 from Sea to the extent that the SPM pipeline did. As per Table~\ref{table:seaneuro-pipelines}, the
 AFNI pipeline performs a very high number of glibc calls. While the overhead of an
