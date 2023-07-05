@@ -8,13 +8,14 @@
 \usepackage{caption}
 \usepackage{subcaption}
 \usepackage{xspace}
+\usepackage{todonotes}
 
-\newcommand{\TG}[1]{\color{red}\textsc{From Tristan}: #1\xspace\color{black}}
 
+\newcommand{\TG}[1]{\todo[color=green!60!black]{\textbf{\textsc{From Tristan:}} #1\xspace}}
 
 \linenumbers
 
-\title{Ephemeral hierarchical data-management for neuroimaging applications}
+\title{Ephemeral hierarchical data-management for neuroimaging applications \TG{Update title as discussed previously}}
 
 \author{Val\'erie Hayot-Sasson}
 \author{Tristan Glatard}
@@ -27,7 +28,7 @@
   scientific datasets. While these datasets are shifting the processing
   bottleneck from compute-intensive to data-intensive, current standardized
   analysis tools have yet to adopt strategies that mitigate the costs
-  associated with large data transfers. A major challenge in adapting neuroimaging
+  associated with large data transfers \TG{use a word better than transfers}. A major challenge in adapting neuroimaging
   applications for data-intensive processing is that they must be entirely
   rewritten.
   
@@ -170,7 +171,7 @@
     file systems~\cite{xtreemfs,burstfs,gekkofs}. 
     
     In this paper, we present Sea~\cite{sea-comp}, a data-management library designed to reduce
-    transfer-related overheads. We view Sea as a complement
+    transfer-related overheads. \TG{add a few sentences to summarize the main features of Sea} We view Sea as a complement
     to the existing stack of neuroimaging tools and standards meant to facilitate 
     the processing of neuroimaging Big Data.   
     % \tristan{Intro logic is good but writing could be polished}
@@ -196,8 +197,8 @@
 \end{figure*}
     Sea (Figure~\ref{fig:seaneuro:diagram}) is a data-management library that leverages
     the \texttt{LD\_PRELOAD}
-    trick to intercept POSIX file system (more specifically, the GNU C library,
-    glibc) calls on Linux systems. This enables Sea to redirect write calls
+    trick to intercept POSIX file system calls (more specifically, file access calls to the GNU C library,
+    glibc) on Linux systems. This enables Sea to redirect write calls
     aimed at slower storage devices to a faster devices whenever possible.
     Similarly, when intercepting read calls, Sea can choose to read from a
     faster device if a copy is available on that device. Sea decides which
@@ -211,13 +212,12 @@
     caches include any available storage located on the compute nodes, such as
     tmpfs (i.e. a temporary file system in virtual memory) or solid state drives (SSDs). 
 
-    As neuroimaging pipeline results are typically required post-processing and
-    HPC compute-local resources are only accessible during the reserved
+    As neuroimaging pipeline results typically require post-processing and
+    HPC \TG{It'd be useful to add a sentence before explaining that neuroimaging applications typically run on HPC systems} compute-local resources are only accessible during the reserved
     duration, Sea provides functionality to flush and evict data to persistent
-    shared storage. This is accomplished via a separate thread (known as the
-    ``flusher'') that moves data from the caches to long-term storage. A
-    separate thread is used, in this case, to avoid interrupting ongoing
-    processing with data management operations. Users must inform Sea of files
+    shared storage. To avoid interrupting ongoing
+    processing with data management operations, this is accomplished via a separate thread (known as the
+    ``flusher'') that moves data from the caches to long-term storage. Users must inform Sea of files
     that need to be persisted to storage within a file called
     \texttt{.sea\_flushlist}, and temporary files which can be removed from
     cache within a file called the \texttt{.sea\_evictlist}. Both these files
@@ -274,11 +274,11 @@
 \end{figure*}
 
 \subsection{Speedups observed in controlled environment}
+\TG{I think the methods need to be summarized in 2-3 sentences here}
+\TG{I would also say "The SPM pipeline" rather than "SPM" (same for all pipelines)}
 
-
-In Figure~\ref{fig:seaneuro:slashbin}, we observe that although performance is
-variable, speedups are obtained by using Sea when Lustre
-performance has been degraded by busy writers. On average, a single SPM
+Speedups are obtained by using Sea when Lustre
+performance has been degraded by busy writers (Figure~\ref{fig:seaneuro:slashbin}), although performance is variable. On average, a single SPM
 process preprocessing a single HCP image produced the greatest speedup
 (13$\times$). AFNI preprocessing a single fMRI image of the PREVENT-AD dataset
 using a single process was the next fastest pipeline, with an average speedup of
@@ -288,11 +288,11 @@ excellent speedups, which is likely due to a mix of prefetching the initial
 input files and the I/O patterns of the application. While it was expected that
 AFNI would benefit the most from Sea due to its
 minimal compute time and the amount of data it generates, it did not benefit
-from Sea to the extent that SPM did. As per Table~\ref{table:seaneuro:pipelines},
+from Sea to the extent that SPM did. As per Table~\ref{table:seaneuro-pipelines},
 AFNI performs a very high number of glibc calls. While the overhead of an
 individual call is likely very minimal, it is possible that the culmination of
 all these calls results in a large enough bottleneck that affects both Sea and
-Baseline executions an extensive amount. Moreover, the number of glibc calls
+Baseline executions to an extensive amount. Moreover, the number of glibc calls
 aimed at interacting with data on the Lustre storage are very few. AFNI still
 obtained an average of 2$\times$ speedup across all experimental conditions.
 
@@ -324,9 +324,7 @@ Sea becomes more limited.
 Baseline performance without busy writers is comparable to that of Sea's as can be seen in Figure~\ref{fig:seaneuro:slashbin}. However, with
 busy writers, Baseline performance may deviate dramatically from the identity
 line. We observe that the more Baseline deviates from this identity line, the
-greater the speedup.
-
-We do occasionally observe slowdowns from using Sea. These slowdowns
+greater the speedup. We do occasionally observe slowdowns from using Sea. These slowdowns
 may arise from the initial read of the data, as they appear to occur less
 frequently with SPM, or due to increased CPU contention caused by Sea's rapid I/O.
 
@@ -345,7 +343,7 @@ frequently with SPM, or due to increased CPU contention caused by Sea's rapid I/
 To determine the overhead of Sea, we compared the average performance of Sea with
 the performance of pipeline executing entirely within memory
 (Figure~\ref{fig:seaneuro:tmpfs}). The results demonstrate that Sea and tmpfs
-behave more or less identically. Given these results, we conclude that the
+behave mostly identically. Given these results, we conclude that the
 overhead of Sea is minimal and that the differences in makespan may be
 due to Sea's initial reading of the data from Lustre.
 
@@ -389,7 +387,7 @@ due to Sea's initial reading of the data from Lustre.
 
   Figures~\ref{fig:seaneuro:beluga-noflush} and \ref{fig:seaneuro:beluga-wflush}
   shows us that although performance in production clusters is highly variable,
-  we can still obtain important speedups. It is very likely that when we
+  we can still obtain important speedups by using Sea. It is very likely that when we
   executed our experiments without flushing
   (Figure~\ref{fig:seaneuro:beluga-noflush}), Lustre performance was not degraded, 
   resulting in Sea and Baseline performing
@@ -409,7 +407,7 @@ due to Sea's initial reading of the data from Lustre.
     \subsection{Significance of speedups with Sea}
 
     Our results show that the speedups obtained from using Sea can be quite
-    substantial (up to 32$\times$) depending on the degradation of the Lustre
+    substantial (up to 32$\times$ \TG{this value should be mentioned in the results}) depending on the degradation of the Lustre
     file system. The highest speed-ups observed on a production cluster were
     found to be 11$\times$.
 
@@ -683,13 +681,13 @@ due to Sea's initial reading of the data from Lustre.
     a result of methodological differences. Thus, we preprocessed each dataset
     using three standard preprocessing pipelines available within the FSL~\cite{fsl},
     AFNI~\cite{cox1996afni}, and SPM~\cite{spm} toolboxes.
-    Table~\ref{table:seaneuro:pipelines} provides a reference of the differences
+    Table~\ref{table:seaneuro-pipelines} provides a reference of the differences
     in computation and data-intensiveness of the different pipelines on a single
     subject for all three of the datasets.
     
     Each tool was set to only run the preprocessing pipeline. Scripts used to
     execute each pipeline can be found
-    at~\url{github.com/valhayot/sea-slurm-scripts}.
+    at~\url{github.com/valhayot/sea-slurm-scripts}. \TG{I'd group some of these short paragraphs together}
     
     For the FSL preprocessing pipeline, we used FEAT configured with many of
     the default parameters. We set the following parameters: slice-timing
@@ -745,8 +743,9 @@ due to Sea's initial reading of the data from Lustre.
       \hline
     \end{tabular}}
     \footnotesize{$*$ Measurements taken on the dedicated cluster}
-    \caption{Pipeline execution characteristics based on the processing of a single fMRI image using a single application process}\label{table:seaneuro:pipelines}
-    \end{table*}
+    \caption{Pipeline execution characteristics based on the processing of a single fMRI image using a single application process}
+    \label{table:seaneuro-pipelines}
+  \end{table*}
 
     \subsection{Controls}
     Our objective is to measure the speedup brought by Sea on real neuroimaging
@@ -830,7 +829,7 @@ due to Sea's initial reading of the data from Lustre.
     filesize, as long as the compute time and non-Lustre I/O-related overheads
     were also minimal.
 
-    It is believed that Sea's benefits are not only limited to performance as
+     Sea's benefits are not only limited to performance as
     users can also benefit from limiting the number of files created on Lustre
     with Sea. Archiving of the output directory on Lustre with Sea to further
     reduce number of files may be an interesting addition to Sea.
