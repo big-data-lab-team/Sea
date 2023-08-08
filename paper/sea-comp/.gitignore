@@ -1,0 +1,10 @@
+*.log
+*.aux
+*.bbl
+*.blg
+*.fdb_latexmk
+*.fls
+*.out
+*.synctex.gz
+paper.pdf
+paper-neuro.pdf
