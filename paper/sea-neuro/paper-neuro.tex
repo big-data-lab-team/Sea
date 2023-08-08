@@ -15,7 +15,7 @@
 
 \linenumbers
 
-\title{Ephemeral hierarchical data-management for neuroimaging applications \TG{Update title as discussed previously}}
+\title{Hierarchical storage management for neuroimaging applications in user space}
 
 \author{Val\'erie Hayot-Sasson}
 \author{Tristan Glatard}
@@ -28,11 +28,9 @@
   scientific datasets. While these datasets are shifting the processing
   bottleneck from compute-intensive to data-intensive, current standardized
   analysis tools have yet to adopt strategies that mitigate the costs
-  associated with large data transfers \TG{use a word better than transfers}. A major challenge in adapting neuroimaging
+  associated with large data transfers. A major challenge in adapting neuroimaging
   applications for data-intensive processing is that they must be entirely
-  rewritten.
-  
-  To facilitate data management for standardized neuroimaging tools, we
+  rewritten. To facilitate data management for standardized neuroimaging tools, we
   developed Sea, a library that intercepts and redirects application read and
   write calls to minimize data transfer time. In this paper, we investigate the
   performance of Sea on three preprocessing pipelines implemented using standard toolboxes (FSL,
@@ -44,7 +42,7 @@
   shared file system is not overburdened by other users, performance is
   unaffected by Sea, suggesting that Sea's overhead is minimal even in cases
   where its benefits are limited. Overall, Sea is beneficial, even when performance gain
-  is minimal, as it can be used to limit files on PFS.
+  is minimal, as it can be used to limit the number of files created on parallel file systems.
 \end{abstract}
 \begin{document}
 
@@ -61,18 +59,18 @@
     
     The ever-growing surge in publicly available neuroimaging data has lead to new data
     management challenges, from storage infrastructure to application processing times.
-    Many tools have been developed by the community to address to various needs in 
+    Many tools have been developed by the community to address various needs in 
     neuroimaging data management.
     %To meet the storage, accessibility and security demands of neuroimaging data,
     %large datasets have been stored in object stores provided by cloud storage providers
     %\TG{mentioning clouds so early in the paper may give the impression that the paper will 
     % focus on them.}.
-    For instance, standardized metadata formats, such as the Brain Imaging Data Standards (BIDS)\cite{bids},
+    For instance, standardized metadata formats, such as the Brain Imaging Data Standards (BIDS)\cite{gorgolewski2016brain},
     have been implemented to facilitate the sharing
-    of the datasets. Tools such as DataLad~\cite{datalad} have been developed to provide 
+    of the datasets, and data management tools such as DataLad~\cite{halchenko2021datalad} have been developed to provide 
     versioning and provenance capture of data.
     Furthermore, recent developments in neuroimaging pipelines have addressed computation time 
-    limitations by adopting machine-learning approaches \TG{cite fastsurfer, hd-bet}.
+    limitations by adopting machine-learning approaches~\cite{henschel2020fastsurfer,hoffmann2021synthmorph}.
     While all these solutions to Big Data-related data management exist, certain aspects, 
     such as processing-related data-transfer overheads
     have received limited attention.
@@ -83,12 +81,12 @@
     volume, parallel high-capacity remote storage solutions are commonly relied
     upon as the persistent storage layer during processing. 
     Despite their respective high-scalability, these remote file systems cannot typically
-    compete with the performance of compute-local storage (e.g., tmpfs and SSDs). Should the pipelines 
+    compete with the performance of compute-local storage such as in-memory file systems (tmpfs) or solid-state drives (SSDs). Should the pipelines 
     need to transfer large amounts of data to these remote storage locations, significant data
     processing overheads may occur.
 
     Big Data in neuroimaging max exist in two formats: 1) very large files
-    (e.g. BigBrain~\cite{amunts2013bigbrain}) and 2) small files pertaining to a
+    (e.g., BigBrain~\cite{amunts2013bigbrain}) and 2) small files pertaining to a
     population of individuals, such as those found in MRI datasets, that
     collectively amount to very large datasets. Differences in the number and
     size of files result in different data transfer overheads. Whereas large
@@ -170,8 +168,9 @@
     been used in many projects and to create lightweight userspace versions of
     file systems~\cite{xtreemfs,burstfs,gekkofs}. 
     
-    In this paper, we present Sea~\cite{sea-comp}, a data-management library designed to reduce
-    transfer-related overheads. \TG{add a few sentences to summarize the main features of Sea} We view Sea as a complement
+    In this paper, we present Sea~\cite{hayot2022sea}, a data-management library designed to reduce
+    transfer-related overheads in user space. Sea leverages the \texttt{LD\_PRELOAD} trick to redirect applications read and write calls to 
+    local or remote storage transparently. We view Sea as a complement
     to the existing stack of neuroimaging tools and standards meant to facilitate 
     the processing of neuroimaging Big Data.   
     % \tristan{Intro logic is good but writing could be polished}
@@ -205,7 +204,7 @@
     storage location it can write to based on the details provided in an
     initialization file called \texttt{sea.ini}. This file informs Sea of which
     locations it can use to read and write to, and well as their order of
-    priority. It is important to note that Sea is not a filesystem, but rather a
+    priority. Importantly, Sea is not a filesystem, but rather a
     lightweight tool that redirects files to more optimal storage devices.
 
     We define all locations in which Sea can redirect writes to as a cache. Such
@@ -213,7 +212,7 @@
     tmpfs (i.e. a temporary file system in virtual memory) or solid state drives (SSDs). 
 
     As neuroimaging pipeline results typically require post-processing and
-    HPC \TG{It'd be useful to add a sentence before explaining that neuroimaging applications typically run on HPC systems} compute-local resources are only accessible during the reserved
+    HPC compute-local resources are only accessible during the reserved
     duration, Sea provides functionality to flush and evict data to persistent
     shared storage. To avoid interrupting ongoing
     processing with data management operations, this is accomplished via a separate thread (known as the
