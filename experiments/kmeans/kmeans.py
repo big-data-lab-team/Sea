@@ -1,11 +1,9 @@
 #!/usr/bin/env python
 import os.path as op
 from typing import Tuple
-from wsgiref.simple_server import WSGIRequestHandler
 import nibabel as nib
 import numpy as np
 from glob import glob
-from scipy.spatial.distance import cdist
 from pydra import mark, Workflow, Submitter
 
 import click
