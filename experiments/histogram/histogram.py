@@ -23,7 +23,7 @@ def merge_hist(filenames: list) -> None:
                 hist_dict[bins[i]] += v
 
     plt.hist(list(hist_dict.values()), bins=list(hist_dict.keys()))
-    plt.savefig("hist.png")
+    plt.savefig("hist.pdf")
 
 
 @mark.task
@@ -60,7 +60,9 @@ def main(dir, output_dir, range):
     wf.add(histo(name="histogram", filename=wf.lzin.fn, outdir=wf.lzin.outdir))
     wf.set_output([("result", wf.histogram.lzout.outfiles)])
 
-    with Submitter(plugin="cf") as sub:
+    with Submitter(
+        plugin="cf",
+    ) as sub:
         sub(wf)
 
     merge_hist(wf.result())
