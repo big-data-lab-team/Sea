@@ -41,8 +41,8 @@
   the shared file system's (e.g. Lustre) performance is deteriorated. When the
   shared file system is not overburdened by other users, performance is
   unaffected by Sea, suggesting that Sea's overhead is minimal even in cases
-  where its benefits are limited. Overall, Sea is beneficial, even when performance gain
-  is minimal, as it can be used to limit the number of files created on parallel file systems.
+  where its benefits are limited. Even in scenarios with minimal performance gain, Sea
+  can improve overall filesystem performance by limiting the number of files on shared filesystems.
 \end{abstract}
 \begin{document}
 
@@ -59,8 +59,9 @@
     
     The ever-growing surge in publicly available neuroimaging data has lead to new data
     management challenges, from storage infrastructure to application processing times.
-    Many tools have been developed by the community to address various needs in 
-    neuroimaging data management.
+    To address the community's data management needs, many tools have been developped.
+    % Many tools have been developed by the community to address various needs in 
+    % neuroimaging data management.
     %To meet the storage, accessibility and security demands of neuroimaging data,
     %large datasets have been stored in object stores provided by cloud storage providers
     %\TG{mentioning clouds so early in the paper may give the impression that the paper will 
@@ -88,7 +89,7 @@
     Big Data in neuroimaging max exist in two formats: 1) very large files
     (e.g., BigBrain~\cite{amunts2013bigbrain}) and 2) small files pertaining to a
     population of individuals, such as those found in MRI datasets, that
-    collectively amount to very large datasets. Differences in the number and
+    amount to very large datasets. Differences in the number and
     size of files result in different data transfer overheads. Whereas large
     file I/O is predominantly impacted by the underlying storage bandwidth,
     small file I/O results in a non-negligible latency overhead. 
@@ -143,14 +144,14 @@
     computing needs: 1) High Performance Computing (HPC) clusters and 2) the
     cloud. Whereas the cloud simplifies data sharing and gives researchers
     access to a wide variety of infrastructures, HPC clusters are a
-    cost-effective solution to accessing a wide array of resources for
+    cost-effective solution to accessing a wide array of hardware resources for
     researchers. %In this paper, we will focus on HPC processing.
     
     HPC systems rely on scalable network-based parallel file systems (e.g.,
     Lustre) for storage. While such file systems offer excellent performance,
     they are shared between all the users on the cluster, meaning that users
     with data-intensive applications can effectively deteriorate the performance
-    of the shared file system for all users on the cluster. Solutions for
+    of the shared file system for all active users. Solutions for
     improving shared file system performance include
     throttling~\cite{huang2020ooops} the data-intensive workloads or
     recommending the use of Burst Buffers~\cite{bb} (e.g., reserving a compute
@@ -168,9 +169,9 @@
     been used in many projects and to create lightweight userspace versions of
     file systems~\cite{xtreemfs,burstfs,gekkofs}. 
     
-    In this paper, we present Sea~\cite{hayot2022sea}, a data-management library designed to reduce
-    transfer-related overheads in user space. Sea leverages the \texttt{LD\_PRELOAD} trick to redirect applications read and write calls to 
-    local or remote storage transparently. We view Sea as a complement
+    In this paper, we evaluate Sea~\cite{hayot2022sea}, a data-management library designed to reduce
+    transfer-related overheads in user space, on real neuroimaging applications and quatify its
+    benefits to neuroimaging research. We view Sea as a complement
     to the existing stack of neuroimaging tools and standards meant to facilitate 
     the processing of neuroimaging Big Data.   
     % \tristan{Intro logic is good but writing could be polished}
@@ -198,7 +199,7 @@
     the \texttt{LD\_PRELOAD}
     trick to intercept POSIX file system calls (more specifically, file access calls to the GNU C library,
     glibc) on Linux systems. This enables Sea to redirect write calls
-    aimed at slower storage devices to a faster devices whenever possible.
+    aimed at slower storage devices to faster devices whenever possible.
     Similarly, when intercepting read calls, Sea can choose to read from a
     faster device if a copy is available on that device. Sea decides which
     storage location it can write to based on the details provided in an
@@ -215,8 +216,10 @@
     HPC compute-local resources are only accessible during the reserved
     duration, Sea provides functionality to flush and evict data to persistent
     shared storage. To avoid interrupting ongoing
-    processing with data management operations, this is accomplished via a separate thread (known as the
-    ``flusher'') that moves data from the caches to long-term storage. Users must inform Sea of files
+    processing with data management operations, this is accomplished via a 
+    separate thread (known as the
+    ``flusher'') that moves data from the caches to long-term storage.
+    Users must inform Sea of files
     that need to be persisted to storage within a file called
     \texttt{.sea\_flushlist}, and temporary files which can be removed from
     cache within a file called the \texttt{.sea\_evictlist}. Both these files
@@ -232,7 +235,7 @@
     capabilities, a file called \texttt{.sea\_prefetchlist} needs to be
     populated using regular expressions like the flushing and eviction files.
     
-    To interact with Sea, a mountpoint is used. The mountpoint
+  Interfacing with Sea is achieved using a user-specified mountpoint. The mountpoint
     is an empty directory that behaves as a view to all the files and
     directories stored within Sea. In order to keep track of the locations of
     files within the mountpoint, Sea mirrors the directory structure of each
