@@ -70,7 +70,7 @@
     of the datasets, and data management tools such as DataLad~\cite{halchenko2021datalad} have been developed to provide 
     versioning and provenance capture of data.
     Furthermore, recent developments in neuroimaging pipelines have addressed computation time 
-    limitations by adopting machine-learning approaches~\cite{henschel2020fastsurfer,hoffmann2021synthmorph}.
+    limitations by adopting machine-learning approaches that are an order of magnitude faster than traditional image processing solutions~\cite{henschel2020fastsurfer,hoffmann2021synthmorph}.
     While all these solutions to Big Data-related data management exist, certain aspects, 
     such as processing-related data-transfer overheads
     have received limited attention.
@@ -276,16 +276,18 @@ denotes the total time between execution launch and completion of the last compu
 \subsection{Speedups observed in controlled environment}
 
 We benchmarked Sea by processing 3 functional MRI datasets of increasing sizes
-(ds001545: 27~GB, PREVENT-AD: 283~GB, Human Connectome Project: 79~TB) with 3 pipelines 
+(ds001545: 27~GB, PREVENT-AD: 283~GB, Human Connectome Project: 79~TB, see
+Table~\ref{table:sea-neuro:data}) with 3 pipelines 
 from the most commonly-used neuroimaging toolboxes (AFNI, SPM, FSL), using a controlled HPC cluster 
 dedicated to our experiments. We deployed ``busy writers'' in the cluster
 that simulated the load from other user applications by writing to the shared file system at a controlled rate.
 
+\TG{Revise the numbers in this paragraph according to current notebook}
 Speedups were obtained by using Sea when Lustre
 performance had been degraded by busy writers (Figure~\ref{fig:seaneuro:slashbin}),
 although performance was variable. On average, a single SPM pipeline
 process preprocessing a single HCP image produced the greatest speedup
-(13$\times$). The AFNI pipeline preprocessing a single fMRI image of the PREVENT-AD dataset
+(13$\times$) \TG{I think this number should be 32x, according to the current notebook}. The AFNI pipeline preprocessing a single fMRI image of the PREVENT-AD dataset
 using a single process was the next fastest pipeline, with an average speedup of
 (5$\times$). The FSL Feat pipeline had speedups as well, with a maximum average speedup of
 1.3$\times$ when preprocessing a single PREVENT-AD image. The SPM pipeline consistently had
@@ -308,7 +310,7 @@ compute-intensive nature of the FSL Feat pipeline, it is expected that it result
 least significant speedups.
 
 The HCP dataset, on average, obtained the greatest speedups with
-Sea. Out of the three datasets, HCP has the largest images (see
+Sea \TG{Mention value}. Out of the three datasets, HCP has the largest images (see
 Table~\ref{table:sea-neuro:data}). Larger individual images mean that they
 occupy more page cache space and take longer to flush to Lustre. Unsurprisingly,
 the next dataset with the largest images (\SI{282}{\mebi\byte} compressed for a
@@ -326,10 +328,9 @@ Sea becomes more limited.
 
 \subsection{Speedup correlated with Lustre degradation}
 
-Baseline performance without busy writers was comparable to that of Sea's as can be seen in Figure~\ref{fig:seaneuro:slashbin}. However, with
-busy writers, Baseline performance deviated dramatically from the identity
-line. We observe that the more Baseline deviates from this identity line, the
-greater the speedup. We did occasionally observe slowdowns from using Sea. These slowdowns
+Baseline performance without busy writers was comparable to that of Sea's as can be seen in Figure~\ref{fig:seaneuro:slashbin} \TG{(p=x, two-sample T-test)}. However, with
+busy writers, the makespan obtained with Sea was smaller than baseline \TG{(p=x, two-sample T-test)}. We observe that the more Baseline deviates from this identity line, the
+greater the speedup \TG{I would remove this sentence, it's obvious}. We did occasionally observe slowdowns from using Sea. These slowdowns
 may arise from the initial read of the data, as they appeared to occur less
 frequently with the SPM pipeline, or due to increased CPU contention caused by Sea's rapid I/O.
 
@@ -348,7 +349,7 @@ frequently with the SPM pipeline, or due to increased CPU contention caused by S
 To determine the overhead of Sea, we compared the average performance of Sea with
 the performance of pipeline executing entirely within memory
 (Figure~\ref{fig:seaneuro:tmpfs}). The results demonstrated that Sea and tmpfs
-behave mostly identically. Given these results, we conclude that the
+did not lead to significant differences in average makespan (\TG{p=x, two-sampled T-test}). Given these results, we conclude that the
 overhead of Sea is minimal and that the differences in makespan may be
 due to Sea's initial reading of the data from Lustre.
 
@@ -414,10 +415,10 @@ due to Sea's initial reading of the data from Lustre.
     \section{Discussion}
     \subsection{Significance of speedups with Sea}
 
-    Our results show that the speedups obtained from using Sea can be 
+    Our results show that the speedups obtained from using Sea when pre-processing functional MRI data can be 
     substantial (up to 32$\times$ \TG{this value should be mentioned in the results}) depending on the degradation of the Lustre
     file system. The highest speed-ups observed on a production cluster were
-    found to be 11$\times$.
+    found to be 11$\times$ \TG{Double check this number}.
 
     While on the production cluster, Sea and Baseline generally performed similarly,
     it is impossible for cluster users to know if Lustre's
@@ -831,7 +832,7 @@ due to Sea's initial reading of the data from Lustre.
     When benchmarking the performance of Sea compared to Baseline, it was found that Sea provided speedups
     when Lustre performance was degraded. We were able to obtain up to a
     32$\times$ in the controlled environment and 11$\times$ in a production
-    cluster. It was also found that speedups were greatest with a larger
+    cluster \TG{Double check this number}. It was also found that speedups were greatest with a larger
     filesize, as long as the compute time and non-Lustre I/O-related overheads
     were also minimal.
 
