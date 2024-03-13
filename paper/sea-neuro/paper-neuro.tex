@@ -62,10 +62,6 @@
     management challenges, from storage infrastructure to application processing times.
     Many tools have been developed by the community to address various needs in 
     neuroimaging data management.
-    %To meet the storage, accessibility and security demands of neuroimaging data,
-    %large datasets have been stored in object stores provided by cloud storage providers
-    %\TG{mentioning clouds so early in the paper may give the impression that the paper will 
-    % focus on them.}.
     For instance, standardized metadata formats, such as the Brain Imaging Data Standards (BIDS)\cite{gorgolewski2016brain},
     have been implemented to facilitate the sharing
     of the datasets, and data management tools such as DataLad~\cite{halchenko2021datalad} have been developed to provide 
@@ -111,12 +107,6 @@
     Newer neuroimaging applications leveraging popular neuroimaging pipeline engines
     also do not benefit from processing-related data management.
     Although engines such as Nipype~\cite{nipype}
-    % and Joblib~\cite{joblib} \TG{joblib is multithreading, dask or ray. I wouldn't call it an engine. You should use another example.}
-    do not prohibit the use of data-management
-    strategies, they do not facilitate the integration of these strategies into
-    their resulting workflow. To give
-    Although engines such as Nipype~\cite{nipype}
-    % and Joblib~\cite{joblib} \TG{joblib is multithreading, dask or ray. I wouldn't call it an engine. You should use another example.}
     do not prohibit the use of data-management
     strategies, they do not facilitate the integration of these strategies into
     their resulting workflow. To give
@@ -295,7 +285,6 @@ from the most commonly-used neuroimaging toolboxes (AFNI, SPM, FSL), using a con
 dedicated to our experiments. We deployed ``busy writers'' in the cluster
 that simulated the load from other user applications by writing to the shared file system at a controlled rate.
 
-\TG{Revise the numbers in this paragraph according to current notebook}
 Speedups were obtained by using Sea when Lustre
 performance had been degraded by busy writers (Figure~\ref{fig:seaneuro:slashbin}),
 although performance was variable. The largest speedup across all conditions
@@ -408,7 +397,6 @@ due to Sea's initial reading of the data from Lustre.
     \caption{Zoomed between 0 and 2000 seconds}\label{fig:seaneuro:belugazoomwf}
 \end{subfigure}
 \caption{Makespan comparison between Sea and Baseline on the production cluster with flushing enabled for all files}
-\caption{Makespan comparison between Sea and Baseline on the production cluster with flushing enabled for all files}
 \label{fig:seaneuro:beluga-wflush}
 \end{figure*}
 
@@ -447,7 +435,7 @@ due to Sea's initial reading of the data from Lustre.
     Our results show that the speedups obtained from using Sea when pre-processing functional MRI data can be 
     substantial (up to 32$\times$) depending on the degradation of the Lustre
     file system. The highest speed-ups observed on a production cluster were
-    found to be 11$\times$ \TG{Double check this number}.
+    found to be 11$\times$.
 
     While on the production cluster, Sea and Baseline generally performed similarly,
     it is impossible for cluster users to know if Lustre's
@@ -806,9 +794,7 @@ due to Sea's initial reading of the data from Lustre.
     \caption{Pipeline execution characteristics based on the processing of a single fMRI image using a single application process}
     \label{table:seaneuro-pipelines}
   \end{table*}
-    \caption{Pipeline execution characteristics based on the processing of a single fMRI image using a single application process}
-    \label{table:seaneuro-pipelines}
-  \end{table*}
+
 
     \subsection{Controls}
     Our objective was to measure the speedup brought by Sea on real neuroimaging
@@ -904,7 +890,7 @@ due to Sea's initial reading of the data from Lustre.
     When benchmarking the performance of Sea compared to Baseline, it was found that Sea provided speedups
     when Lustre performance was degraded. We were able to obtain up to a
     32$\times$ in the controlled environment and 11$\times$ in a production
-    cluster \TG{Double check this number}. It was also found that speedups were greatest with a larger
+    cluster. It was also found that speedups were greatest with a larger
     filesize, as long as the compute time and non-Lustre I/O-related overheads
     were also minimal.
 
