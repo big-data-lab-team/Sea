@@ -306,7 +306,7 @@ compute-intensive nature of the FSL Feat pipeline, it is expected to have result
 least significant speedups.
 
 The HCP dataset obtained the greatest speedups with
-Sea, with $2.3\times$ on average vs $1.3\times$ for PREVENT-AD and $1.9\times$ for ds001545.
+Sea, with $2.3\times$ on average vs. $1.9\times$ for ds001545  and $1.3\times$ for PREVENT-AD.
 Out of the three datasets, HCP has the largest images (see
 Table~\ref{table:sea-neuro:data}). Larger individual images mean that they
 occupy more page cache space and take longer to flush to Lustre. Unsurprisingly,
@@ -325,8 +325,8 @@ Sea becomes more limited.
 
 \subsection{Speedup correlated with Lustre degradation}
 
-Baseline performance without busy writers was comparable to that of Sea's as can be seen in Figure~\ref{fig:seaneuro:slashbin} (p=0.7, two-sample unpaired T-test). However, with
-busy writers, the makespan obtained with Sea was smaller than baseline (p<1e-04, two-sample T-test). We did occasionally observe slowdowns from using Sea. These slowdowns
+Baseline performance without busy writers was comparable to that of Sea's (p=0.7, two-sample unpaired t-test) as can be seen in Figure~\ref{fig:seaneuro:slashbin}. However, with
+busy writers, the makespan obtained with Sea was smaller than baseline (p<1e-04, two-sample t-test). We did occasionally observe slowdowns from using Sea. These slowdowns
 may arise from the initial read of the data, as they appeared to occur less
 frequently with the SPM pipeline, or due to increased CPU contention caused by Sea's rapid I/O.
 
@@ -345,7 +345,7 @@ frequently with the SPM pipeline, or due to increased CPU contention caused by S
 To determine the overhead of Sea, we compared the average performance of Sea with
 the performance of pipeline executing entirely within memory
 (Figure~\ref{fig:seaneuro:tmpfs}). The results demonstrated that Sea and tmpfs
-did not lead to significant differences in average makespan (p=0.9, two-sampled unpaired T-test). Given these results, we conclude that the
+did not lead to significant differences in average makespan (p=0.9, two-sampled unpaired t-test). Given these results, we conclude that the
 overhead of Sea is minimal and that the differences in makespan may be
 due to Sea's initial reading of the data from Lustre.
 
@@ -779,9 +779,9 @@ due to Sea's initial reading of the data from Lustre.
     HDD object storage targets (OSTs) and 1 metadata server (MDS) with a single
     metadata target (MDT). The storage nodes were connected to the compute nodes
     via a 20Gbps ethernet connection. The cluster's hardware was similar to that
-    of Compute Canada's Beluga cluster.
+    of the Beluga cluster at the Digital Alliance of Canada.
     
-    Compute Canada's Beluga cluster was used as the production cluster.
+    The Beluga cluster was used as the production cluster.
     It consisted of a total of 977 compute nodes, of which we
     used up to 16 general compute nodes at a time with \SI{186}{\gibi\byte} of
     available memory, \SI{480}{\gibi\byte} of local scratch SSD space, 2 Intel
