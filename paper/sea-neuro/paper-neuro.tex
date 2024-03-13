@@ -205,9 +205,9 @@
 \end{figure*}
     Sea (Figure~\ref{fig:seaneuro:diagram}) is a data-management library that leverages
     the \texttt{LD\_PRELOAD}
-    trick to intercept POSIX file system calls (more specifically, file access calls to the GNU C library,
-    glibc) on Linux systems. This enables Sea to redirect write calls
-    aimed at slower storage devices to a faster devices whenever possible.
+    trick to intercept POSIX file system calls, or more specifically, file access calls to the GNU C library,
+    glibc, on Linux systems. This enables Sea to redirect write calls
+    aimed at slower storage devices to a faster device whenever possible.
     Similarly, when intercepting read calls, Sea can choose to read from a
     faster device if a copy is available on that device. Sea decides which
     storage location it can write to based on the details provided in an
@@ -300,11 +300,9 @@ Speedups were obtained by using Sea when Lustre
 performance had been degraded by busy writers (Figure~\ref{fig:seaneuro:slashbin}),
 although performance was variable. On average, a single SPM pipeline
 process preprocessing a single HCP image produced the greatest speedup
-(13$\times$) \TG{I think this number should be 32x, according to the current notebook}. The AFNI pipeline preprocessing a single fMRI image of the PREVENT-AD dataset
+(12.6$\times$),  \TG{I think this number should be 32x, according to the current notebook}. The AFNI pipeline preprocessing a single fMRI image of the PREVENT-AD dataset
 using a single process was the next fastest pipeline, with an average speedup of
-(5$\times$). The FSL Feat pipeline had speedups as well, with a maximum average speedup of
-1.3$\times$ when preprocessing a single PREVENT-AD image. The SPM pipeline consistently had
-(5$\times$). The FSL Feat pipeline had speedups as well, with a maximum average speedup of
+(4.3$\times$). The FSL Feat pipeline had speedups as well, with a maximum average speedup of
 1.3$\times$ when preprocessing a single PREVENT-AD image. The SPM pipeline consistently had
 excellent speedups, which is likely due to a mix of prefetching the initial
 input files and the I/O patterns of the application. While it was expected that the
@@ -322,13 +320,12 @@ The FSL Feat pipeline, in contrast, appeared to be the most compute-bound of the
 The FSL Feat pipeline, in contrast, appeared to be the most compute-bound of the three
 applications. Not only did it spend an extensive amount of time computing, the
 amount of output data generated was least of the three. Due to the
-compute-intensive nature of the FSL Feat pipeline, it is expected that it resulted in the
-compute-intensive nature of the FSL Feat pipeline, it is expected that it resulted in the
+compute-intensive nature of the FSL Feat pipeline, it is expected to have resulted in the
 least significant speedups.
 
 The HCP dataset, on average, obtained the greatest speedups with
 Sea \TG{Mention value}. Out of the three datasets, HCP has the largest images (see
-Table~\ref{table:sea-neuro:data}). Larger individual images mean that they
+Table~\ref{table:sea-neuro:data}). Larger individual images
 occupy more page cache space and take longer to flush to Lustre. Unsurprisingly,
 the next dataset with the largest images (\SI{282}{\mebi\byte} compressed for a
 single image) results in the next largest speedups, followed by PREVENT-AD, the
@@ -349,8 +346,7 @@ Sea becomes more limited.
 \subsection{Speedup correlated with Lustre degradation}
 
 Baseline performance without busy writers was comparable to that of Sea's as can be seen in Figure~\ref{fig:seaneuro:slashbin} \TG{(p=x, two-sample T-test)}. However, with
-busy writers, the makespan obtained with Sea was smaller than baseline \TG{(p=x, two-sample T-test)}. We observe that the more Baseline deviates from this identity line, the
-greater the speedup \TG{I would remove this sentence, it's obvious}. We did occasionally observe slowdowns from using Sea. These slowdowns
+busy writers, the makespan obtained with Sea was smaller than baseline \TG{(p=x, two-sample T-test)}. We did occasionally observe slowdowns from using Sea. These slowdowns
 may arise from the initial read of the data, as they appeared to occur less
 frequently with the SPM pipeline, or due to increased CPU contention caused by Sea's rapid I/O.
 
