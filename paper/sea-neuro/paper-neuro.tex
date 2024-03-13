@@ -311,8 +311,9 @@ amount of output data generated was least of the three. Due to the
 compute-intensive nature of the FSL Feat pipeline, it is expected that it resulted in the
 least significant speedups.
 
-The HCP dataset, on average, obtained the greatest speedups with
-Sea \TG{Mention value}. Out of the three datasets, HCP has the largest images (see
+The HCP dataset obtained the greatest speedups with
+Sea, with $2.3\times$ on average vs $1.3\times$ for PREVENT-AD and $1.9\times$ for ds001545.
+Out of the three datasets, HCP has the largest images (see
 Table~\ref{table:sea-neuro:data}). Larger individual images mean that they
 occupy more page cache space and take longer to flush to Lustre. Unsurprisingly,
 the next dataset with the largest images (\SI{282}{\mebi\byte} compressed for a
@@ -350,7 +351,7 @@ frequently with the SPM pipeline, or due to increased CPU contention caused by S
 To determine the overhead of Sea, we compared the average performance of Sea with
 the performance of pipeline executing entirely within memory
 (Figure~\ref{fig:seaneuro:tmpfs}). The results demonstrated that Sea and tmpfs
-did not lead to significant differences in average makespan (\TG{p=x, two-sampled T-test}). Given these results, we conclude that the
+did not lead to significant differences in average makespan (p=0.9, two-sampled unpaired T-test). Given these results, we conclude that the
 overhead of Sea is minimal and that the differences in makespan may be
 due to Sea's initial reading of the data from Lustre.
 
