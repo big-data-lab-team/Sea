@@ -36,8 +36,7 @@
   performance of Sea on three preprocessing pipelines implemented using standard toolboxes (FSL,
   SPM and AFNI), using three neuroimaging datasets of different sizes
   (OpenNeuro's ds001545, PREVENT-AD and the HCP dataset) on two high-performance
-  computing clusters. Our results demonstrate that given the features of the
-  applications and datasets, Sea provides large speedups (up to 32$\times$) when
+  computing clusters. Our results demonstrate that Sea provides large speedups (up to 32$\times$) when
   the shared file system's (e.g. Lustre) performance is deteriorated. When the
   shared file system is not overburdened by other users, performance is
   unaffected by Sea, suggesting that Sea's overhead is minimal even in cases
@@ -61,16 +60,12 @@
     management challenges, from storage infrastructure to application processing times.
     Many tools have been developed by the community to address various needs in 
     neuroimaging data management.
-    %To meet the storage, accessibility and security demands of neuroimaging data,
-    %large datasets have been stored in object stores provided by cloud storage providers
-    %\TG{mentioning clouds so early in the paper may give the impression that the paper will 
-    % focus on them.}.
     For instance, standardized metadata formats, such as the Brain Imaging Data Standards (BIDS)\cite{gorgolewski2016brain},
     have been implemented to facilitate the sharing
     of the datasets, and data management tools such as DataLad~\cite{halchenko2021datalad} have been developed to provide 
     versioning and provenance capture of data.
     Furthermore, recent developments in neuroimaging pipelines have addressed computation time 
-    limitations by adopting machine-learning approaches~\cite{henschel2020fastsurfer,hoffmann2021synthmorph}.
+    limitations by adopting machine-learning approaches that are an order of magnitude faster than traditional image processing solutions~\cite{henschel2020fastsurfer,hoffmann2021synthmorph}.
     While all these solutions to Big Data-related data management exist, certain aspects, 
     such as processing-related data-transfer overheads
     have received limited attention.
@@ -85,7 +80,7 @@
     need to transfer large amounts of data to these remote storage locations, significant data
     processing overheads may occur.
 
-    Big Data in neuroimaging max exist in two formats: 1) very large files
+    Big Data in neuroimaging may exist in two formats: 1) very large files
     (e.g., BigBrain~\cite{amunts2013bigbrain}) and 2) small files pertaining to a
     population of individuals, such as those found in MRI datasets, that
     collectively amount to very large datasets. Differences in the number and
@@ -110,7 +105,6 @@
     Newer neuroimaging applications leveraging popular neuroimaging pipeline engines
     also do not benefit from processing-related data management.
     Although engines such as Nipype~\cite{nipype}
-    % and Joblib~\cite{joblib} \TG{joblib is multithreading, dask or ray. I wouldn't call it an engine. You should use another example.}
     do not prohibit the use of data-management
     strategies, they do not facilitate the integration of these strategies into
     their resulting workflow. To give
@@ -196,9 +190,9 @@
 \end{figure*}
     Sea (Figure~\ref{fig:seaneuro:diagram}) is a data-management library that leverages
     the \texttt{LD\_PRELOAD}
-    trick to intercept POSIX file system calls (more specifically, file access calls to the GNU C library,
-    glibc) on Linux systems. This enables Sea to redirect write calls
-    aimed at slower storage devices to a faster devices whenever possible.
+    trick to intercept POSIX file system calls, or more specifically, file access calls to the GNU C library,
+    glibc, on Linux systems. This enables Sea to redirect write calls
+    aimed at slower storage devices to a faster device whenever possible.
     Similarly, when intercepting read calls, Sea can choose to read from a
     faster device if a copy is available on that device. Sea decides which
     storage location it can write to based on the details provided in an
@@ -276,18 +270,22 @@ denotes the total time between execution launch and completion of the last compu
 \subsection{Speedups observed in controlled environment}
 
 We benchmarked Sea by processing 3 functional MRI datasets of increasing sizes
-(ds001545: 27~GB, PREVENT-AD: 283~GB, Human Connectome Project: 79~TB) with 3 pipelines 
+(ds001545: 27~GB, PREVENT-AD: 283~GB, Human Connectome Project: 79~TB, see
+Table~\ref{table:sea-neuro:data}) with 3 pipelines 
 from the most commonly-used neuroimaging toolboxes (AFNI, SPM, FSL), using a controlled HPC cluster 
 dedicated to our experiments. We deployed ``busy writers'' in the cluster
 that simulated the load from other user applications by writing to the shared file system at a controlled rate.
 
 Speedups were obtained by using Sea when Lustre
 performance had been degraded by busy writers (Figure~\ref{fig:seaneuro:slashbin}),
-although performance was variable. On average, a single SPM pipeline
+although performance was variable. The largest speedup across all conditions
+was found to be 32$\times$ and occurred when SPM was processing a single
+HCP image with 6 active busy writers.
+On average, however, a single SPM pipeline
 process preprocessing a single HCP image produced the greatest speedup
-(13$\times$). The AFNI pipeline preprocessing a single fMRI image of the PREVENT-AD dataset
+(12.6$\times$). The AFNI pipeline preprocessing a single fMRI image of the PREVENT-AD dataset
 using a single process was the next fastest pipeline, with an average speedup of
-(5$\times$). The FSL Feat pipeline had speedups as well, with a maximum average speedup of
+(4.3$\times$). The FSL Feat pipeline had speedups as well, with a maximum average speedup of
 1.3$\times$ when preprocessing a single PREVENT-AD image. The SPM pipeline consistently had
 excellent speedups, which is likely due to a mix of prefetching the initial
 input files and the I/O patterns of the application. While it was expected that the
@@ -304,11 +302,12 @@ obtained an average of 2$\times$ speedup across all experimental conditions.
 The FSL Feat pipeline, in contrast, appeared to be the most compute-bound of the three
 applications. Not only did it spend an extensive amount of time computing, the
 amount of output data generated was least of the three. Due to the
-compute-intensive nature of the FSL Feat pipeline, it is expected that it resulted in the
+compute-intensive nature of the FSL Feat pipeline, it is expected to have resulted in the
 least significant speedups.
 
-The HCP dataset, on average, obtained the greatest speedups with
-Sea. Out of the three datasets, HCP has the largest images (see
+The HCP dataset obtained the greatest speedups with
+Sea, with $2.3\times$ on average vs. $1.9\times$ for ds001545  and $1.3\times$ for PREVENT-AD.
+Out of the three datasets, HCP has the largest images (see
 Table~\ref{table:sea-neuro:data}). Larger individual images mean that they
 occupy more page cache space and take longer to flush to Lustre. Unsurprisingly,
 the next dataset with the largest images (\SI{282}{\mebi\byte} compressed for a
@@ -319,17 +318,14 @@ For both the pipelines and the datasets, we noticed that obtained speedups
 decreased with increased parallelism. We did not modify the default parallelism
 level of the applications in our experiments. As a result, each application
 process was likely attempting to utilize all cores, resulting in longer wait times
-with the increase in parallelism. With this unintentional additional wait time that
-is added to the applications due to compute contention, the benefits of using
+with the increase in parallelism. With the added compute contention overhead, the benefits of using
 Sea becomes more limited.
 
 
 \subsection{Speedup correlated with Lustre degradation}
 
-Baseline performance without busy writers was comparable to that of Sea's as can be seen in Figure~\ref{fig:seaneuro:slashbin}. However, with
-busy writers, Baseline performance deviated dramatically from the identity
-line. We observe that the more Baseline deviates from this identity line, the
-greater the speedup. We did occasionally observe slowdowns from using Sea. These slowdowns
+Baseline performance without busy writers was comparable to that of Sea's (p=0.7, two-sample unpaired t-test) as can be seen in Figure~\ref{fig:seaneuro:slashbin}. However, with
+busy writers, the makespan obtained with Sea was smaller than baseline (p<1e-04, two-sample t-test). Occassional slowdowns did occur with the use of Sea. These slowdowns
 may arise from the initial read of the data, as they appeared to occur less
 frequently with the SPM pipeline, or due to increased CPU contention caused by Sea's rapid I/O.
 
@@ -348,7 +344,7 @@ frequently with the SPM pipeline, or due to increased CPU contention caused by S
 To determine the overhead of Sea, we compared the average performance of Sea with
 the performance of pipeline executing entirely within memory
 (Figure~\ref{fig:seaneuro:tmpfs}). The results demonstrated that Sea and tmpfs
-behave mostly identically. Given these results, we conclude that the
+did not lead to significant differences in average makespan (p=0.9, two-sampled unpaired t-test). Given these results, we conclude that the
 overhead of Sea is minimal and that the differences in makespan may be
 due to Sea's initial reading of the data from Lustre.
 
@@ -414,13 +410,12 @@ due to Sea's initial reading of the data from Lustre.
     \section{Discussion}
     \subsection{Significance of speedups with Sea}
 
-    Our results show that the speedups obtained from using Sea can be 
-    substantial (up to 32$\times$ \TG{this value should be mentioned in the results}) depending on the degradation of the Lustre
+    Our results show that the speedups obtained from using Sea when pre-processing functional MRI data can be 
+    substantial (up to 32$\times$) depending on the degradation of the Lustre
     file system. The highest speed-ups observed on a production cluster were
     found to be 11$\times$.
 
-    While on the production cluster, Sea and Baseline generally performed similarly,
-    it is impossible for cluster users to know if Lustre's
+    It is unrealistic for cluster users to know whether Lustre's
     performance will be deteriorated during the lifetime of their application
     execution, nor to predict how such a deterioration would impact the
     application. The fact that Sea and Baseline perform similarly in the average
@@ -433,8 +428,7 @@ due to Sea's initial reading of the data from Lustre.
     of the degradation was less than that of possible speedups
     obtained. Our controlled experiments demonstrated that using Sea with a
     degraded Lustre file system can result in average speedups of up to
-    2.5$\times$. Such results indicate that the risk of a slowdown with Sea are
-    less important that the potential speedups that can arise.
+    2.5$\times$, which is likely to benefit scientific application deployments in production.
 
     \subsection{Limitations of using Sea}
     
@@ -453,7 +447,6 @@ due to Sea's initial reading of the data from Lustre.
     through increased parallelism which is limited by the number of available
     cores. As a result, we could only demonstrate the speedups brought by Sea when
     Lustre performance had been degraded.
-
 
     Sea cannot speedup applications that are very compute-intensive, as is the case with the FSL Feat pipeline.
     In such cases, the performance bottleneck is the
@@ -482,7 +475,7 @@ due to Sea's initial reading of the data from Lustre.
     larger than what has been reported on our dedicated cluster with only 8 compute
     nodes and 44 disks associated to Lustre. However, these are not the only
     factors that can affect reported results, others can include when the
-    experiment were executed, what kind of applications were being executed
+    experiment was executed, what kind of applications were being executed
     alongside the experiment, scratch file system usage during experiments, and
     what were the application read and write patterns.
 
@@ -750,6 +743,7 @@ due to Sea's initial reading of the data from Lustre.
     \label{table:seaneuro-pipelines}
   \end{table*}
 
+
     \subsection{Controls}
     Our objective was to measure the speedup brought by Sea on real neuroimaging
     pipelines. Although Sea is agnostic to the internals of the pipelines and
@@ -782,9 +776,9 @@ due to Sea's initial reading of the data from Lustre.
     HDD object storage targets (OSTs) and 1 metadata server (MDS) with a single
     metadata target (MDT). The storage nodes were connected to the compute nodes
     via a 20Gbps ethernet connection. The cluster's hardware was similar to that
-    of Compute Canada's Beluga cluster.
+    of the Beluga cluster at the Digital Alliance of Canada.
     
-    Compute Canada's Beluga cluster was used as the production cluster.
+    The Beluga cluster was used as the production cluster.
     It consisted of a total of 977 compute nodes, of which we
     used up to 16 general compute nodes at a time with \SI{186}{\gibi\byte} of
     available memory, \SI{480}{\gibi\byte} of local scratch SSD space, 2 Intel
@@ -835,7 +829,7 @@ due to Sea's initial reading of the data from Lustre.
     filesize, as long as the compute time and non-Lustre I/O-related overheads
     were also minimal.
 
-     Sea's benefits are not only limited to performance as
+    Sea's benefits are not only limited to performance as
     users can also benefit from limiting the number of files created on Lustre
     with Sea. Archiving of the output directory on Lustre with Sea to further
     reduce number of files may be an interesting addition to Sea.
