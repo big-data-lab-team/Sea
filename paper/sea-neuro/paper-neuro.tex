@@ -318,15 +318,14 @@ For both the pipelines and the datasets, we noticed that obtained speedups
 decreased with increased parallelism. We did not modify the default parallelism
 level of the applications in our experiments. As a result, each application
 process was likely attempting to utilize all cores, resulting in longer wait times
-with the increase in parallelism. With this unintentional additional wait time that
-is added to the applications due to compute contention, the benefits of using
+with the increase in parallelism. With the added compute contention overhead, the benefits of using
 Sea becomes more limited.
 
 
 \subsection{Speedup correlated with Lustre degradation}
 
 Baseline performance without busy writers was comparable to that of Sea's (p=0.7, two-sample unpaired t-test) as can be seen in Figure~\ref{fig:seaneuro:slashbin}. However, with
-busy writers, the makespan obtained with Sea was smaller than baseline (p<1e-04, two-sample t-test). We did occasionally observe slowdowns from using Sea. These slowdowns
+busy writers, the makespan obtained with Sea was smaller than baseline (p<1e-04, two-sample t-test). Occassional slowdowns did occur with the use of Sea. These slowdowns
 may arise from the initial read of the data, as they appeared to occur less
 frequently with the SPM pipeline, or due to increased CPU contention caused by Sea's rapid I/O.
 
@@ -416,8 +415,7 @@ due to Sea's initial reading of the data from Lustre.
     file system. The highest speed-ups observed on a production cluster were
     found to be 11$\times$.
 
-    While on the production cluster, Sea and Baseline generally performed similarly,
-    it is impossible for cluster users to know if Lustre's
+    It is unrealistic for cluster users to know whether Lustre's
     performance will be deteriorated during the lifetime of their application
     execution, nor to predict how such a deterioration would impact the
     application. The fact that Sea and Baseline perform similarly in the average
@@ -430,8 +428,7 @@ due to Sea's initial reading of the data from Lustre.
     of the degradation was less than that of possible speedups
     obtained. Our controlled experiments demonstrated that using Sea with a
     degraded Lustre file system can result in average speedups of up to
-    2.5$\times$. Such results indicate that the risk of a slowdown with Sea are
-    less important that the potential speedups that can arise.
+    2.5$\times$, which is likely to benefit scientific application deployments in production.
 
     \subsection{Limitations of using Sea}
     
@@ -478,7 +475,7 @@ due to Sea's initial reading of the data from Lustre.
     larger than what has been reported on our dedicated cluster with only 8 compute
     nodes and 44 disks associated to Lustre. However, these are not the only
     factors that can affect reported results, others can include when the
-    experiment were executed, what kind of applications were being executed
+    experiment was executed, what kind of applications were being executed
     alongside the experiment, scratch file system usage during experiments, and
     what were the application read and write patterns.
 
