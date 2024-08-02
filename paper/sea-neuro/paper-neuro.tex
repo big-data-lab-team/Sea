@@ -24,24 +24,39 @@
 
 \begin{abstract}
 
-	Neuroimaging open-data initiatives have led to increased availability of large
-  scientific datasets. While these datasets are shifting the processing
-  bottleneck from compute-intensive to data-intensive, current standardized
-  analysis tools have yet to adopt strategies that mitigate the costs
-  associated with large data transfers. A major challenge in adapting neuroimaging
-  applications for data-intensive processing is that they must be entirely
-  rewritten. To facilitate data management for standardized neuroimaging tools, we
-  developed Sea, a library that intercepts and redirects application read and
-  write calls to minimize data transfer time. In this paper, we investigate the
-  performance of Sea on three preprocessing pipelines implemented using standard toolboxes (FSL,
-  SPM and AFNI), using three neuroimaging datasets of different sizes
-  (OpenNeuro's ds001545, PREVENT-AD and the HCP dataset) on two high-performance
-  computing clusters. Our results demonstrate that Sea provides large speedups (up to 32$\times$) when
-  the shared file system's (e.g. Lustre) performance is deteriorated. When the
-  shared file system is not overburdened by other users, performance is
-  unaffected by Sea, suggesting that Sea's overhead is minimal even in cases
-  where its benefits are limited. Overall, Sea is beneficial, even when performance gain
-  is minimal, as it can be used to limit the number of files created on parallel file systems.
+  Neuroimaging open-data initiatives have led to increased availability of large
+  scientific datasets. While these datasets are shifting the processing bottleneck
+  from compute-intensive to data-intensive, current standardized analysis tools
+  have yet to adopt strategies that mitigate the costs associated with large data
+  transfers. A major challenge in adapting neuroimaging applications for data-intensive
+  processing is that they must be entirely rewritten. To facilitate data management for
+  standardized neuroimaging tools, we developed Sea, a library that intercepts and
+  redirects application read and write calls to minimize data transfer time. In this
+  paper, we investigate the performance of Sea on three preprocessing pipelines applied
+  to three different neuroimaging datasets on two high-performance computing clusters.
+  Our results demonstrate that Sea provides large speedups (up to 32$\times$) when the
+  shared file system’s performance is deteriorated. When the shared file system is not
+  overburdened by other users, performance is unaffected by Sea, suggesting that Sea’s
+  overhead is minimal even in cases where its benefits are limited.
+
+	% Neuroimaging open-data initiatives have led to increased availability of large
+  % scientific datasets. While these datasets are shifting the processing
+  % bottleneck from compute-intensive to data-intensive, current standardized
+  % analysis tools have yet to adopt strategies that mitigate the costs
+  % associated with large data transfers. A major challenge in adapting neuroimaging
+  % applications for data-intensive processing is that they must be entirely
+  % rewritten. To facilitate data management for standardized neuroimaging tools, we
+  % developed Sea, a library that intercepts and redirects application read and
+  % write calls to minimize data transfer time. In this paper, we investigate the
+  % performance of Sea on three preprocessing pipelines implemented using standard toolboxes (FSL,
+  % SPM and AFNI), using three neuroimaging datasets of different sizes
+  % (OpenNeuro's ds001545, PREVENT-AD and the HCP dataset) on two high-performance
+  % computing clusters. Our results demonstrate that Sea provides large speedups (up to 32$\times$) when
+  % the shared file system's (e.g. Lustre) performance is deteriorated. When the
+  % shared file system is not overburdened by other users, performance is
+  % unaffected by Sea, suggesting that Sea's overhead is minimal even in cases
+  % where its benefits are limited. Overall, Sea is beneficial, even when performance gain
+  % is minimal, as it can be used to limit the number of files created on parallel file systems.
 \end{abstract}
 \begin{document}
 
@@ -576,6 +591,26 @@ due to Sea's initial reading of the data from Lustre.
     that the number of files that make it to Lustre are the exact ones required,
     therefore not exceeding any predetermined quota a user might have on the
     shared file system. 
+
+    \subsection{Conclusion and Future work}
+
+    We developed a lightweight data-management library, Sea, to seamlessly
+    provide data management capabilities to existing neuroimaging workflows. We
+    have tested our library on three of the most commonly used fMRI
+    preprocessing libraries and found that Sea was able to intercept and
+    redirect all application I/O calls without issue. 
+
+    When benchmarking the performance of Sea compared to Baseline, it was found that Sea provided speedups
+    when Lustre performance was degraded. We were able to obtain up to a
+    32$\times$ in the controlled environment and 11$\times$ in a production
+    cluster. It was also found that speedups were greatest with a larger
+    filesize, as long as the compute time and non-Lustre I/O-related overheads
+    were also minimal.
+
+    Sea's benefits are not only limited to performance as
+    users can also benefit from limiting the number of files created on Lustre
+    with Sea. Archiving of the output directory on Lustre with Sea to further
+    reduce number of files may be an interesting addition to Sea.
     
     %user
     
@@ -814,25 +849,12 @@ due to Sea's initial reading of the data from Lustre.
     Each process consisted of a single application call processing a single fMRI image.
     
     %Busy writers
-    \section{Conclusion and Future work}
 
-    We developed a lightweight data-management library, Sea, to seamlessly
-    provide data management capabilities to existing neuroimaging workflows. We
-    have tested our library on three of the most commonly used fMRI
-    preprocessing libraries and found that Sea was able to intercept and
-    redirect all application I/O calls without issue. 
+    \section{Data Availability}
 
-    When benchmarking the performance of Sea compared to Baseline, it was found that Sea provided speedups
-    when Lustre performance was degraded. We were able to obtain up to a
-    32$\times$ in the controlled environment and 11$\times$ in a production
-    cluster. It was also found that speedups were greatest with a larger
-    filesize, as long as the compute time and non-Lustre I/O-related overheads
-    were also minimal.
-
-    Sea's benefits are not only limited to performance as
-    users can also benefit from limiting the number of files created on Lustre
-    with Sea. Archiving of the output directory on Lustre with Sea to further
-    reduce number of files may be an interesting addition to Sea.
+    The ds001545 dataset is openly available at \url{https://openneuro.org/datasets/ds001545/versions/1.1.1} in BIDS format.
+    The PREVENT-AD dataset is available at \url{https://openpreventad.loris.ca} under registered access.
+    The Human Connectome Project (HCP) dataset is available at \url{https://www.humanconnectome.org} under registered access.
 
     \section{Code Availability}
 
@@ -842,11 +864,18 @@ due to Sea's initial reading of the data from Lustre.
     Dockerfiles containing AFNI, SPM, and FSL with Sea pre-installed are available
     at~\url{https://github.com/ValHayot/Sea/tree/master/containers/applications}.
 
-    \section{Data Availability}
+    \section{Acknowledgements}
+    Val\'erie Hayot-Sasson was funded by the Canadian Open
+    Neuroscience Platform (CONP) Scholar Award. This work
+    was also supported by the Canada Foundation for Innova-
+    tion as well as the Canada Research Chairs program.
 
-    The ds001545 dataset is openly available at \url{https://openneuro.org/datasets/ds001545/versions/1.1.1} in BIDS format.
-    The PREVENT-AD dataset is available at \url{https://openpreventad.loris.ca} under registered access.
-    The Human Connectome Project (HCP) dataset is available at \url{https://www.humanconnectome.org} under registered access.
+    \section{Author Contributions}
+    VHS contributed to idea development, experimental and model design, implementation of experiments and
+    evaluation. TG contributed to idea development, experimental design and implementation.
+
+    \section{Competing Interests}
+    The authors declare no competing interests.
 
     \bibliography{biblio}
 
