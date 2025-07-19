@@ -1,4 +1,4 @@
-FROM fedora:33
+FROM fedora:43
 
 RUN useradd --no-log-init -r tmpu
 
