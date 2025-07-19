@@ -15,7 +15,7 @@ env:
   REGISTRY: ghcr.io
 jobs:
   run-tests:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu
     strategy:
       fail-fast: false
       matrix:
