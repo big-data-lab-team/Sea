@@ -1,54 +1,100 @@
-\documentclass[utf8]{FrontiersinHarvard}
-\usepackage{url,hyperref,lineno,microtype,subcaption}
-\usepackage[onehalfspacing]{setspace}
+\documentclass[pdflatex,sn-mathphys-num]{sn-jnl}
+
+\usepackage[nopatch=footnote]{microtype}
+\usepackage{url}
+\usepackage{lineno}
+% \usepackage[onehalfspacing]{setspace}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage{lineno}
 \usepackage[binary-units]{siunitx}
 \usepackage{multirow}
 \usepackage{graphicx}
-\usepackage{caption}
+% \usepackage{caption}
 \usepackage{subcaption}
 \usepackage{xspace}
-\usepackage{todonotes}
+% \usepackage{graphicx}
+% \usepackage{siunitx}
+
+\usepackage{amsmath,amssymb,amsfonts}%
+\usepackage{amsthm}%
+\usepackage{mathrsfs}%
+\usepackage[title]{appendix}%
+\usepackage{xcolor}%
+\usepackage{textcomp}%
+\usepackage{manyfoot}%
+\usepackage{booktabs}%
+\usepackage{algorithm}%
+\usepackage{algorithmicx}%
+\usepackage{algpseudocode}%
+\usepackage{listings}%
+
+% \usepackage{todonotes}
+% \usepackage{float}
+% \newcommand{\TG}[1]{\todo[color=green!60!black]{\textbf{\textsc{From Tristan:}} #1\xspace}}
+
+% \linenumbers
 
 
-\newcommand{\TG}[1]{\todo[color=green!60!black]{\textbf{\textsc{From Tristan:}} #1\xspace}}
 
-\linenumbers
+\theoremstyle{thmstyleone}%
+\newtheorem{theorem}{Theorem}%  meant for continuous numbers
+%%\newtheorem{theorem}{Theorem}[section]% meant for sectionwise numbers
+%% optional argument [theorem] produces theorem numbering sequence instead of independent numbers for Proposition
+\newtheorem{proposition}[theorem]{Proposition}% 
+%%\newtheorem{proposition}{Proposition}% to get separate numbers for theorem and proposition etc.
 
-%\title{Hierarchical storage management in user space for neuroimaging applications}
+\theoremstyle{thmstyletwo}%
+\newtheorem{example}{Example}%
+\newtheorem{remark}{Remark}%
 
-\def\keyFont{\fontsize{8}{11}\helveticabold }
-\def\firstAuthorLast{V. Hayot-Sasson {et~al.}} %use et al only if is more than 1 author
-\def\Authors{Val\'erie Hayot-Sasson\,$^{1,*}$ and Tristan Glatard\,$^{1}$}
-% Affiliations should be keyed to the author's name with superscript numbers and be listed as follows: Laboratory, Institute, Department, Organization, City, State abbreviation (USA, Canada, Australia), and Country (without detailed address information such as city zip codes or street names).
-% If one of the authors has a change of address, list the new address below the correspondence details using a superscript symbol and use the same symbol to indicate the author in the author list.
-\def\Address{$^{1}$Department of Computer Science and Software Engineering, Concordia University, Montreal, Qu\'ebec, Canada}
-% The Corresponding Author should be marked with an asterisk
-% Provide the exact contact address (this time including street name and city zip code) and email of the corresponding author
-\def\corrAuthor{Corresponding Author}
+\theoremstyle{thmstylethree}%
+\newtheorem{definition}{Definition}%
 
-\def\corrEmail{vhayot@uchicago.edu}
-% \author{Val\'erie Hayot-Sasson}
-% \author{Tristan Glatard}
-% \affil{}
+\raggedbottom
+
 
 \begin{document}
-    \onecolumn
-    \firstpage{1}
 
-  \title[Sea]{Hierarchical storage management in user space for neuroimaging applications} 
+\title[Hierarchical storage management in user space for neuroimaging applications]{Hierarchical storage management in user space for neuroimaging applications}
 
-  \author[\firstAuthorLast ]{\Authors} %This field will be automatically populated
-  \address{} %This field will be automatically populated
-  \correspondance{} 
-  \extraAuth{}
+%%% Use the \authfn to add symbols for additional footnotes, if any. 1 is reserved for correspondence emails; then continuing with 2 etc for contributions.
 
-  \maketitle
-  \begin{abstract}
 
-  Neuroimaging open-data initiatives have led to increased availability of large
+\author[1]{\fnm{Val\'erie} \sur{Hayot-Sasson}}%\email{valerie.hayot-sasson@concordia.ca}
+
+\author*[1]{\fnm{Tristan} \sur{Glatard}}\email{tristan.glatard@concordia.ca}
+
+
+
+\affil[1]{\orgdiv{Department of Computer Science and Software Engineering}, \orgname{Concordia University}, \orgaddress{\city{Montr\'eal}, \state{Qu\'ebec}, \country{Canada}}}
+
+% \author[1]{Val\'erie Hayot-Sasson}
+% \author[1,\authfn{1}]{Tristan Glatard}
+
+% \affil[1]{Department of Computer Science and Software Engineering, Concordia University, Montreal, Qu\'ebec, Canada}
+
+%%% Author Notes
+% \authnote{\authfn{1}tristan.glatard@concordia.ca}
+
+% %%% Paper category
+% \papercat{Paper}
+
+% %%% "Short" author for running page header
+% \runningauthor{Hayot-Sasson and Glatard}
+
+% \begin{frontmatter}
+    % \onecolumn
+    % \firstpage{1}
+
+  %\title[Sea]{Hierarchical storage management in user space for neuroimaging applications} 
+
+  % \author[\firstAuthorLast ]{\Authors} %This field will be automatically populated
+  % \address{} %This field will be automatically populated
+  % \correspondance{} 
+  % \extraAuth{}
+
+  \abstract{Neuroimaging open-data initiatives have led to increased availability of large
   scientific datasets. While these datasets are shifting the processing bottleneck
   from compute-intensive to data-intensive, current standardized analysis tools
   have yet to adopt strategies that mitigate the costs associated with large data
@@ -61,7 +107,7 @@
   Our results demonstrate that Sea provides large speedups (up to 32$\times$) when the
   shared file system’s performance is deteriorated. When the shared file system is not
   overburdened by other users, performance is unaffected by Sea, suggesting that Sea’s
-  overhead is minimal even in cases where its benefits are limited.
+  overhead is minimal even in cases where its benefits are limited.}
 
 	% Neuroimaging open-data initiatives have led to increased availability of large
   % scientific datasets. While these datasets are shifting the processing
@@ -81,7 +127,10 @@
   % unaffected by Sea, suggesting that Sea's overhead is minimal even in cases
   % where its benefits are limited. Overall, Sea is beneficial, even when performance gain
   % is minimal, as it can be used to limit the number of files created on parallel file systems.
-\end{abstract}
+\keywords{data management, neuroimaging, high-performance computing}
+
+\maketitle
+% \end{frontmatter}
 
 % \flushbottom
 % \maketitle
@@ -259,7 +308,8 @@
     understanding of when and where Sea can be useful.
     
     \begin{table*}[t]
-      \small\centering
+      %\small
+      \centering
     \resizebox{\textwidth}{!}{\begin{tabular}{|c c c c c|}
       \hline
       Dataset & Total Size (MB) & Total Number of images & Number of images per experiment & Total compressed size processed (MB) \\
@@ -339,22 +389,23 @@
     %%{provide subject #/session#} of the ds001545 dataset.
     
     \begin{table*}[t]
-      \small\centering
+      %\small
+      \centering
       \resizebox{\textwidth}{!}{\begin{tabular}{|c c c c c c|}
       \hline
       Tool & Dataset &  Output Size (MB) & Total glibc calls & Glibc Lustre calls
       & Compute time (s)* \\
       \hline
-      \multirow{3}{1em}{AFNI} & PREVENT-AD & 540 & 272,342 & 4,118 & 103.25 \\
+      \multirow{3}{*}{AFNI} & PREVENT-AD & 540 & 272,342 & 4,118 & 103.25 \\
       & ds001545 & 3,063 & 281,660 & 4,340 & 280.30 \\
       & HCP & 18,720 & 305,555 & 5,137 & 816.16 \\
       \hline
-      \multirow{3}{1em}{FSL Feat} & PREVENT-AD & 254 & 191,148 & 28,099 &
+      \multirow{3}{*}{FSL Feat} & PREVENT-AD & 254 & 191,148 & 28,099 &
       1,338.29 \\
       & ds001545 & 551 & 192,404 & 28,371 & 2,145.96 \\
       & HCP & 1,608 & 192,445 & 28,997 & 6,596.46 \\
       \hline
-      \multirow{3}{1em}{SPM} & PREVENT-AD & 331.0 & 42,329 & 18,257 &  483.67 \\
+      \multirow{3}{*}{SPM} & PREVENT-AD & 331.0 & 42,329 & 18,257 &  483.67 \\
       & ds001545 & 744 & 54,481 & 27,770 & 446.53 \\
       & HCP & 2,083 & 62,234 & 33,477 & 715.43 \\
     
@@ -439,10 +490,10 @@
 
     \subsection{Sea}
     
-\begin{figure*}
+\begin{figure*}[t]
 
     \centering
-    \includegraphics[width=\columnwidth]{figures/sea-diagram.pdf}%
+    \includegraphics[width=\linewidth]{figures/sea-diagram.pdf}%
     \captionsetup{justification=centering}
     \captionof{figure}{The Sea data-management library overview}
     \label{fig:seaneuro:diagram}
@@ -510,50 +561,51 @@
 % in production cluster \end{enumerate}
 % }
 
-%\setcounter{figure}{2}
-%\setcounter{subfigure}{0}
-\begin{subfigure}
-%\setcounter{figure}{2}
-%\setcounter{subfigure}{0}
-    \centering
-    \begin{minipage}[b]{0.5\textwidth}
-      \centering
-        \includegraphics[width=\linewidth]{figures/slashbin_nozoom.pdf}
-        \captionsetup{justification=centering}
-        \captionof{subfigure}{Complete results}\label{fig:seaneuro:slashbinfull}
-    \end{minipage}%
-    \begin{minipage}[b]{0.5\textwidth}
-      \centering
-        \includegraphics[width=\linewidth]{figures/slashbin_withzoom.pdf}
-        \captionsetup{justification=centering}
-        \captionof{subfigure}{Zoomed between 0 and 5000 seconds}\label{fig:seaneuro:slashbinzoom}
-    \end{minipage}
-
-%\setcounter{figure}{2}
-\setcounter{subfigure}{-1}
-    \caption{Makespan comparison between Sea and Baseline on controlled dedicated cluster. Makespan
-    denotes the total time between execution launch and completion of the last computing task.}
-    \label{fig:seaneuro:slashbin}
-\end{subfigure}
-
-% \begin{figure*}
-
-% % \begin{subfigure}{0.5\textwidth}
+% %\setcounter{figure}{2}
+% %\setcounter{subfigure}{0}
+% \begin{subfigure}
+% %\setcounter{figure}{2}
+% %\setcounter{subfigure}{0}
 %     \centering
-%     \captionsetup{width=.85\linewidth}
-%     \includegraphics[width=\columnwidth]{figures/slashbin_nozoom.pdf}%
-%     \caption{Complete results}\label{fig:seaneuro:slashbinfull}
-% % \end{subfigure}
-% % \begin{subfigure}{0.5\textwidth}
-% %     \centering
-% %     \captionsetup{width=.85\linewidth}
-% %     \includegraphics[width=\linewidth]{figures/slashbin_withzoom.pdf}
-% %     \caption{Zoomed between 0 and 5000 seconds}\label{fig:seaneuro:slashbinzoom}
-% % \end{subfigure}
-% \caption{Makespan comparison between Sea and Baseline on controlled dedicated cluster. Makespan
-% denotes the total time between execution launch and completion of the last computing task.}
-% %\label{fig:seaneuro:slashbin}
-% \end{figure*}
+%     \begin{minipage}[b]{0.5\textwidth}
+%       \centering
+%         \includegraphics[width=\linewidth]{figures/slashbin_nozoom.pdf}
+%         \captionsetup{justification=centering}
+%         \captionof{subfigure}{Complete results}\label{fig:seaneuro:slashbinfull}
+%     \end{minipage}%
+%     \begin{minipage}[b]{0.5\textwidth}
+%       \centering
+%         \includegraphics[width=\linewidth]{figures/slashbin_withzoom.pdf}
+%         \captionsetup{justification=centering}
+%         \captionof{subfigure}{Zoomed between 0 and 5000 seconds}\label{fig:seaneuro:slashbinzoom}
+%     \end{minipage}
+
+% %\setcounter{figure}{2}
+% \setcounter{subfigure}{-1}
+%     \caption{Makespan comparison between Sea and Baseline on controlled dedicated cluster. Makespan
+%     denotes the total time between execution launch and completion of the last computing task.}
+%     \label{fig:seaneuro:slashbin}
+% \end{subfigure}
+
+\begin{figure*}[ht]
+\centering
+
+\begin{subfigure}{0.8\textwidth}
+    \centering
+    \captionsetup{width=\textwidth}
+    \includegraphics[width=\textwidth]{figures/slashbin_nozoom.pdf}%
+    \caption{Complete results}\label{fig:seaneuro:slashbinfull}
+\end{subfigure}
+\begin{subfigure}{0.8\textwidth}
+    \centering
+    \captionsetup{width=\textwidth}
+    \includegraphics[width=\textwidth]{figures/slashbin_withzoom.pdf}
+    \caption{Zoomed between 0 and 5000 seconds}\label{fig:seaneuro:slashbinzoom}
+\end{subfigure}
+\caption{Makespan comparison between Sea and Baseline on controlled dedicated cluster. Makespan
+denotes the total time between execution launch and completion of the last computing task.}
+\label{fig:seaneuro:slashbin}
+\end{figure*}
 
 \subsection{Speedups observed in controlled environment}
 
@@ -622,9 +674,9 @@ frequently with the SPM pipeline, or due to increased CPU contention caused by S
 \subsection{Overhead of Sea was minimal}
 
 
-\begin{figure*}
+\begin{figure*}[t]
 \centering
-\includegraphics[width=0.5\linewidth]{figures/beluga_sea_tmpfs.pdf}%
+\includegraphics[width=0.8\textwidth]{figures/beluga_sea_tmpfs.pdf}%
 \caption{Makespan comparison between Sea and tmpfs on the production cluster with flushing disabled}
 \label{fig:seaneuro:tmpfs}
 \end{figure*}
@@ -639,86 +691,88 @@ due to Sea's initial reading of the data from Lustre.
 
 \subsection{Speedups observed in production environments}
 
-\begin{subfigure}
-  %\setcounter{figure}{2}
-  %\setcounter{subfigure}{0}
-      \centering
-      \begin{minipage}[b]{0.5\textwidth}
-        \centering
-          \includegraphics[width=\linewidth]{figures/beluga_withoutflush_nozoom.pdf}
-          \captionsetup{justification=centering}
-          \captionof{subfigure}{Complete results}\label{fig:seaneuro:belugafull}
-      \end{minipage}%
-      \begin{minipage}[b]{0.5\textwidth}
-        \centering
-          \includegraphics[width=\linewidth]{figures/beluga_withoutflush_zoom.pdf}
-          \captionsetup{justification=centering}
-          \captionof{subfigure}{Zoomed between 0 and 2000 seconds}\label{fig:seaneuro:belugazoom}
-      \end{minipage}
+% \begin{subfigure}
+%   %\setcounter{figure}{2}
+%   %\setcounter{subfigure}{0}
+%       \centering
+%       \begin{minipage}[b]{0.5\textwidth}
+%         \centering
+%           \includegraphics[width=\linewidth]{figures/beluga_withoutflush_nozoom.pdf}
+%           \captionsetup{justification=centering}
+%           \captionof{subfigure}{Complete results}\label{fig:seaneuro:belugafull}
+%       \end{minipage}%
+%       \begin{minipage}[b]{0.5\textwidth}
+%         \centering
+%           \includegraphics[width=\linewidth]{figures/beluga_withoutflush_zoom.pdf}
+%           \captionsetup{justification=centering}
+%           \captionof{subfigure}{Zoomed between 0 and 2000 seconds}\label{fig:seaneuro:belugazoom}
+%       \end{minipage}
   
-  %\setcounter{figure}{2}
-  \setcounter{subfigure}{-1}
-      \caption{Makespan comparison between Sea and Baseline on the production cluster with flushing disabled}
-      \label{fig:seaneuro:beluga-noflush}
-  \end{subfigure}
+%   %\setcounter{figure}{2}
+%   \setcounter{subfigure}{-1}
+%       \caption{Makespan comparison between Sea and Baseline on the production cluster with flushing disabled}
+%       \label{fig:seaneuro:beluga-noflush}
+%   \end{subfigure}
 
-% \begin{figure*}
+\begin{figure*}[h!]
+  \centering
 
-% % \begin{subfigure}{0.5\textwidth}
-%     \centering
-%     \captionsetup{width=.85\linewidth}
-%     \includegraphics[width=\columnwidth]{figures/beluga_withoutflush_nozoom.pdf}%
-%     \caption{Complete results}\label{fig:seaneuro:belugafull}
-% % \end{subfigure}
-% % \begin{subfigure}{0.5\textwidth}
-% %     \centering
-% %     \captionsetup{width=.85\linewidth}
-% %     \includegraphics[width=\linewidth]{figures/beluga_withoutflush_zoom.pdf}
-% %     \caption{Zoomed between 0 and 2000 seconds}\label{fig:seaneuro:belugazoom}
-% % \end{subfigure}
-% \caption{Makespan comparison between Sea and Baseline on the production cluster with flushing disabled}
-% \label{fig:seaneuro:beluga-noflush}
-% \end{figure*}
+\begin{subfigure}{0.8\textwidth}
+    \centering
+    \captionsetup{width=\linewidth}
+    \includegraphics[width=\textwidth]{figures/beluga_withoutflush_nozoom.pdf}%
+    \caption{Complete results}\label{fig:seaneuro:belugafull}
+\end{subfigure}
+\begin{subfigure}{0.8\textwidth}
+    \centering
+    \captionsetup{width=\linewidth}
+    \includegraphics[width=\textwidth]{figures/beluga_withoutflush_zoom.pdf}
+    \caption{Zoomed between 0 and 2000 seconds}\label{fig:seaneuro:belugazoom}
+\end{subfigure}
+\caption{Makespan comparison between Sea and Baseline on the production cluster with flushing disabled}
+\label{fig:seaneuro:beluga-noflush}
+\end{figure*}
 
-\begin{subfigure}
-  %\setcounter{figure}{2}
-  %\setcounter{subfigure}{0}
-      \centering
-      \begin{minipage}[b]{0.5\textwidth}
-        \centering
-          \includegraphics[width=\linewidth]{figures/beluga_withflush_nozoom.pdf}
-          \captionsetup{justification=centering}
-          \captionof{subfigure}{Complete results}\label{fig:seaneuro:belugafullwf}
-      \end{minipage}%
-      \begin{minipage}[b]{0.5\textwidth}
-        \centering
-          \includegraphics[width=\linewidth]{figures/beluga_withflush_zoom.pdf}
-          \captionsetup{justification=centering}
-          \captionof{subfigure}{Zoomed between 0 and 2000 seconds}\label{fig:seaneuro:belugazoomwf}
-      \end{minipage}
+% \begin{subfigure}
+%   %\setcounter{figure}{2}
+%   %\setcounter{subfigure}{0}
+%       \centering
+%       \begin{minipage}[b]{0.5\textwidth}
+%         \centering
+%           \includegraphics[width=\linewidth]{figures/beluga_withflush_nozoom.pdf}
+%           \captionsetup{justification=centering}
+%           \captionof{subfigure}{Complete results}\label{fig:seaneuro:belugafullwf}
+%       \end{minipage}%
+%       \begin{minipage}[b]{0.5\textwidth}
+%         \centering
+%           \includegraphics[width=\linewidth]{figures/beluga_withflush_zoom.pdf}
+%           \captionsetup{justification=centering}
+%           \captionof{subfigure}{Zoomed between 0 and 2000 seconds}\label{fig:seaneuro:belugazoomwf}
+%       \end{minipage}
   
-  %\setcounter{figure}{2}
-  \setcounter{subfigure}{-1}
-      \caption{Makespan comparison between Sea and Baseline on the production cluster with flushing enabled for all files}
-      \label{fig:seaneuro:beluga-wflush}
-  \end{subfigure}
+%   %\setcounter{figure}{2}
+%   \setcounter{subfigure}{-1}
+%       \caption{Makespan comparison between Sea and Baseline on the production cluster with flushing enabled for all files}
+%       \label{fig:seaneuro:beluga-wflush}
+%   \end{subfigure}
 
-% \begin{figure*}
-% %\begin{subfigure}{0.5\textwidth}
-%     \centering
-%     \captionsetup{width=.85\linewidth}
-%     \includegraphics[width=\columnwidth]{figures/beluga_withflush_nozoom.pdf}%
-%     \caption{Complete results}\label{fig:seaneuro:belugafullwf}
-% % \end{subfigure}
-% % \begin{subfigure}{0.5\textwidth}
-% %     \centering
-% %     \captionsetup{width=.85\linewidth}
-% %     \includegraphics[width=\linewidth]{figures/beluga_withflush_zoom.pdf}
-% %     \caption{Zoomed between 0 and 2000 seconds}\label{fig:seaneuro:belugazoomwf}
-% % \end{subfigure}
-% \caption{Makespan comparison between Sea and Baseline on the production cluster with flushing enabled for all files}
-% \label{fig:seaneuro:beluga-wflush}
-% \end{figure*}
+\begin{figure*}[ht]
+  \centering
+\begin{subfigure}{0.8\textwidth}
+    \centering
+    \captionsetup{width=\linewidth}
+    \includegraphics[width=\columnwidth]{figures/beluga_withflush_nozoom.pdf}%
+    \caption{Complete results}\label{fig:seaneuro:belugafullwf}
+\end{subfigure}
+\begin{subfigure}{0.8\textwidth}
+    \centering
+    \captionsetup{width=\textwidth}
+    \includegraphics[width=\textwidth]{figures/beluga_withflush_zoom.pdf}
+    \caption{Zoomed between 0 and 2000 seconds}\label{fig:seaneuro:belugazoomwf}
+\end{subfigure}
+\caption{Makespan comparison between Sea and Baseline on the production cluster with flushing enabled for all files}
+\label{fig:seaneuro:beluga-wflush}
+\end{figure*}
 
   We also benchmarked Sea on a production cluster of the Digital Alliance of Canada
   shared with other users,
@@ -949,13 +1003,13 @@ due to Sea's initial reading of the data from Lustre.
     
     %Busy writers
 
-    \section{Data Availability}
+    \section*{Data Availability}
 
     The ds001545 dataset is openly available at \url{https://openneuro.org/datasets/ds001545/versions/1.1.1} in BIDS format.
     The PREVENT-AD dataset is available at \url{https://openpreventad.loris.ca} under registered access.
     The Human Connectome Project (HCP) dataset is available at \url{https://www.humanconnectome.org} under registered access.
 
-    \section{Code Availability}
+    \section*{Code Availability}
 
     Scripts used to
     execute each pipeline can be found
@@ -963,20 +1017,19 @@ due to Sea's initial reading of the data from Lustre.
     Dockerfiles containing AFNI, SPM, and FSL with Sea pre-installed are available
     at~\url{https://github.com/ValHayot/Sea/tree/master/containers/applications}.
 
-    \section{Acknowledgements}
+    \section*{Declarations}
     Val\'erie Hayot-Sasson was funded by the Canadian Open
     Neuroscience Platform (CONP) Scholar Award. This work
-    was also supported by the Canada Foundation for Innova-
-    tion as well as the Canada Research Chairs program.
+    was also supported by the Canada Foundation for Innovation as well as the Canada Research Chairs program.
 
-    \section{Author Contributions}
+    \section*{Author Contributions}
     VHS contributed to idea development, experimental and model design, implementation of experiments and
     evaluation. TG contributed to idea development, experimental design and implementation.
 
-    \section{Competing Interests}
+    \section*{Competing Interests}
     The authors declare no competing interests.
 
-    \bibliographystyle{Frontiers-Harvard}
+    % \bibliographystyle{Frontiers-Harvard}
     \bibliography{biblio}
 
 \end{document}
