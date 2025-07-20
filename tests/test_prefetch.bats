@@ -28,6 +28,7 @@ setup () {
 	. bin/sea_prefetch.sh 0
 	get_sources
 	[[ ${sources_arr[@]} == ${SOURCE} ]]
+	echo ${sources_arr[@]}
 	[[ ${base_source} == ${SOURCE_1} ]]
 }
 

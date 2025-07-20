@@ -1,4 +1,4 @@
-gcc_opts=-Wall -fPIC -c -std=c++0x
+gcc_opts=-Wall -fPIC -c -std=c++14
 debug_opts=-g -ggdb
 
 all: build/sea.so build/mirror
@@ -19,6 +19,6 @@ build/sea.so: build/passthrough.o build/functions.o build/logger.o build/config.
 build/mirror: build/config.o build/logger.o build/passthrough.o
 	gcc ${debug_opts} src/mirrordirs.cpp build/config.o build/logger.o build/passthrough.o -o build/mirror -ldl -lpthread -lstdc++ -liniparser
 test/test_custom: tests/test_custom.cpp build/passthrough.o build/sea.o build/config.o build/logger.o
-	gcc ${debug_opts} -std=c++0x -Wall -fPIC tests/test_custom.cpp build/passthrough.o build/sea.o build/config.o build/logger.o -o tests/test_custom -lstdc++ -liniparser -ldl -lgtest -lpthread 
+	gcc ${debug_opts} -std=c++14 -Wall -fPIC tests/test_custom.cpp build/passthrough.o build/sea.o build/config.o build/logger.o -o tests/test_custom -lstdc++ -liniparser -ldl -lgtest -lpthread 
 clean:
 	\rm -f build/logger.o build/functions.o build/passthrough.o build/config.o build/sea.o build/sea.so build/mirror build/*.gcda build/*.gcov build/*.gcno tests/test_custom

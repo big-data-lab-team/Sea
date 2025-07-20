@@ -22,7 +22,7 @@ DOC
         cat > ${SEA_HOME}/sea.ini << DOC
         # Sea configuration
         [Sea]
-        mount_dir = MOUNT ;
+        mount_dir = ${MOUNT} ;
         n_levels = 2 ;
         cache_0 = SOURCE ;
         cache_1 = SOURCE_1 ;

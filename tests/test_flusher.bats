@@ -9,6 +9,9 @@ export SEA_LOG_FILE="${PWD}/sea.log"
 export SEA_HOME=${PWD}
 
 mkdir -p ${SOURCE_2}/bin ${SOURCE_2}/build
+mkdir -p ${SOURCE_1}
+mkdir -p ${SOURCE_3}
+mkdir -p ${SOURCE}
 
 gen_conf() {
 cat > ${SEA_HOME}/sea.ini << DOC
@@ -96,6 +99,9 @@ setup () {
 	get_sources
 	assign_rgx
 
+	mkdir -p ${SOURCE}/bin ${SOURCE_1}/bin ${SOURCE_2}/bin ${SOURCE_3}/bin
+	mkdir -p ${SOURCE}/subdir ${SOURCE_1}/subdir ${SOURCE_2}/subdir ${SOURCE_3}/subdir
+
 	f1="f1.txt"
 	f2="bin/f2.txt"
 	f3="subdir/f3.txt"
@@ -111,10 +117,15 @@ setup () {
 	. bin/sea_flusher.sh 0
 	get_sources
 
+	mkdir -p ${SOURCE}/bin ${SOURCE_1}/bin ${SOURCE_2}/bin ${SOURCE_3}/bin
+	mkdir -p ${SOURCE}/subdir ${SOURCE_1}/subdir ${SOURCE_2}/subdir ${SOURCE_3}/subdir
+
+	touch ${SOURCE_1}/subdir/f3.txt
+
 	f1=${SOURCE}/bin/"script.sh"
 	touch ${f1} 
 
-	echo ".*.txt" > ${SEA_HOME}/.sea_evictlist
+	echo "[a-zA-Z0-9_.-]*.txt" > ${SEA_HOME}/.sea_evictlist
 	echo "bin/.*" >> ${SEA_HOME}/.sea_evictlist
 
 	#touch ${SOURCE_2}/bin/somefile
@@ -122,6 +133,7 @@ setup () {
 	assign_rgx
 	flush 0 process
 
+	[[ ! -f ${SOURCE}/bin/f2.txt ]]
 	[[ ! -f ${SOURCE}/${f1} &&
            ! -f ${SOURCE}/bin/script.sh &&
 	   ! -f ${SOURCE}/bin/f2.txt && 

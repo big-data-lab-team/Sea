@@ -8,6 +8,7 @@ extern "C"
 #include <sstream>
 #include <algorithm>
 #include <ctime>
+#include <cstring>
 #include <cstdlib>
 #include "config.h"
 #include "logger.h"
@@ -84,7 +85,7 @@ void parse_config()
     }
     if ((sea_config.n_levels = iniparser_getint(config_dict, "sea:n_levels", 0)) == 0)
     {
-        printf("Missing n_caches in config file %s\n", config_file);
+        printf("Missing n_levels in config file %s\n", config_file);
         exit(1);
     }
     std::vector<std::string> all_sources;

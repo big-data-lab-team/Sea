@@ -961,7 +961,7 @@ extern "C"
         init_path("unlinkat", abspath, passpath, 0, 1);
 
         struct stat buffer;
-        if (((funcptr___xstat)libc___xstat)(_STAT_VER_LINUX, passpath, &buffer) == 0)
+        if (((funcptr_stat)libc_stat)(passpath, &buffer) == 0)
         {
 
             if (S_ISDIR(buffer.st_mode))

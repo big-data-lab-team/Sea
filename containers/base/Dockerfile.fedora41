@@ -2,9 +2,21 @@ FROM fedora:41
 
 RUN useradd --no-log-init -r tmpu
 
-RUN dnf update -y && dnf install -y make gcc gcc-c++ git findutils file file-devel python2 python3 which iniparser iniparser-devel gtest gtest-devel valgrind 
+RUN dnf update -y \
+    && dnf install -y make gcc gcc-c++ git findutils file \
+        file-devel python3 which iniparser iniparser-devel \
+        gtest gtest-devel valgrind wget
 RUN git clone https://github.com/bats-core/bats-core.git && cd bats-core && ./install.sh /usr/local
+
+# Install Python 2
+RUN wget https://www.python.org/ftp/python/2.7.18/Python-2.7.18.tgz \
+    && tar -xvf Python-2.7.18.tgz \
+    && cd Python-2.7.18 \
+    && ./configure --enable-optimizations \
+    && make \
+    && make install 
 
 RUN mkdir /libsea
 ADD . /libsea
+RUN cp /usr/include/iniparser/* /usr/include/ 
 RUN cd /libsea && make clean && make

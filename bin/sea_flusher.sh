@@ -184,8 +184,6 @@ flush () {
         fi
         flush_files+=$(echo ${all_files} | tr " " "\n" | grep -Eo "${rgx}" || true)
     done
-    #echo "re_flush $re_flush"
-    #echo "flush_files ${flush_files}"
 
     # if .sea_evictlist file contains regex
     for rgx in ${re_evict[@]+"${re_evict[@]}"}
@@ -195,10 +193,6 @@ flush () {
             evict_files+=" "
         fi
 
-        if [[ $(ls ${rgx} 2> /dev/null) == "" ]]
-        then
-            continue
-        fi
         evict_files+=$(echo ${all_files} | tr " " "\n" | grep -Eo "${rgx}" || true)
     done
 
@@ -260,6 +254,10 @@ flush () {
     flush_files=${tmp_flush}
     evict_files=${tmp_evict}
 
+    log "EVICT : ${evict_files}"
+    log "FLUSH : ${flush_files}"
+    log "FLEVICT: ${fe_files}"
+
     #echo "FLUSH ${flush_files}"
     #echo "EVICT ${evict_files}"
 
@@ -310,18 +308,18 @@ get_sources () {
     do
         source_lvl=$(cat ${conf_file} | grep "^\s*cache_$i" | cut -d "=" -f 2 | tr -d ' ;')
         IFS=',' read -ra curr_sources <<< "$source_lvl"
+        log "Fluser ${i}"
 
         resolved_sources=()
         for src in "${curr_sources[@]}"
         do
-            if [ ! -d ${src} ]
+            envvar=$(printenv | grep "^${src}=" | sed "s/^${src}=//g" || echo "")
+            if [[ ${envvar} != "" ]]
             then
-                envvar=$(printenv | grep "^${src}=" | sed "s/^${src}=//g" || echo "")
-                if [[ ${envvar} != "" ]]
-                then
-                    resolved_sources+=( ${envvar} )
-                fi
+                log "Flusher1 ${envvar}"
+                resolved_sources+=( ${envvar} )
             else
+                log "Flusher 2 ${src}"
                 resolved_sources+=( ${src} )
             fi
         done
@@ -333,13 +331,10 @@ get_sources () {
     done
 
     base_source=$(cat ${conf_file} | grep "^\s*cache_$i" | cut -d "=" -f 2 | tr -d ' ;')
-    if [ ! -d ${base_source} ]
+    envvar=$(printenv | grep "^${base_source}=" | sed "s/^${base_source}=//g" || echo "")
+    if [[ ${envvar} != "" ]]
     then
-        envvar=$(printenv | grep "^${base_source}=" | sed "s/^${base_source}=//g" || echo "")
-        if [[ ${envvar} != "" ]]
-        then
-            base_source=${envvar}
-        fi
+        base_source=${envvar}
     fi
 
 

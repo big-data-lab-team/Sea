@@ -115,13 +115,10 @@ get_sources () {
         resolved_sources=()
         for src in "${curr_sources[@]}"
         do
-            if [ ! -d ${src} ]
+            envvar=$(printenv | grep "^${src}=" | sed "s/^${src}=//g" || echo "")
+            if [[ ${envvar} != "" ]]
             then
-                envvar=$(printenv | grep "^${src}=" | sed "s/^${src}=//g" || echo "")
-                if [[ ${envvar} != "" ]]
-                then
-                    resolved_sources+=( ${envvar} )
-                fi
+                resolved_sources+=( ${envvar} )
             else
                 resolved_sources+=( ${src} )
             fi
@@ -133,13 +130,10 @@ get_sources () {
 
     base_source=$(cat ${conf_file} | grep "^\s*cache_$i" | cut -d "=" -f 2 | tr -d ' ;')
 
-    if [ ! -d ${base_source} ]
+    envvar=$(printenv | grep "^${base_source}=" | sed "s/^${base_source}=//g" || echo "")
+    if [[ ${envvar} != "" ]]
     then
-        envvar=$(printenv | grep "^${base_source}=" | sed "s/^${base_source}=//g" || echo "")
-        if [[ ${envvar} != "" ]]
-        then
-            base_source=${envvar}
-        fi
+        base_source=${envvar}
     fi
 
     log "Prefetch: Base dir ${base_source}"

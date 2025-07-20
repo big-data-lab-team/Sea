@@ -105,8 +105,8 @@ export SEA_LOG_FILE="${PWD}/sea.log"
         load setup
         rm -rf ${MOUNT}/subdir
         load unset
-        [ ! -d ${SOURCE}/dir ]
-        [ ! -d ${MOUNT}/dir ]
+        [ ! -d ${SOURCE}/subdir ]
+        [ ! -d ${MOUNT}/subdir ]
 
         if [[ $levels < 3 ]]
         then
