@@ -241,18 +241,21 @@ export SEA_LOG_FILE="${PWD}/sea.log"
 }
 
 @test "read python2" {
-    for levels in {1..3}
-    do
-        load setup
-        python2 tests/read.py ${MOUNT}/file_in_source.txt
-        python2 tests/read.py ${MOUNT}/subdir/file_in_subdir.txt
+    if [ ! command -v python2 >/dev/null 2>&1 ]
+    then
+        for levels in {1..3}
+        do
+            load setup
+            python2 tests/read.py ${MOUNT}/file_in_source.txt
+            python2 tests/read.py ${MOUNT}/subdir/file_in_subdir.txt
 
-        if [[ $levels < 3 ]]
-        then
-            python2 tests/read.py ${MOUNT}/file_in_mem.txt
-        fi
-        load unset
-    done
+            if [[ $levels < 3 ]]
+            then
+                python2 tests/read.py ${MOUNT}/file_in_mem.txt
+            fi
+            load unset
+        done
+    fi
 }
 
 @test "read python3" {
@@ -272,15 +275,18 @@ export SEA_LOG_FILE="${PWD}/sea.log"
 }
 
 @test "write python2" {
-    for levels in {1..3}
-    do
-        load setup
-        python2 tests/write.py ${MOUNT}/hello.txt
-        python2 tests/write.py ${MOUNT}/subdir/hello.txt
-        load unset
-        test -f ${SOURCE}/hello.txt
-        test -f ${SOURCE}/subdir/hello.txt
-    done
+    if [ ! command -v python2 >/dev/null 2>&1 ]
+    then
+        for levels in {1..3}
+        do
+            load setup
+            python2 tests/write.py ${MOUNT}/hello.txt
+            python2 tests/write.py ${MOUNT}/subdir/hello.txt
+            load unset
+            test -f ${SOURCE}/hello.txt
+            test -f ${SOURCE}/subdir/hello.txt
+        done
+    fi
 }
 
 @test "write python3" {
