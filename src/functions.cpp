@@ -961,7 +961,7 @@ extern "C"
         init_path("unlinkat", abspath, passpath, 0, 1);
 
         struct stat buffer;
-        if (((funcptr_stat)libc_stat)(passpath, &buffer) == 0)
+        if (((funcptr___xstat)libc___xstat)(_STAT_VER_LINUX, passpath, &buffer) == 0)
         {
 
             if (S_ISDIR(buffer.st_mode))
@@ -1068,6 +1068,13 @@ extern "C"
         return ((funcptr_stat)libc_stat)(passpath, statbuf);
     }
 
+    int stat64(const char *pathname, struct stat64 *statbuf)
+    {
+        char passpath[PATH_MAX];
+        init_path("stat64", pathname, passpath, 0);
+        return ((funcptr_stat64)libc_stat64)(passpath, statbuf);
+    }
+
     int statx(int dirfd, const char *pathname, int flags, unsigned int mask, struct statx *statxbuf)
     {
         initialize_passthrough_if_necessary();
@@ -1101,11 +1108,25 @@ extern "C"
         return ((funcptr_fstat)libc_fstat)(fd, statbuf);
     }
 
+    int fstat64(int fd, struct stat64 *statbuf)
+    {
+        initialize_passthrough_if_necessary();
+        log_msg(INFO, "fstat64 %d", fd);
+        return ((funcptr_fstat64)libc_fstat64)(fd, statbuf);
+    }
+
     int fstatat(int dirfd, char const *path, struct stat *statbuf, int flags)
     {
         char passpath[PATH_MAX];
         init_path("fstatat", path, passpath, 0, 1);
         return ((funcptr_fstatat)libc_fstatat)(dirfd, passpath, statbuf, flags);
+    }
+
+    int fstatat64(int dirfd, char const *path, struct stat64 *statbuf, int flags)
+    {
+        char passpath[PATH_MAX];
+        init_path("fstatat64", path, passpath, 0, 1);
+        return ((funcptr_fstatat64)libc_fstatat64)(dirfd, passpath, statbuf, flags);
     }
 
     int statvfs(const char *path, struct statvfs *buf)
@@ -1280,7 +1301,7 @@ extern "C"
     int fchmodat(int dirfd, const char *pathname, mode_t mode, int flags)
     {
         initialize_passthrough_if_necessary();
-        log_msg(DEBUG, "accessed fstatat");
+        
         char passpath[PATH_MAX];
         char abspath[PATH_MAX];
 
@@ -1487,6 +1508,14 @@ extern "C"
         init_path("readlink", filename, passpath, 0);
         log_msg(INFO, "READLINK  %s %lu", passpath, size);
         return ((funcptr_readlink)libc_readlink)(passpath, buffer, size);
+    }
+
+    int readlinkat(int dirfd, const char *pathname, char *buf, size_t bufsize)
+    {
+        char passpath[PATH_MAX];
+        init_path("readlinkat", pathname, passpath, 0);
+        log_msg(INFO, "READLINKAT  %s %lu", passpath, bufsize);
+        return ((funcptr_readlinkat)libc_readlink)(dirfd, passpath, buf, bufsize);
     }
 
     int nftw(const char *dirpath,
