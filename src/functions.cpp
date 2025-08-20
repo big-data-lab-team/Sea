@@ -130,7 +130,7 @@ void init_path(const char *function, const char *path, char passpath[PATH_MAX], 
     int match = 0;
     passpath[0] = '\0';
 
-    log_msg(INFO, "Entering %s with path: %s", function, path);
+    log_msg(INFO, "[%s]: Function started with path: %s", function, path);
 
     struct config sea_conf = get_sea_config();
     if (sea_conf.parsed == true)
@@ -145,7 +145,7 @@ void init_path(const char *function, const char *path, char passpath[PATH_MAX], 
         strcpy(passpath, path);
     }
 
-    log_msg(INFO, "Completing %s with updated path  %s", function, passpath);
+    log_msg(INFO, "[%s]: Function completed with updated path  %s", function, passpath);
 }
 
 /**

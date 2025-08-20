@@ -189,20 +189,20 @@ char *make_file_name_canonical(char const *file_path)
 {
   if (file_path == NULL)
   {
-    log_msg(INFO, "In make_file_name_canonical NULL");
+    log_msg(DEBUG, "In make_file_name_canonical NULL");
     return NULL;
   }
   else if (!strcmp(file_path, ""))
   {
-    log_msg(INFO, "In make_file_name_canonical ''");
+    log_msg(DEBUG, "In make_file_name_canonical ''");
     return strdup("");
   }
   else if (strstr(file_path, "\n"))
   {
-    log_msg(INFO, "In make_file_name_canonical '\\n'");
+    log_msg(DEBUG, "In make_file_name_canonical '\\n'");
     return strdup("\n");
   }
-  log_msg(INFO, "In make_file_name_canonical %s", file_path);
+  log_msg(DEBUG, "In make_file_name_canonical %s", file_path);
 
   char *canonical_file_path = (char *)malloc(sizeof(char) * PATH_MAX);
   unsigned int file_path_len = strlen(file_path);
@@ -293,7 +293,7 @@ char *make_file_name_canonical(char const *file_path)
   }
 
   if (canonical_file_path != NULL)
-    log_msg(INFO, "Canonical path %s", canonical_file_path);
+    log_msg(DEBUG, "Canonical path %s", canonical_file_path);
 
   return canonical_file_path;
 }
@@ -440,7 +440,6 @@ int pass_getpath(const char *oldpath, char passpath[PATH_MAX], int masked_path, 
   if (passpath == NULL)
     return 0;
 
-  //printf("sea_lvl=%d  :   old fn %s ---> new fn %s %s\n", sea_lvl, oldpath, passpath, path);
   log_msg(INFO, "sea_lvl=%d  :   old fn %s ---> new fn %s", sea_lvl, oldpath, passpath);
   return match_found;
 }
