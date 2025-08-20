@@ -496,7 +496,7 @@ void initialize_functions()
   libc_access = dlsym(libc, "access");
   libc_faccessat = dlsym(libc, "faccessat");
   libc_stat = dlsym(libc, "stat");
-  libc_stat = dlsym(libc, "stat64");
+  libc_stat64 = dlsym(libc, "stat64");
   libc_statx = dlsym(libc, "statx");
   libc_lstat = dlsym(libc, "lstat");
   libc_lstat64 = dlsym(libc, "lstat64");
