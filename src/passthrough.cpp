@@ -440,7 +440,7 @@ int pass_getpath(const char *oldpath, char passpath[PATH_MAX], int masked_path, 
   if (passpath == NULL)
     return 0;
 
-  log_msg(INFO, "sea_lvl=%d  :   old fn %s ---> new fn %s", sea_lvl, oldpath, passpath);
+  log_msg(DEBUG, "sea_lvl=%d  :   old fn %s ---> new fn %s", sea_lvl, oldpath, passpath);
   return match_found;
 }
 
