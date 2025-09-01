@@ -906,8 +906,23 @@ extern "C"
         return ((funcptr_renameat)libc_renameat)(olddirfd, oldpasspath, newdirfd, newpasspath);
     }
 
+    int renameatu(int oldfd, const char *src, int newfd, const char *dst)
+    {
+        char oldpasspath[PATH_MAX];
+        char newpasspath[PATH_MAX];
+
+        char oldabspath[PATH_MAX];
+        char newabspath[PATH_MAX];
+
+        get_dirpath(src, oldabspath, oldfd);
+        get_dirpath(dst, newabspath, newfd);
+        init_twopaths("renameat", oldabspath, newabspath, oldpasspath, newpasspath, 0);
+        return ((funcptr_renameatu)libc_renameatu)(oldfd, oldpasspath, newfd, newpasspath);
+    }
+
     int renameat2(int olddirfd, const char *oldpath, int newdirfd, const char *newpath, unsigned int flags)
     {
+        log_msg(INFO, "***in renameat2***");
         char oldpasspath[PATH_MAX];
         char newpasspath[PATH_MAX];
 

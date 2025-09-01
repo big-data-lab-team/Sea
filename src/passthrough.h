@@ -58,6 +58,7 @@ typedef int (*funcptr_chdir)(const char *);
 typedef int (*funcptr_dirfd)(DIR *dirp);
 typedef int (*funcptr_rename)(const char *, const char *);
 typedef int (*funcptr_renameat)(int, const char *, int, const char *);
+typedef int (*funcptr_renameatu)(int, const char *, int, const char *);
 typedef int (*funcptr_renameat2)(int, const char *, int, const char *, unsigned int);
 typedef int (*funcptr_remove)(const char *);
 typedef int (*funcptr_unlink)(const char *);
@@ -185,6 +186,7 @@ extern void *libc_lseek;
 
 extern void *libc_rename;
 extern void *libc_renameat;
+extern void *libc_renameatu;
 extern void *libc_renameat2;
 
 extern void *libc_link;

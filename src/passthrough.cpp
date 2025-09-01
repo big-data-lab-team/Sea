@@ -50,6 +50,7 @@ void *libc_dup2;
 void *libc_lseek;
 void *libc_rename;
 void *libc_renameat;
+void *libc_renameatu;
 void *libc_renameat2;
 void *libc_link;
 void *libc_linkat;
@@ -484,6 +485,7 @@ void initialize_functions()
   libc_dirfd = dlsym(libc, "dirfd");
   libc_rename = dlsym(libc, "rename");
   libc_renameat = dlsym(libc, "renameat");
+  libc_renameatu = dlsym(libc, "renameatu");
   libc_renameat2 = dlsym(libc, "renameat2");
   libc_remove = dlsym(libc, "remove");
   libc_unlink = dlsym(libc, "unlink");
