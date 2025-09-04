@@ -3,8 +3,10 @@
 *.so
 *.gcda
 *.gcno
+**/.DS_STORE
 **/*.swp
 **/*.sif
+**/*.tar.gz
 **/.*.*
 **/.ipynb_checkpoints
 **/__pycache__
