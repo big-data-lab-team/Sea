@@ -15,10 +15,10 @@ build/passthrough.o: src/passthrough.cpp src/passthrough.h
 build/sea.o: src/sea.cpp src/sea.h
 	gcc ${gcc_opts} ${debug_opts} src/sea.cpp -o build/sea.o
 build/sea.so: build/passthrough.o build/functions.o build/logger.o build/config.o build/sea.o
-	gcc ${debug_opts} -shared build/passthrough.o build/functions.o build/logger.o build/config.o build/sea.o -o build/sea.so -ldl -lpthread -lstdc++ -liniparser
+	gcc ${debug_opts} -shared build/passthrough.o build/functions.o build/logger.o build/config.o build/sea.o -o build/sea.so -lm -ldl -lpthread -lstdc++ -liniparser
 build/mirror: build/config.o build/logger.o build/passthrough.o
-	gcc ${debug_opts} src/mirrordirs.cpp build/config.o build/logger.o build/passthrough.o -o build/mirror -ldl -lpthread -lstdc++ -liniparser
+	gcc ${debug_opts} src/mirrordirs.cpp build/config.o build/logger.o build/passthrough.o -o build/mirror -lm -ldl -lpthread -lstdc++ -liniparser
 test/test_custom: tests/test_custom.cpp build/passthrough.o build/sea.o build/config.o build/logger.o
-	gcc ${debug_opts} -std=c++14 -Wall -fPIC tests/test_custom.cpp build/passthrough.o build/sea.o build/config.o build/logger.o -o tests/test_custom -lstdc++ -liniparser -ldl -lgtest -lpthread 
+	gcc ${debug_opts} -std=c++14 -Wall -fPIC tests/test_custom.cpp build/passthrough.o build/sea.o build/config.o build/logger.o -o tests/test_custom -lstdc++ -liniparser -lm -ldl -lgtest -lpthread 
 clean:
 	\rm -f build/logger.o build/functions.o build/passthrough.o build/config.o build/sea.o build/sea.so build/mirror build/*.gcda build/*.gcov build/*.gcno tests/test_custom
