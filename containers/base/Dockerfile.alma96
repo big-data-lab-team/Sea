@@ -1,0 +1,32 @@
+FROM almalinux:9.6
+
+RUN useradd --no-log-init -r tmpu
+
+RUN dnf update -y \
+        && dnf install -y dnf-plugins-core \
+        && dnf config-manager --set-enabled crb \
+        && dnf install -y make gcc gcc-c++ git findutils file file-devel python3 which valgrind cmake
+
+RUN git clone https://github.com/ndevilla/iniparser.git && cd iniparser && mkdir build && cd build && cmake .. && make all && make install
+
+ENV CPATH=/iniparser/src
+ENV LIBRARY_PATH=/iniparser/build
+ENV LD_LIBRARY_PATH=/iniparser/build
+
+RUN git clone https://github.com/google/googletest.git -b v1.14.0 && cd googletest && mkdir build && cd build && cmake .. && make all && make install
+
+ENV CPATH=${CPATH}:/googletest/src
+ENV LIBRARY_PATH=${LIBRARY_PATH}:/googletest/build
+ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/googletest/build
+
+RUN curl -L -O https://www.python.org/ftp/python/2.7.18/Python-2.7.18.tar.xz && \
+    tar xf Python-2.7.18.tar.xz && \
+    cd Python-2.7.18 && \
+    ./configure --prefix=/usr/local --enable-shared --enable-unicode=ucs4 && \
+    make && make altinstall
+
+RUN git clone https://github.com/bats-core/bats-core.git && cd bats-core && ./install.sh /usr/local
+
+RUN mkdir /libsea
+ADD . /libsea
+RUN cd /libsea && make clean && make
