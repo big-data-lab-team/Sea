@@ -47,7 +47,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        os-name: [ bionic, focal, fedora41, fedora42, fedora43 ]
+        os-name: [ bionic, focal, rocky93, rocky10, fedora41, fedora42, fedora43 ]
     permissions:
       contents: read
       packages: write
