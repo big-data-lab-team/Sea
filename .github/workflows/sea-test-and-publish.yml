@@ -19,7 +19,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os-name: [bionic, focal, fedora41, fedora42, fedora43]
+        os-name: [bionic, focal, rocky93, rocky10, fedora41, fedora42, fedora43]
     name: Test in ${{ matrix.os-name }}
     steps:
       - run: docker --version
