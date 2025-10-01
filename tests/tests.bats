@@ -301,6 +301,17 @@ export SEA_LOG_FILE="${PWD}/sea.log"
     done
 }
 
+@test "string memmap python3" {
+    for levels in {1..3}
+    do
+        load setup
+        python3 tests/memmap.py ${MOUNT}/subdir/map.txt
+        a=$(cat ${MOUNT}/subdir/map.txt)
+        load unset
+        [[ "$a" == "Heyyo World" ]]
+    done
+}
+
 @test "chown" {
     for levels in {1..3}
     do
