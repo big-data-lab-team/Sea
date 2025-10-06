@@ -301,7 +301,7 @@ export SEA_LOG_FILE="${PWD}/sea.log"
     done
 }
 
-@test "string memmap python3" {
+@test "string/numpy memmap python3" {
     for levels in {1..3}
     do
         load setup
@@ -309,6 +309,13 @@ export SEA_LOG_FILE="${PWD}/sea.log"
         a=$(cat ${MOUNT}/subdir/map.txt)
         load unset
         [[ "$a" == "Heyyo World" ]]
+
+        load setup
+        python3 tests/mmap_numpy.py ${MOUNT}
+        a=$(md5sum ${MOUNT}/updated.npy)
+        b=$(md5sum ${SOURCE}/copied.npy})
+        load unset
+        [[ "$a" == "$b" ]]
     done
 }
 

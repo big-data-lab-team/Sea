@@ -5,7 +5,7 @@ RUN useradd --no-log-init -r tmpu
 RUN dnf update -y \
         && dnf install -y dnf-plugins-core \
         && dnf config-manager --set-enabled crb \
-        && dnf install -y make gcc gcc-c++ git findutils file file-devel python3 which valgrind cmake
+        && dnf install -y make gcc gcc-c++ git findutils file file-devel python3 python3-numpy which valgrind cmake
 
 RUN git clone https://github.com/ndevilla/iniparser.git && cd iniparser && mkdir build && cd build && cmake .. && make all && make install
 
