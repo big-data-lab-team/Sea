@@ -39,7 +39,7 @@ jobs:
           fail_ci_if_error: true
           gcov_executable: docker run --rm -v $PWD:$PWD -w $PWD imagetest:${{ matrix.os-name }} gcov -abcfu build
       - name: setup tmate session
-        if: ${{ failure() && github.event_name == 'workflow_dispatch' && github.event.inputs.debug_enabled == 'true' }}
+        if: ${{ failure() }} # && github.event_name == 'workflow_dispatch' && github.event.inputs.debug_enabled == 'true' }}
         uses: mxschmitt/action-tmate@v3
 
   build-and-push-base-image:
