@@ -312,8 +312,8 @@ export SEA_LOG_FILE="${PWD}/sea.log"
 
         load setup
         python3 tests/mmap_numpy.py ${MOUNT}
-        a=$(md5sum ${MOUNT}/updated.npy)
-        b=$(md5sum ${MOUNT}/copied.npy)
+        a=($(md5sum ${MOUNT}/updated.npy))
+        b=($(md5sum ${MOUNT}/copied.npy))
         load unset
         [[ "$a" == "$b" ]]
     done
