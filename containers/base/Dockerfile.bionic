@@ -2,8 +2,21 @@ FROM ubuntu:bionic
 
 RUN useradd --no-log-init -r tmpu
 
-RUN apt update -y && apt install -y make gcc g++ git file libmagic-dev python python3 python3-numpy libiniparser1 libiniparser-dev cmake libgtest-dev valgrind &&\
-    cp /usr/include/iniparser/*.h /usr/include/
+RUN apt update -y \
+        && apt install software-properties-common -y \
+        && add-apt-repository ppa:deadsnakes/ppa -y \
+        && apt update -y \
+        && apt install python3.7 -y \
+        && apt install -y make gcc g++ git file libmagic-dev python python3-pip libiniparser1 libiniparser-dev cmake libgtest-dev valgrind \
+        && cp /usr/include/iniparser/*.h /usr/include/
+
+
+RUN update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.7 1 \
+        && update-alternatives --config python3 \
+        && update-alternatives  --set python3 /usr/bin/python3.7 \
+        && python3 -m pip install pip --upgrade \
+        && python3 -m pip install numpy
+
 RUN cd /usr/src/gtest/ && cmake -DBUILD_SHARED_LIBS=ON && make && cp *.so /usr/lib
 RUN git clone https://github.com/bats-core/bats-core.git && cd bats-core && ./install.sh /usr/local
 
