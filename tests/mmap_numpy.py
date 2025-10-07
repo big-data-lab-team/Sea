@@ -11,7 +11,7 @@ shape = (10, 10)
 dtype = np.float32
 
 rng = np.random.default_rng()
-data = rng.random(size=shape, dtype=dtype)
+data = rng.random(size=shape, dtype=dtype).astype(dtype=dtype)
 np.save(orig_fn, data)
 
 mmap_array = np.load(orig_fn, mmap_mode="r+")
