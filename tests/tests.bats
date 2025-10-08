@@ -324,7 +324,7 @@ export SEA_LOG_FILE="${PWD}/sea.log"
     do
         python3 tests/rand_matrices.py
         python3 tests/linalg_op.py $PWD
-        a=($(md5sum ${MOUNT}/tensordot.npy))
+        a=($(md5sum ${PWD}/tensordot.npy))
 
         load setup
         python3 tests/linalg_op.py ${MOUNT}
