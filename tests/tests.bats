@@ -319,6 +319,21 @@ export SEA_LOG_FILE="${PWD}/sea.log"
     done
 }
 
+@test "linalg op checksum python3" {
+    for levels in {1..3}
+    do
+        python3 tests/rand_matrices.py
+        python3 tests/linalg_op.py $PWD
+        a=($(md5sum ${MOUNT}/tensordot.npy))
+
+        load setup
+        python3 tests/linalg_op.py ${MOUNT}
+        b=($(md5sum ${MOUNT}/tensordot.npy)) 
+        load unset
+        [[ "$a" == "$b" ]]
+    done
+}
+
 @test "chown" {
     for levels in {1..3}
     do
