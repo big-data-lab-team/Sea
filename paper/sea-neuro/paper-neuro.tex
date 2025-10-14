@@ -28,12 +28,11 @@
 \usepackage{algorithmicx}%
 \usepackage{algpseudocode}%
 \usepackage{listings}%
-
 % \usepackage{todonotes}
 % \usepackage{float}
 % \newcommand{\TG}[1]{\todo[color=green!60!black]{\textbf{\textsc{From Tristan:}} #1\xspace}}
-
-% \linenumbers
+\newcommand{\vhs}[1]{\textcolor{red}{#1}}
+\linenumbers
 
 
 
@@ -51,7 +50,34 @@
 \theoremstyle{thmstylethree}%
 \newtheorem{definition}{Definition}%
 
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+
+\lstdefinestyle{myyamlstyle}{
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2
+}
+
 \raggedbottom
+
+
 
 
 \begin{document}
@@ -264,6 +290,115 @@
     % CBRAIN, nipype, joblib. sea can be used in all these contexts.
     
     \section{Materials and Methods}
+
+
+    \subsection{Sea}
+    
+\begin{figure*}[t]
+
+    \centering
+    \includegraphics[width=\linewidth]{figures/sea-diagram.pdf}%
+    \captionsetup{justification=centering}
+    \captionof{figure}{The Sea data-management library overview}
+    \label{fig:seaneuro:diagram}
+\end{figure*}
+
+
+    Sea (\autoref{fig:seaneuro:diagram}) is a data-management library that leverages
+    the \texttt{LD\_PRELOAD}
+    trick to intercept POSIX file system calls, or more specifically, file access calls to the GNU C library,
+    glibc, on Linux systems. Its goal is to easily enable users to intergrate efficient data management within their
+    applications within their existing workflows. Using glibc interception, Sea can redirect write calls
+    aimed at slower storage devices to a faster device whenever possible.
+    Similarly, when intercepting read calls, Sea can choose to read from a
+    faster device if a copy is available on that device. Sea decides which
+    storage location it can write to based on the details provided in an
+    initialization file called \texttt{sea.ini} (\autoref{lst:seaini}). This file informs Sea of which
+    locations it can use to read and write to, and well as their order of
+    priority. Importantly, Sea is not a filesystem, but rather a
+    lightweight tool that redirects files to more optimal storage devices.
+
+    \begin{figure}
+      \centering
+       \begin{lstlisting}[style=myyamlstyle, caption={Example Sea configuration file (sea.ini)}, label=lst:seaini]
+[Sea]                                                                  
+mount_dir = /lustre/seamount ;                                    
+n_levels = 3 ;                                                        
+cache_0 = /dev/shm/seasource ;                                           
+cache_1 = /localscratch/seasource ;                                         
+cache_2 = /lustre/seasource ;                                    
+log_level = 0 ;                                 
+log_file = /lustre/sea.log ;                             
+max_fs = 646971392 ;                                                   
+n_threads = 16 ;    \end{lstlisting}
+    \end{figure}
+   
+
+    \vhs{To configure Sea, a few parameters need to be configured within a \texttt{sea.ini} file located in the directory from where the application will be launched. To interact with Sea, a mountpoint is used. The mountpoint
+    is an empty directory that behaves as a view to all the files and
+    directories stored within Sea. In order to keep track of the locations of
+    files within the mountpoint, Sea mirrors the directory structure of each
+    storage location across all caches. It is generally advisable to provide
+    empty storage locations for Sea to use as the mirroring of large directories
+    can take some time.}
+
+    \vhs{We define all locations in which Sea can redirect reads and  writes to as a cache. Such
+    caches include any available storage located on the compute nodes, such as
+    tmpfs (i.e. a temporary file system in virtual memory) or solid state drives (SSDs). When the application attempts to write
+    data to the Sea mountpoint, Sea will write the data to one of these cache locations, by order of preference (cache\_0 being the most optimal).
+    Since many cache locations may be available, the user must specify the number of cache levels available (n\_levels) followed by the locations for each of these levels.}
+
+    \vhs{Optionally, logging may be enabled, giving insight the glibc commands that were executed and how the filepaths were treated by Sea. There are five log levels
+    available (0:None, 1:Error, 2: Warning, 3: Info, 4: Debug).\autoref{fig:seaneuro:logs} shows how logs can be interpreted to gain insight into the decisions made by Sea.}
+
+    \vhs{It is important to note that Sea does not chunk files, and therefore, there is no risk of partitioned files across storage devices. Rather, it relies on configuration parameters
+    \texttt{max\_fs} and \texttt{n\_threads} to determine whether there is sufficient space on a storage device to write the file to. \texttt{max\_fs} represents an upper bound estimate of the maximum
+    filesize generated by the application in bytes. }
+
+    \begin{figure}
+      \centering
+      \includegraphics[width=\textwidth]{figures/ex_log.png}
+       \captionsetup{justification=centering}
+    \captionof{figure}{Example logs outputted at log level 3 (INFO)}
+    \label{fig:seaneuro:logs}
+    \end{figure}
+
+
+    As neuroimaging pipeline results typically require post-processing and
+    HPC compute-local resources are only accessible during the reserved
+    duration, Sea provides functionality to flush and evict data to persistent
+    shared storage. To avoid interrupting ongoing
+    processing with data management operations, this is accomplished via a separate thread (known as the
+    ``flusher'') that moves data from the caches to long-term storage. Users must inform Sea of files
+    that need to be persisted to storage within a file called
+    \texttt{.sea\_flushlist}, and temporary files which can be removed from
+    cache within a file called the \texttt{.sea\_evictlist}. Both these files
+    can be populated using regular expressions to denote the paths to flush and
+    evict (e.g., ~\autoref{fig:seaneuro:flushlist}). If a file occurs in both the \texttt{.sea\_flushlist} and
+    \texttt{.sea\_evictlist}, Sea will interpret this as a \texttt{move}
+    operation and simply move the file from local to persistent storage rather
+    than copying it. Files that will be reused by the application should only be
+    flushed rather than flushed and evicted, as files can benefit from speedups
+    related to reading from fast rather than slow storage. Sea currently also
+    provides a rudimentary prefetch thread that can move files located within
+    Sea to the fastest available cache. To use Sea's prefetch
+    capabilities, a file called \texttt{.sea\_prefetchlist} needs to be
+    populated using regular expressions like the flushing and eviction files.
+    When used, the prefetch, flush and eviction configuration files must all be located within the directory from where the application will be launched.
+
+    \begin{figure}
+      \centering
+      \includegraphics[width=0.5\textwidth]{figures/ex_flushlist.png}
+       \captionsetup{justification=centering}
+    \captionof{figure}{Example \texttt{.sea\_flishlist} used for AFNI processing}
+    \label{fig:seaneuro:flushlist}
+    \end{figure}
+    
+    
+    
+    Sea can easily be executed directly using the available containers on the
+    GitHub registry, or can be compiled via source using gcc-C++ and Make. Once
+    compiled, Sea can be executed using the \texttt{sea\_launch.sh} bash script.
     
     
     \subsection{Datasets and Pipelines}
@@ -488,67 +623,6 @@
     
     \section{Results}
 
-    \subsection{Sea}
-    
-\begin{figure*}[t]
-
-    \centering
-    \includegraphics[width=\linewidth]{figures/sea-diagram.pdf}%
-    \captionsetup{justification=centering}
-    \captionof{figure}{The Sea data-management library overview}
-    \label{fig:seaneuro:diagram}
-\end{figure*}
-
-
-    Sea (Figure~\ref{fig:seaneuro:diagram}) is a data-management library that leverages
-    the \texttt{LD\_PRELOAD}
-    trick to intercept POSIX file system calls, or more specifically, file access calls to the GNU C library,
-    glibc, on Linux systems. This enables Sea to redirect write calls
-    aimed at slower storage devices to a faster device whenever possible.
-    Similarly, when intercepting read calls, Sea can choose to read from a
-    faster device if a copy is available on that device. Sea decides which
-    storage location it can write to based on the details provided in an
-    initialization file called \texttt{sea.ini}. This file informs Sea of which
-    locations it can use to read and write to, and well as their order of
-    priority. Importantly, Sea is not a filesystem, but rather a
-    lightweight tool that redirects files to more optimal storage devices.
-
-    We define all locations in which Sea can redirect writes to as a cache. Such
-    caches include any available storage located on the compute nodes, such as
-    tmpfs (i.e. a temporary file system in virtual memory) or solid state drives (SSDs). 
-
-    As neuroimaging pipeline results typically require post-processing and
-    HPC compute-local resources are only accessible during the reserved
-    duration, Sea provides functionality to flush and evict data to persistent
-    shared storage. To avoid interrupting ongoing
-    processing with data management operations, this is accomplished via a separate thread (known as the
-    ``flusher'') that moves data from the caches to long-term storage. Users must inform Sea of files
-    that need to be persisted to storage within a file called
-    \texttt{.sea\_flushlist}, and temporary files which can be removed from
-    cache within a file called the \texttt{.sea\_evictlist}. Both these files
-    can be populated using regular expressions to denote the paths to flush and
-    evict. If a file occurs in both the \texttt{.sea\_flushlist} and
-    \texttt{.sea\_evictlist}, Sea will interpret this as a \texttt{move}
-    operation and simply move the file from local to persistent storage rather
-    than copying it. Files that will be reused by the application should only be
-    flushed rather than flushed and evicted, as files can benefit from speedups
-    related to reading from fast rather than slow storage. Sea currently also
-    provides a rudimentary prefetch thread that can move files located within
-    Sea to the fastest available cache. To use Sea's prefetch
-    capabilities, a file called \texttt{.sea\_prefetchlist} needs to be
-    populated using regular expressions like the flushing and eviction files.
-    
-    To interact with Sea, a mountpoint is used. The mountpoint
-    is an empty directory that behaves as a view to all the files and
-    directories stored within Sea. In order to keep track of the locations of
-    files within the mountpoint, Sea mirrors the directory structure of each
-    storage location across all caches. It is generally advisable to provide
-    empty storage locations for Sea to use as the mirroring of large directories
-    can take some time.
-    
-    Sea can easily be executed directly using the available containers on the
-    GitHub registry, or can be compiled via source using gcc-C++ and Make. Once
-    compiled, Sea can be executed using the \texttt{sea\_launch.sh} bash script.
 
 
 % \tristan{I find this section lacks a clear focus. What are the key points from
@@ -587,23 +661,27 @@
 %     \label{fig:seaneuro:slashbin}
 % \end{subfigure}
 
-\begin{figure*}[ht]
+\begin{figure*}
 \centering
 
-\begin{subfigure}{0.8\textwidth}
+\begin{subfigure}{\textwidth}
     \centering
     \captionsetup{width=\textwidth}
-    \includegraphics[width=\textwidth]{figures/slashbin_nozoom.pdf}%
+    \includegraphics[width=\textwidth]{figures/slashbin_nozoom_updated.pdf}%
     \caption{Complete results}\label{fig:seaneuro:slashbinfull}
 \end{subfigure}
-\begin{subfigure}{0.8\textwidth}
+\begin{subfigure}{\textwidth}
     \centering
     \captionsetup{width=\textwidth}
-    \includegraphics[width=\textwidth]{figures/slashbin_withzoom.pdf}
-    \caption{Zoomed between 0 and 5000 seconds}\label{fig:seaneuro:slashbinzoom}
+    \includegraphics[width=\textwidth]{figures/slashbin_withzoom_updated.pdf}
+    \caption{Zoomed between 0 and 3000 seconds}\label{fig:seaneuro:slashbinzoom}
 \end{subfigure}
-\caption{Makespan comparison between Sea and Baseline on controlled dedicated cluster. Makespan
-denotes the total time between execution launch and completion of the last computing task.}
+\caption{Makespan comparison between Sea and baseline (I/O to and from Lustre) on controlled dedicated cluster. Makespan
+denotes the total time between execution launch and completion of the last computing task. Five repetitions were recorded for each experimental condition (including with and without busy writers)
+using Sea and baseline. The black dots (without busy writers) represent pipeline makespan when pipeline has exclusive access to the cluster.
+a) shows that using Sea on SPM processing of large 
+datasets produces important speedups (marker below the y=x line) when compared to baseline, due to its data intensive nature.
+However, as seen in (b), for short application makespans, Sea performance is comparable to baseline. }
 \label{fig:seaneuro:slashbin}
 \end{figure*}
 
@@ -676,8 +754,10 @@ frequently with the SPM pipeline, or due to increased CPU contention caused by S
 
 \begin{figure*}[t]
 \centering
-\includegraphics[width=0.8\textwidth]{figures/beluga_sea_tmpfs.pdf}%
-\caption{Makespan comparison between Sea and tmpfs on the production cluster with flushing disabled}
+\includegraphics[width=\textwidth]{figures/beluga_sea_tmpfs_updated.pdf}%
+\caption{Makespan comparison between Sea and tmpfs (baseline) on the production cluster with flushing disabled. Mean pipeline execution time with Sea was recorded across five repetitions and compared
+to time it took to execute the same pipeline exclusively using data stored on tmpfs.
+As shown by the figure, Sea's mean runtime is comparable to that of writing directly to RAM, across pipelines, datasets and parallelism.}
 \label{fig:seaneuro:tmpfs}
 \end{figure*}
 
@@ -717,19 +797,19 @@ due to Sea's initial reading of the data from Lustre.
 \begin{figure*}[h!]
   \centering
 
-\begin{subfigure}{0.8\textwidth}
+\begin{subfigure}{\textwidth}
     \centering
     \captionsetup{width=\linewidth}
-    \includegraphics[width=\textwidth]{figures/beluga_withoutflush_nozoom.pdf}%
+    \includegraphics[width=\textwidth]{figures/beluga_withoutflush_nozoom_updated.pdf}%
     \caption{Complete results}\label{fig:seaneuro:belugafull}
 \end{subfigure}
-\begin{subfigure}{0.8\textwidth}
+\begin{subfigure}{\textwidth}
     \centering
     \captionsetup{width=\linewidth}
-    \includegraphics[width=\textwidth]{figures/beluga_withoutflush_zoom.pdf}
-    \caption{Zoomed between 0 and 2000 seconds}\label{fig:seaneuro:belugazoom}
+    \includegraphics[width=\textwidth]{figures/beluga_withoutflush_nozoom_updated.pdf}
+    \caption{Zoomed between 0 and 3000 seconds}\label{fig:seaneuro:belugazoom}
 \end{subfigure}
-\caption{Makespan comparison between Sea and Baseline on the production cluster with flushing disabled}
+\caption{Makespan comparison between Sea and Baseline on the production cluster with flushing disabled. }
 \label{fig:seaneuro:beluga-noflush}
 \end{figure*}
 
@@ -756,21 +836,21 @@ due to Sea's initial reading of the data from Lustre.
 %       \label{fig:seaneuro:beluga-wflush}
 %   \end{subfigure}
 
-\begin{figure*}[ht]
+\begin{figure*}[t]
   \centering
-\begin{subfigure}{0.8\textwidth}
+\begin{subfigure}{\textwidth}
     \centering
     \captionsetup{width=\linewidth}
-    \includegraphics[width=\columnwidth]{figures/beluga_withflush_nozoom.pdf}%
+    \includegraphics[width=\columnwidth]{figures/beluga_withflush_nozoom_updated.pdf}%
     \caption{Complete results}\label{fig:seaneuro:belugafullwf}
 \end{subfigure}
-\begin{subfigure}{0.8\textwidth}
+\begin{subfigure}{\textwidth}
     \centering
     \captionsetup{width=\textwidth}
-    \includegraphics[width=\textwidth]{figures/beluga_withflush_zoom.pdf}
+    \includegraphics[width=\textwidth]{figures/beluga_withflush_zoom_updated.pdf}
     \caption{Zoomed between 0 and 2000 seconds}\label{fig:seaneuro:belugazoomwf}
 \end{subfigure}
-\caption{Makespan comparison between Sea and Baseline on the production cluster with flushing enabled for all files}
+\caption{Makespan comparison between Sea and baseline (Lustre) on the production cluster with flushing enabled for all files.}
 \label{fig:seaneuro:beluga-wflush}
 \end{figure*}
 

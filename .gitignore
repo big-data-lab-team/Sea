@@ -1,15 +1,21 @@
 .sea_*list
+.python-version
 *.o
 *.so
 *.gcda
 *.gcno
+*.npy
+a.txt
 **/.DS_STORE
+**/*.eps
 **/*.swp
 **/*.sif
 **/*.tar.gz
+**/*.zip
 **/.*.*
 **/.ipynb_checkpoints
 **/__pycache__
+**/arxiv*
 .ccls-cache/
 .vscode/
 sea.ini
@@ -19,3 +25,10 @@ source*
 paper/*.pdf
 paper/*.log
 paper/*.aux
+tests/test_custom
+
+## temporarily ignored
+containers/base/Dockerfile.questing
+containers/base/Dockerfile.plucky
+containers/base/Dockerfile.noble
+containers/base/Dockerfile.jammy
