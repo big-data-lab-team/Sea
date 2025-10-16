@@ -309,7 +309,9 @@
     the \texttt{LD\_PRELOAD}
     trick to intercept POSIX file system calls, or more specifically, file access calls to the GNU C library,
     glibc, on Linux systems. Its goal is to easily enable users to intergrate efficient data management within their
-    applications within their existing workflows. Using glibc interception, Sea can redirect write calls
+    applications within their existing workflows. \vhs{Sea benefits most applications that process large quantities of data. These can include applications that process large files, as they would benefit from increased bandwidth provided by faster storage devices, as well as large quantities of small files, as such applications would benefit from decreased latency brought on by higher performance storage devices. Applications relying on shared filesystems whose performance may be affected by other user behaviour may also benefit from Sea usage, as node-local temporary storage is most commonly dedicated to the user's in HPC environments}.
+    
+    With glibc interception, Sea can redirect write calls
     aimed at slower storage devices to a faster device whenever possible.
     Similarly, when intercepting read calls, Sea can choose to read from a
     faster device if a copy is available on that device. Sea decides which
@@ -398,7 +400,7 @@ n_threads = 16 ;    \end{lstlisting}
     \end{figure}
     
     
-    \vhs{Sea can run alongside any application that dynamically loads and calls the libc library for read/write operations. Such applications commonly include interpreted applications, such as Python and Matlab/Octave. Sea can additionally work seamlessly from within a containerized environment, as long as the necessary cache directories required by Sea are mounted to the container. We provide various Docker containers preinstalled with Sea within the Github Container Registry (\url{https://github.com/orgs/big-data-lab-team/packages?repo_name=Sea}). Alternatively, Sea can be compiled from source using Make.} Once
+    \vhs{Sea can run alongside any application that dynamically loads and calls the libc library for read/write operations. Such applications commonly include interpreted applications, such as Python and Matlab/Octave. Sea can additionally work seamlessly from within a containerized environment, as long as the necessary cache directories required by Sea are mounted to the container. We provide various Docker containers preinstalled with Sea within the Github Container Registry\footnote{\url{https://github.com/orgs/big-data-lab-team/packages?repo_name=Sea}}. Alternatively, Sea can be compiled from source using Make.} Once
     compiled, Sea can be executed using the \texttt{sea\_launch.sh} bash script.
     
         \begin{figure}
@@ -505,21 +507,21 @@ n_threads = 16 ;    \end{lstlisting}
     we used FEAT configured with many of
     the default parameters. We set the following parameters: slice-timing
     correction (interleaved), intensity normalization and non-linear
-    registration to standard space. FSL version 6.0.4 was used.
+    registration to standard space. \vhs{Outputted files were compressed NIfTI (.nii.gz) format.} FSL version 6.0.4 was used.
     
     %% Add SPM here
     To preprocess the datasets with SPM, we reused the template described in
-    \cite{haitas2021age}, with fieldmap correction removed. \vhs{As with the other applications, MNI registration was performed.} Since the template was
+    \cite{haitas2021age}, with fieldmap correction removed. \vhs{SPM was configured to perform slice timing correction, motion correction for within-subject registration, structural alignment to standard space MNI template, and an 8mm gaussian blur.} Since the template was
     designed for a specific dataset, we updated the paths to the fMRI and
     anatomical images, as well as the dimensions, such as the number of volumes
     and slices and the TR and TA, for each dataset. Furthermore, we set the
-    slice order to interleaved in all cases. SPM version 12 was used.
+    slice order to interleaved in all cases. \vhs{Output files were in uncompressed NIfTI (.nii) format.} SPM version 12 was used.
     
-    For AFNI preprocessing, the pipeline was configured to perform slice timing, \vhs{EPI alignment to anatomical, 
-    linear alignment to MNI space,} registration, smoothing \vhs{(blur size of 4)} and brain masking.
+    For AFNI preprocessing, the pipeline was configured to perform slice timing correction, \vhs{EPI alignment to anatomical with robust motion correction, 
+    warping of both anatomical and EPI to MNI space,} smoothing \vhs{(blur size of 4)} and brain masking.
     While AFNI does have some parallelized components that can be controlled via
     environment variables, we chose to let the pipeline use as much parallelism
-    as required for its execution. AFNI version 21.1.02 was used.
+    as required for its execution. \vhs{Output files generated were in uncompressed .BRIK/.HEAD format.} AFNI version 21.1.02 was used.
 
     
     % We set fMRIPrep to run with \texttt{--fs-no-reconall} flag set and set the
@@ -751,7 +753,7 @@ Sea becomes more limited.
 \subsection{Speedup correlated with Lustre degradation}
 
 Baseline performance without busy writers was comparable to that of Sea's (p=0.7, two-sample unpaired t-test) as can be seen in Figure~\ref{fig:seaneuro:slashbin}. However, with
-busy writers, the makespan obtained with Sea was smaller than baseline (p<1e-04, two-sample t-test). Occassional slowdowns did occur with the use of Sea. These slowdowns
+busy writers, the makespan obtained with Sea was smaller than baseline (p<1e-04, two-sample t-test). Occasional slowdowns did occur with the use of Sea. These slowdowns
 may arise from the initial read of the data, as they appeared to occur less
 frequently with the SPM pipeline, or due to increased CPU contention caused by Sea's rapid I/O.
 
@@ -1103,7 +1105,7 @@ due to Sea's initial reading of the data from Lustre.
     execute each pipeline can be found
     at~\url{https://github.com/valhayot/sea-slurm-scripts}. 
     Dockerfiles containing AFNI, SPM, and FSL with Sea pre-installed are available
-    at~\url{https://github.com/ValHayot/Sea/tree/master/containers/applications}.
+    at~\url{https://github.com/big-data-lab-team/Sea/tree/main/containers/applications}. Sea implementation is available at \url{https://github.com/big-data-lab-team/Sea}.
 
     \section*{Declarations}
     Val\'erie Hayot-Sasson was funded by the Canadian Open
