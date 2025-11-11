@@ -352,7 +352,7 @@ n_threads = 16 ;    \end{lstlisting}
     Since many cache locations may be available, the user must specify the number of cache levels available (n\_levels) followed by the locations for each of these levels.}
 
     \vhs{Optionally, logging may be enabled, giving insight the glibc commands that were executed and how the filepaths were treated by Sea. There are five log levels
-    available (0:None, 1:Error, 2: Warning, 3: Info, 4: Debug).\autoref{fig:seaneuro:logs} shows how logs can be interpreted to gain insight into the decisions made by Sea.}
+    available (0:None, 1:Error, 2: Warning, 3: Info, 4: Debug). \autoref{fig:seaneuro:logs} shows how logs can be interpreted to gain insight into the decisions made by Sea.}
 
     \vhs{It is important to note that Sea does not chunk files, and therefore, there is no risk of corruption due to partitioned files across storage devices. Rather, it relies on configuration parameters
     \texttt{max\_fs} and \texttt{n\_threads} to determine whether there is sufficient space on a storage device to write the file to. \texttt{max\_fs} represents an upper bound estimate of the maximum
@@ -400,7 +400,7 @@ n_threads = 16 ;    \end{lstlisting}
     \end{figure}
     
     
-    \vhs{Sea can run alongside any application that dynamically loads and calls the libc library for read/write operations. Such applications commonly include interpreted applications, such as Python and Matlab/Octave. Sea can additionally work seamlessly from within a containerized environment, as long as the necessary cache directories required by Sea are mounted to the container. We provide various Docker containers preinstalled with Sea within the Github Container Registry\footnote{\url{https://github.com/orgs/big-data-lab-team/packages?repo_name=Sea}}. Alternatively, Sea can be compiled from source using Make.} Once
+    \vhs{Sea can run alongside any application that dynamically loads and calls the libc library for read/write operations. Such applications commonly include interpreted applications, such as Python and Matlab or GNU Octave. Sea can additionally work seamlessly from within a containerized environment, as long as the necessary cache directories required by Sea are mounted to the container. We provide various Docker containers preinstalled with Sea within the Github Container Registry\footnote{\url{https://github.com/orgs/big-data-lab-team/packages?repo_name=Sea}}. Alternatively, Sea can be compiled from source using Make.} Once
     compiled, Sea can be executed using the \texttt{sea\_launch.sh} bash script.
     
         \begin{figure}
@@ -1029,7 +1029,7 @@ due to Sea's initial reading of the data from Lustre.
     greater than the magnitude of the slowdowns.
     
     %opportunities for other optimizations Sea may be beneficial
-    \subsection{Should Sea always be used ?}
+    \subsection{Should Sea always be used?}
     
     Our results show that performance with Sea is generally hard to predict as
     users do not have control over the variables outside the application they
